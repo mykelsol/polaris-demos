@@ -1,0 +1,3089 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Polaris I/O  Joint Battlespace Awareness Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  /* Polaris I/O tokens (subset) — values inlined so this file is self-contained */
+  :root {
+    /* Neutrals */
+    --neutral-0:#ffffff; --neutral-25:#fcfcfc; --neutral-50:#fafafa; --neutral-100:#f5f5f5;
+    --neutral-150:#ececec; --neutral-200:#e5e5e5; --neutral-300:#d4d4d4; --neutral-400:#a3a3a3;
+    --neutral-500:#737373; --neutral-600:#525252; --neutral-700:#404040; --neutral-800:#262626;
+    --neutral-900:#171717; --neutral-950:#0c0e12;
+    /* Brand */
+    --brand-50:#eff8ff; --brand-100:#d1e9ff; --brand-200:#b2ddff; --brand-300:#84caff;
+    --brand-400:#53b1fd; --brand-500:#2e90fa; --brand-600:#1570ef; --brand-700:#175cd3;
+    --brand-800:#1849a9; --brand-900:#194185;
+    --polaris-navy:#001030; --polaris-wordmark-blue:#2868c0;
+    /* Semantic */
+    --success-bg:#f0fdf4; --success-border:#bbf7d0; --success-text:#15803d;
+    --warning-bg:#fffbeb; --warning-border:#fde68a; --warning-text:#b45309;
+    --error-bg:#fef2f2; --error-border:#fecaca; --error-text:#dc2626;
+    --info-bg:#eff6ff;   --info-border:#bfdbfe;   --info-text:#1d4ed8;
+    /* Legacy aliases used by the renderer */
+    --bg:           var(--neutral-50);
+    --surface-1:    var(--neutral-0);
+    --surface-2:    var(--neutral-0);
+    --surface-3:    var(--neutral-50);
+    --surface-4:    var(--neutral-100);
+    --border:       var(--neutral-200);
+    --border-strong:var(--neutral-300);
+    --text:         var(--neutral-900);
+    --text-dim:     var(--neutral-600);
+    --text-muted:   var(--neutral-500);
+    --text-faint:   var(--neutral-400);
+    --brand:        var(--brand-600);
+    --brand-strong: var(--brand-700);
+    --brand-soft:   var(--brand-50);
+    --brand-soft-strong: var(--brand-100);
+    --success:      var(--success-text);
+    --success-soft: var(--success-bg);
+    --warning:      var(--warning-text);
+    --warning-soft: var(--warning-bg);
+    --danger:       var(--error-text);
+    --danger-soft:  var(--error-bg);
+    /* Radii */
+    --radius-sm:6px; --radius-md:8px; --radius-lg:12px; --radius-xl:16px;
+    /* Shadows */
+    --shadow-xs: 0 1px 2px 0 rgba(0,0,0,0.05);
+    --shadow-sm: 0 1px 3px 0 rgba(0,0,0,0.06), 0 1px 2px -1px rgba(0,0,0,0.06);
+    --shadow-md: 0 4px 8px -2px rgba(0,0,0,0.08), 0 2px 4px -2px rgba(0,0,0,0.04);
+    --shadow-lg: 0 12px 24px -8px rgba(0,0,0,0.10), 0 4px 8px -4px rgba(0,0,0,0.06);
+    --button-inset: inset 0 -2px 0 0 rgba(0,0,0,0.05), inset 0 0 0 1px rgba(0,0,0,0.18);
+    --ring-focus: 0 0 0 4px rgba(21,112,239,0.24);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; height: 100%; }
+
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    background: var(--neutral-50);
+    color: var(--neutral-900);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+  }
+
+  button { font-family: inherit; cursor: pointer; }
+  input, textarea { font-family: inherit; }
+  *:focus-visible { outline: none; box-shadow: var(--ring-focus); }
+
+  /* ====== APP SHELL ====== */
+  .app {
+    display: grid;
+    grid-template-rows: 64px 1fr;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  /* Header */
+  .topbar {
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    border-bottom: 1px solid var(--neutral-200);
+    background: var(--neutral-0);
+    gap: 16px;
+  }
+  .topbar-left {
+    display: flex; align-items: center; gap: 14px;
+    min-width: 240px;
+  }
+  .topbar-left .divider { width:1px; height:24px; background: var(--neutral-200); }
+  .icon-btn {
+    width: 32px; height: 32px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--neutral-500);
+    transition: background var(--duration-fast, 120ms) ease, color var(--duration-fast, 120ms) ease;
+  }
+  .icon-btn:hover { background: var(--neutral-100); color: var(--neutral-900); }
+  .icon-btn.active { background: var(--neutral-100); color: var(--neutral-900); }
+  .logo-wrap { display: inline-flex; align-items: center; gap: 10px; }
+  .logo-wrap img { display: block; height: 22px; }
+  .topbar-center {
+    flex: 1;
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; color: var(--neutral-600);
+  }
+  .topbar-center .crumb { color: var(--neutral-600); }
+  .topbar-center .crumb-sep { color: var(--neutral-400); }
+  .topbar-center .crumb-active { color: var(--neutral-900); font-weight: 600; }
+  .topbar-right {
+    display: flex; align-items: center; gap: 8px;
+    min-width: 240px; justify-content: flex-end;
+  }
+  .topbar-right .topbar-status {
+    display:inline-flex; align-items:center; gap:6px;
+    font-size:11px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase;
+    color: var(--neutral-500); padding: 4px 10px;
+    border:1px solid var(--neutral-200); border-radius: var(--radius-full, 9999px);
+    background: var(--neutral-0);
+  }
+  .topbar-right .topbar-status .live-dot {
+    width:6px; height:6px; border-radius:50%; background: var(--success-text);
+    box-shadow: 0 0 0 3px rgba(21,128,61,0.15);
+  }
+  .avatar {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--brand-700);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; color: white;
+    border: 1px solid var(--brand-800);
+  }
+
+  /* Main grid */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 0 1fr 0;
+    height: 100%;
+    overflow: hidden;
+    transition: grid-template-columns .25s cubic-bezier(0.16, 1, 0.3, 1);
+    background: var(--neutral-50);
+  }
+  .main-grid.left-open  { grid-template-columns: 280px 1fr 0; }
+  .main-grid.right-open { grid-template-columns: 0 1fr 380px; }
+  .main-grid.left-open.right-open { grid-template-columns: 280px 1fr 380px; }
+
+  /* ====== LEFT SIDEBAR ====== */
+  .left-sidebar {
+    background: var(--neutral-0);
+    border-right: 1px solid var(--neutral-200);
+    overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+  .left-sidebar-inner {
+    width: 280px;
+    padding: 16px 16px 24px;
+    display: flex; flex-direction: column; gap: 4px;
+    overflow-y: auto;
+  }
+  .left-sidebar-inner::-webkit-scrollbar { width: 6px; }
+  .left-sidebar-inner::-webkit-scrollbar-thumb { background: var(--neutral-200); border-radius: 3px; }
+
+  .left-header {
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 4px 8px 12px;
+    border-bottom: 1px solid var(--neutral-200);
+    margin-bottom: 12px;
+  }
+  .left-title {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--neutral-500);
+  }
+  .left-count {
+    font-family: 'Plus Jakarta Sans'; font-variant-numeric: tabular-nums;
+    font-size: 12px; font-weight: 700;
+    color: var(--neutral-700);
+    padding: 2px 8px; background: var(--neutral-100);
+    border-radius: 9999px;
+  }
+
+  .nav-section-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+    color: var(--neutral-500);
+    padding: 12px 8px 6px; text-transform: uppercase;
+  }
+
+  /* ====== CENTER / CONTENT ====== */
+  .content {
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    position: relative;
+    background: var(--neutral-50);
+  }
+
+  .editing-banner {
+    display: none;
+    align-items: center; justify-content: space-between;
+    padding: 10px 28px;
+    background: var(--warning-bg);
+    border-bottom: 1px solid var(--warning-border);
+    color: var(--warning-text);
+    font-size: 12.5px; font-weight: 500;
+  }
+  .editing-banner.show { display: flex; }
+  .editing-banner .return-btn {
+    background: var(--neutral-0);
+    border: 1px solid var(--warning-border);
+    color: var(--warning-text);
+    border-radius: 6px;
+    padding: 5px 12px;
+    font-size: 12px; font-weight: 600;
+    box-shadow: var(--shadow-xs);
+  }
+  .editing-banner .return-btn:hover { background: var(--warning-bg); }
+
+  .scroll-wrap {
+    flex: 1; overflow-y: auto; overflow-x: hidden;
+  }
+  .scroll-wrap::-webkit-scrollbar { width: 10px; }
+  .scroll-wrap::-webkit-scrollbar-track { background: transparent; }
+  .scroll-wrap::-webkit-scrollbar-thumb { background: var(--neutral-200); border-radius: 5px; border: 2px solid var(--neutral-50); }
+  .scroll-wrap::-webkit-scrollbar-thumb:hover { background: var(--neutral-300); }
+
+  /* Empty state full-page */
+  .empty-state {
+    min-height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    padding: 40px;
+  }
+
+  /* Chat layout */
+  .chat-container {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 40px 32px 220px;
+    display: flex; flex-direction: column;
+    gap: 24px;
+  }
+
+  .chat-message { display: flex; gap: 14px; }
+  .msg-avatar {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    flex-shrink: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--neutral-100);
+    border: 1px solid var(--neutral-200);
+  }
+  .msg-avatar.ai {
+    background: var(--brand-50);
+    border-color: var(--brand-200);
+    color: var(--brand-600);
+  }
+  .msg-avatar.user {
+    background: var(--brand-700);
+    border: 1px solid var(--brand-800);
+    color: white; font-weight: 700; font-size: 12px;
+  }
+  .msg-body { flex: 1; min-width: 0; padding-top: 4px; }
+  .msg-author {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+    color: var(--neutral-500);
+    margin-bottom: 8px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .msg-author .badge {
+    font-size: 10px;
+    background: var(--brand-50); color: var(--brand-700);
+    border: 1px solid var(--brand-200);
+    padding: 1px 6px; border-radius: 4px;
+    margin-left: 0;
+    font-weight: 700; letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .msg-text {
+    color: var(--neutral-900);
+    font-size: 14px; line-height: 1.62;
+  }
+  .msg-text p { margin: 0 0 8px 0; }
+  .msg-text p:last-child { margin-bottom: 0; }
+  .msg-text b { font-weight: 700; }
+  .msg-text .hint {
+    color: var(--neutral-600);
+    font-size: 13px;
+    margin-top: 6px;
+  }
+  .msg-text .hint b { color: var(--neutral-900); }
+
+  /* Chips */
+  .chip-row {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-top: 12px;
+  }
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 12px;
+    border: 1px solid var(--neutral-300);
+    background: var(--neutral-0);
+    color: var(--neutral-700);
+    border-radius: 9999px;
+    font-size: 13px; font-weight: 500;
+    cursor: pointer;
+    transition: all .12s ease;
+    user-select: none;
+    box-shadow: var(--shadow-xs);
+  }
+  .chip:hover { border-color: var(--neutral-400); background: var(--neutral-50); color: var(--neutral-900); }
+  .chip.selected {
+    background: var(--brand-50); border-color: var(--brand-300); color: var(--brand-700);
+    font-weight: 600;
+  }
+  .chip.recommend::before {
+    content: ''; width: 5px; height: 5px; border-radius:50%; background: var(--brand-600);
+  }
+  .chip.recommend { padding-left: 10px; }
+
+  /* Entity cards */
+  .entity-list {
+    display: flex; flex-direction: column; gap: 8px;
+    margin-top: 12px;
+  }
+  .entity-card {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 14px;
+    background: var(--neutral-0);
+    border: 1px solid var(--neutral-200);
+    border-radius: var(--radius-lg);
+    gap: 12px;
+    box-shadow: var(--shadow-xs);
+  }
+  .entity-card .ent-main { display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1; }
+  .entity-card .ent-icon {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    background: var(--neutral-100);
+    border: 1px solid var(--neutral-200);
+    color: var(--neutral-700);
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .entity-card .ent-name { font-weight: 600; font-size: 14px; color: var(--neutral-900); }
+  .entity-card .ent-meta {
+    font-size: 11.5px; color: var(--neutral-500);
+    display: flex; gap: 6px; align-items: center;
+    margin-top: 3px;
+  }
+  .ent-tag {
+    font-size: 10.5px; font-weight: 600;
+    padding: 1px 7px; border-radius: 4px;
+    border: 1px solid var(--neutral-300);
+    color: var(--neutral-700);
+    background: var(--neutral-100);
+  }
+  .ent-tag.primary { color: var(--brand-700); border-color: var(--brand-300); background: var(--brand-50); }
+  .ent-tag.context { color: var(--neutral-700); border-color: var(--neutral-300); background: var(--neutral-100); }
+  .ent-tag.removed { color: var(--neutral-400); }
+  .entity-card .ent-actions { display: flex; gap: 6px; }
+  .role-btn {
+    background: var(--neutral-0);
+    border: 1px solid var(--neutral-300);
+    color: var(--neutral-700);
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 11.5px; font-weight: 600;
+    transition: all .12s ease;
+    box-shadow: var(--shadow-xs);
+  }
+  .role-btn:hover { background: var(--neutral-50); color: var(--neutral-900); border-color: var(--neutral-400); }
+  .role-btn.primary-active { background: var(--brand-50); border-color: var(--brand-600); color: var(--brand-700); }
+  .role-btn.context-active { background: var(--neutral-100); border-color: var(--neutral-500); color: var(--neutral-900); }
+
+  /* Option cards (sensitivity, cadence) */
+  .option-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .option-card {
+    background: var(--neutral-0);
+    border: 1px solid var(--neutral-200);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    cursor: pointer;
+    transition: all .12s ease;
+    position: relative;
+    box-shadow: var(--shadow-xs);
+  }
+  .option-card:hover { border-color: var(--neutral-400); background: var(--neutral-25); }
+  .option-card.selected {
+    border-color: var(--brand-600);
+    background: var(--brand-50);
+    box-shadow: var(--shadow-xs), 0 0 0 1px var(--brand-600);
+  }
+  .option-card .opt-title {
+    font-weight: 700; font-size: 14px; color: var(--neutral-900);
+    margin-bottom: 6px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .option-card .opt-desc {
+    font-size: 12.5px; color: var(--neutral-600); line-height: 1.5;
+  }
+  .opt-badge {
+    font-size: 10px; color: var(--brand-700);
+    border: 1px solid var(--brand-200);
+    background: var(--brand-50);
+    padding: 1px 6px; border-radius: 4px;
+    font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+  }
+
+  /* Editable list */
+  .edit-list { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+  .edit-list-item {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--neutral-0);
+    border: 1px solid var(--neutral-200);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 13px;
+    box-shadow: var(--shadow-xs);
+  }
+  .edit-list-item .li-bullet { color: var(--brand-600); flex-shrink: 0; }
+  .edit-list-item .li-text { flex: 1; color: var(--neutral-900); }
+  .edit-list-item .li-remove {
+    width: 22px; height: 22px; border-radius: 4px;
+    background: transparent; border: none; color: var(--neutral-400);
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer;
+  }
+  .edit-list-item .li-remove:hover { background: var(--error-bg); color: var(--error-text); }
+  .edit-list .add-item-row { display: flex; gap: 8px; margin-top: 4px; }
+  .edit-list .add-item-row input {
+    flex: 1;
+    background: var(--neutral-0);
+    border: 1px solid var(--neutral-300);
+    border-radius: 8px;
+    color: var(--neutral-900);
+    padding: 9px 12px;
+    font-size: 13px;
+    outline: none;
+    box-shadow: var(--shadow-xs);
+  }
+  .edit-list .add-item-row input:focus { border-color: var(--brand-600); box-shadow: var(--ring-focus); }
+  .edit-list .add-item-row button {
+    background: var(--neutral-0);
+    border: 1px solid var(--neutral-300);
+    color: var(--neutral-900);
+    border-radius: 8px;
+    padding: 0 16px;
+    font-size: 13px; font-weight: 600;
+    box-shadow: var(--button-inset), var(--shadow-xs);
+  }
+  .edit-list .add-item-row button:hover { background: var(--neutral-50); }
+
+  /* Draft review card */
+  .review-card {
+    background: var(--neutral-0);
+    border: 1px solid var(--neutral-200);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    margin-top: 12px;
+    box-shadow: var(--shadow-xs);
+  }
+  .review-card h3 {
+    font-size: 18px; margin: 0 0 6px 0;
+    font-weight: 700; letter-spacing: -0.01em;
+    color: var(--neutral-900);
+  }
+  .review-card .rev-purpose {
+    color: var(--neutral-600);
+    font-size: 13px;
+    margin: 0 0 20px 0;
+    line-height: 1.55;
+  }
+  .review-section {
+    border-top: 1px solid var(--neutral-200);
+    padding: 16px 0;
+    display: grid;
+    grid-template-columns: 150px 1fr auto;
+    gap: 14px; align-items: start;
+  }
+  .review-section:first-of-type { border-top: none; padding-top: 0; }
+  .review-section:last-of-type { padding-bottom: 0; }
+  .rev-label {
+    font-size: 11px; color: var(--neutral-500);
+    text-transform: uppercase; letter-spacing: 0.08em;
+    font-weight: 700;
+    padding-top: 2px;
+  }
+  .rev-value {
+    font-size: 13px; color: var(--neutral-900); line-height: 1.65;
+  }
+  .rev-value .pill {
+    display: inline-block;
+    background: var(--neutral-100);
+    border: 1px solid var(--neutral-300);
+    color: var(--neutral-700);
+    padding: 2px 8px;
+    border-radius: 9999px;
+    font-size: 11.5px; font-weight: 500;
+    margin: 2px 4px 2px 0;
+  }
+  .rev-value .pill.primary { color: var(--brand-700); border-color: var(--brand-300); background: var(--brand-50); }
+  .rev-value .pill.context { color: var(--neutral-700); border-color: var(--neutral-300); background: var(--neutral-50); }
+  .rev-edit {
+    background: var(--neutral-0);
+    border: 1px solid var(--neutral-300);
+    color: var(--neutral-700);
+    border-radius: 6px;
+    padding: 5px 12px;
+    font-size: 11.5px; font-weight: 600;
+    cursor: pointer;
+    box-shadow: var(--shadow-xs);
+  }
+  .rev-edit:hover { background: var(--neutral-50); color: var(--neutral-900); }
+
+  /* Preview metrics */
+  .preview-metrics {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 10px; margin-top: 14px;
+  }
+  .metric-card {
+    background: var(--neutral-0);
+    border: 1px solid var(--neutral-200);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    box-shadow: var(--shadow-xs);
+  }
+  .metric-card .mc-label {
+    font-size: 11px; color: var(--neutral-500);
+    text-transform: uppercase; letter-spacing: 0.08em;
+    font-weight: 700;
+    margin-bottom: 8px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .metric-card .mc-value {
+    font-size: 28px; font-weight: 700;
+    color: var(--neutral-900);
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .metric-card.emit .mc-label { color: var(--success-text); }
+  .metric-card.watch .mc-label { color: var(--warning-text); }
+  .metric-card.reject .mc-label { color: var(--neutral-500); }
+
+  /* Sample signal cards */
+  .signal-section { margin-top: 20px; }
+  .signal-section-title {
+    font-size: 11px; color: var(--neutral-500);
+    text-transform: uppercase; letter-spacing: 0.08em;
+    font-weight: 700;
+    margin-bottom: 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .signal-card {
+    background: var(--neutral-0);
+    border: 1px solid var(--neutral-200);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    margin-bottom: 8px;
+    box-shadow: var(--shadow-xs);
+  }
+  .signal-card .sc-head {
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+  }
+  .signal-card .sc-title {
+    font-weight: 700; font-size: 14px; color: var(--neutral-900);
+    margin: 0; line-height: 1.45;
+  }
+  .signal-card .sc-tags { display: flex; gap: 6px; flex-shrink: 0; }
+  .strength-tag, .conf-tag {
+    font-size: 10px; padding: 2px 7px; border-radius: 4px;
+    font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+    border: 1px solid transparent;
+  }
+  .strength-tag.high { background: var(--success-bg); color: var(--success-text); border-color: var(--success-border); }
+  .strength-tag.med  { background: var(--warning-bg); color: var(--warning-text); border-color: var(--warning-border); }
+  .conf-tag.high     { background: var(--brand-50); color: var(--brand-700); border-color: var(--brand-200); }
+  .signal-card .sc-body {
+    margin-top: 12px;
+    font-size: 12.5px; line-height: 1.55;
+    color: var(--neutral-700);
+  }
+  .signal-card .sc-row {
+    display: grid; grid-template-columns: 120px 1fr;
+    gap: 12px; padding: 5px 0;
+  }
+  .signal-card .sc-row .lbl {
+    font-size: 10.5px; color: var(--neutral-500);
+    text-transform: uppercase; letter-spacing: 0.08em;
+    font-weight: 700;
+    padding-top: 1px;
+  }
+  .signal-card .sc-row .val { color: var(--neutral-900); font-size: 13px; line-height: 1.55; }
+  .signal-card.watch-card { border-left: 3px solid var(--warning-text); }
+  .signal-card.reject-card { border-left: 3px solid var(--neutral-400); opacity: 0.92; }
+
+  /* Refinement banner */
+  .refinement-banner {
+    margin-top: 16px;
+    padding: 16px 18px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--neutral-200);
+    background: var(--neutral-0);
+    display: flex; gap: 14px; align-items: flex-start;
+    box-shadow: var(--shadow-xs);
+  }
+  .refinement-banner.healthy { border-color: var(--success-border); background: var(--success-bg); }
+  .refinement-banner.noisy   { border-color: var(--warning-border); background: var(--warning-bg); }
+  .refinement-banner.narrow  { border-color: var(--brand-200);      background: var(--brand-50); }
+  .refinement-banner .rb-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0; background: var(--neutral-0);
+  }
+  .refinement-banner.healthy .rb-icon { background: rgba(21,128,61,0.12); color: var(--success-text); }
+  .refinement-banner.noisy   .rb-icon { background: rgba(180,83,9,0.12);  color: var(--warning-text); }
+  .refinement-banner.narrow  .rb-icon { background: var(--brand-100);     color: var(--brand-700); }
+  .refinement-banner .rb-body { flex: 1; }
+  .refinement-banner .rb-title { font-weight: 700; font-size: 14px; margin: 0 0 4px; color: var(--neutral-900); }
+  .refinement-banner .rb-desc  { font-size: 13px; color: var(--neutral-700); line-height: 1.55; margin: 0; }
+
+  /* Action row */
+  .action-row {
+    display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap;
+  }
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 13px; font-weight: 600;
+    transition: all .12s ease;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--neutral-900);
+    cursor: pointer;
+  }
+  .btn-primary {
+    background: var(--brand-600);
+    border-color: var(--brand-700);
+    color: white;
+    box-shadow: var(--button-inset), var(--shadow-xs);
+  }
+  .btn-primary:hover  { background: var(--brand-700); border-color: var(--brand-800); }
+  .btn-primary:active { transform: translateY(1px); }
+  .btn-primary:disabled { background: var(--neutral-200); border-color: var(--neutral-200); color: var(--neutral-400); cursor: not-allowed; box-shadow: none; }
+
+  .btn-secondary {
+    background: var(--neutral-0);
+    border: 1px solid var(--neutral-300);
+    color: var(--neutral-900);
+    box-shadow: var(--button-inset), var(--shadow-xs);
+  }
+  .btn-secondary:hover { background: var(--neutral-50); }
+  .btn-secondary:active { transform: translateY(1px); }
+
+  .btn-ghost {
+    color: var(--neutral-600);
+    background: transparent;
+  }
+  .btn-ghost:hover { color: var(--neutral-900); background: var(--neutral-100); }
+
+  /* Input area */
+  .input-area-wrap {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    padding: 16px 28px 28px;
+    background: linear-gradient(to top, var(--neutral-50) 60%, rgba(250,250,250,0) 100%);
+    pointer-events: none;
+  }
+  .input-area {
+    pointer-events: all;
+    max-width: 760px; margin: 0 auto;
+    background: var(--neutral-0);
+    border: 1px solid var(--neutral-300);
+    border-radius: var(--radius-lg);
+    padding: 12px;
+    display: flex; flex-direction: column; gap: 8px;
+    transition: border-color .15s ease, box-shadow .15s ease;
+    box-shadow: var(--shadow-sm);
+  }
+  .input-area:focus-within { border-color: var(--brand-600); box-shadow: var(--shadow-sm), var(--ring-focus); }
+  .input-area textarea {
+    flex: 1; width: 100%;
+    background: transparent; border: none;
+    color: var(--neutral-900);
+    font-size: 14px; line-height: 1.5;
+    resize: none; outline: none;
+    padding: 8px 10px;
+    min-height: 44px; max-height: 160px;
+    font-family: inherit;
+  }
+  .input-area textarea::placeholder { color: var(--neutral-400); }
+  .input-row-bottom {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 6px;
+  }
+  .input-row-left { display: flex; gap: 4px; }
+  .input-row-right { display: flex; gap: 8px; align-items: center; }
+  .input-mode-pill {
+    font-size: 11px; font-weight: 600;
+    color: var(--neutral-600);
+    background: var(--neutral-100);
+    border: 1px solid var(--neutral-200);
+    padding: 4px 9px;
+    border-radius: 6px;
+  }
+  .send-btn {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--brand-700);
+    background: var(--brand-600);
+    color: white;
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: all .12s ease;
+    box-shadow: var(--button-inset);
+  }
+  .send-btn:hover { background: var(--brand-700); }
+  .send-btn:disabled {
+    background: var(--neutral-100); border-color: var(--neutral-200);
+    color: var(--neutral-400); cursor: not-allowed; box-shadow: none;
+  }
+
+  /* ====== RIGHT SIDEBAR ====== */
+  .right-sidebar {
+    background: var(--neutral-0);
+    border-left: 1px solid var(--neutral-200);
+    overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+  .right-inner {
+    width: 380px;
+    display: flex; flex-direction: column;
+    height: 100%;
+  }
+  .right-tabs {
+    padding: 14px 18px 14px;
+    border-bottom: 1px solid var(--neutral-200);
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--neutral-0);
+  }
+  .right-tabs h3 {
+    margin: 0;
+    font-size: 14px; font-weight: 700;
+    color: var(--neutral-900);
+    letter-spacing: -0.01em;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .right-tabs h3::before {
+    content: ''; width: 4px; height: 16px;
+    background: var(--brand-600); border-radius: 2px;
+  }
+  .right-tabs .right-actions { display: flex; gap: 4px; }
+  .right-scroll {
+    flex: 1; overflow-y: auto;
+    padding: 14px 16px 24px;
+    display: flex; flex-direction: column;
+    gap: 10px;
+    background: var(--neutral-50);
+  }
+  .right-scroll::-webkit-scrollbar { width: 6px; }
+  .right-scroll::-webkit-scrollbar-thumb { background: var(--neutral-200); border-radius: 3px; }
+
+  .panel-block {
+    background: var(--neutral-0);
+    border: 1px solid var(--neutral-200);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-xs);
+  }
+  .panel-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 14px;
+    border-bottom: 1px solid transparent;
+  }
+  .panel-title {
+    font-size: 11px; color: var(--neutral-500);
+    text-transform: uppercase; letter-spacing: 0.08em;
+    font-weight: 700;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .panel-title.brand { color: var(--brand-700); }
+  .panel-actions { display: flex; gap: 4px; }
+  .mini-btn {
+    width: 24px; height: 24px;
+    background: transparent; border: none;
+    border-radius: 4px;
+    color: var(--neutral-400);
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: all .12s;
+  }
+  .mini-btn:hover { background: var(--neutral-100); color: var(--neutral-900); }
+  .panel-body { padding: 12px 14px 14px; border-top: 1px solid var(--neutral-200); }
+  .panel-body .pb-content {
+    font-size: 13px; color: var(--neutral-900); line-height: 1.6;
+    white-space: pre-wrap;
+  }
+  .panel-body .pb-muted { color: var(--neutral-600); }
+  .panel-body .pill-row { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; }
+  .panel-body .pill {
+    display: inline-block;
+    background: var(--neutral-100);
+    border: 1px solid var(--neutral-200);
+    color: var(--neutral-700);
+    padding: 2px 8px;
+    border-radius: 9999px;
+    font-size: 11px; font-weight: 500;
+  }
+  .panel-body .pill.primary { color: var(--brand-700); border-color: var(--brand-300); background: var(--brand-50); }
+  .panel-body .pill.context { color: var(--neutral-700); border-color: var(--neutral-300); background: var(--neutral-50); }
+  .panel-body ul {
+    margin: 0; padding: 0; list-style: none;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .panel-body ul li {
+    display: flex; gap: 8px;
+    font-size: 12.5px; color: var(--neutral-900); line-height: 1.45;
+  }
+  .panel-body ul li::before {
+    content: ''; width: 4px; height: 4px;
+    border-radius: 50%; background: var(--brand-600);
+    margin-top: 7px; flex-shrink: 0;
+  }
+
+  /* Progress steps */
+  .progress-steps { display: flex; flex-direction: column; padding: 4px 0; }
+  .progress-step {
+    display: flex; gap: 12px; align-items: center;
+    padding: 8px 8px;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--neutral-600);
+    position: relative;
+    transition: background .12s;
+  }
+  .progress-step.clickable:hover { background: var(--neutral-50); color: var(--neutral-900); }
+  .progress-step.locked { cursor: not-allowed; color: var(--neutral-400); }
+  .progress-step.completed { color: var(--neutral-700); }
+  .progress-step.active { color: var(--neutral-900); font-weight: 700; background: var(--brand-50); }
+  .progress-step .ps-circle {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: 1.5px solid var(--neutral-300);
+    flex-shrink: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--neutral-0);
+    color: var(--neutral-400);
+    font-size: 10px;
+    z-index: 1;
+  }
+  .progress-step.completed .ps-circle {
+    background: var(--brand-600); border-color: var(--brand-600); color: white;
+  }
+  .progress-step.active .ps-circle {
+    border-color: var(--brand-600);
+    background: var(--neutral-0);
+  }
+  .progress-step.active .ps-circle::after {
+    content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--brand-600);
+  }
+  .progress-step .ps-text { flex: 1; min-width: 0; }
+  .progress-step .ps-line {
+    position: absolute;
+    left: 17px;
+    top: 28px;
+    bottom: -8px;
+    width: 1.5px;
+    background: var(--neutral-200);
+  }
+  .progress-step:last-child .ps-line { display: none; }
+  .progress-step.completed .ps-line { background: var(--brand-600); opacity: 0.5; }
+
+  /* Right empty hint */
+  .right-empty-hint {
+    padding: 24px 18px;
+    color: var(--neutral-500);
+    font-size: 13px;
+    text-align: center;
+    line-height: 1.55;
+    background: var(--neutral-0);
+    border: 1px dashed var(--neutral-200);
+    border-radius: var(--radius-md);
+  }
+
+  /* Misc helpers */
+  .hidden { display: none !important; }
+
+  /* ===== Combined entry: two-card layout (Frame 1 + Frame 2) ===== */
+  .combined-entry {
+    min-height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    padding: 40px 28px;
+  }
+  .entry-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    max-width: 920px;
+    width: 100%;
+  }
+  .entry-card {
+    background: var(--neutral-0);
+    border: 1px solid var(--neutral-200);
+    border-radius: var(--radius-lg);
+    padding: 28px;
+    display: flex; flex-direction: column; gap: 16px;
+    min-height: 300px;
+    position: relative;
+    transition: border-color .15s ease, box-shadow .15s ease;
+    box-shadow: var(--shadow-xs);
+  }
+  .entry-card.primary {
+    border-color: var(--brand-300);
+    background: linear-gradient(180deg, var(--brand-50) 0%, var(--neutral-0) 60%);
+  }
+  .entry-card.primary:hover { border-color: var(--brand-600); box-shadow: var(--shadow-md); }
+  .entry-card.secondary:hover { border-color: var(--neutral-400); box-shadow: var(--shadow-sm); }
+  .entry-card .ec-icon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--neutral-100);
+    border: 1px solid var(--neutral-200);
+    color: var(--neutral-700);
+  }
+  .entry-card.primary .ec-icon {
+    background: var(--brand-100);
+    border-color: var(--brand-300);
+    color: var(--brand-700);
+  }
+  .entry-card h2 {
+    margin: 0;
+    font-size: 20px; font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--neutral-900);
+  }
+  .entry-card p {
+    margin: 0;
+    color: var(--neutral-600);
+    font-size: 13.5px; line-height: 1.6;
+    flex: 1;
+  }
+  .entry-card .ec-cta { margin-top: 4px; }
+
+  /* Poll-style sub-questions */
+  .poll-nav {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 20px;
+    padding: 12px 0 4px;
+    border-top: 1px solid var(--neutral-200);
+  }
+  .poll-nav .step-counter {
+    font-size: 12px;
+    color: var(--neutral-500);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+  .poll-nav .step-counter b {
+    color: var(--neutral-900); font-weight: 700;
+  }
+  .poll-arrow {
+    width: 34px; height: 34px;
+    border-radius: 8px;
+    border: 1px solid var(--neutral-300);
+    background: var(--neutral-0);
+    color: var(--neutral-700);
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: all .12s;
+    cursor: pointer;
+    box-shadow: var(--button-inset), var(--shadow-xs);
+  }
+  .poll-arrow:hover:not(:disabled) { background: var(--neutral-50); color: var(--neutral-900); }
+  .poll-arrow:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
+  .poll-options {
+    display: flex; flex-direction: column;
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .poll-option {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 14px 16px;
+    background: var(--neutral-0);
+    border: 1px solid var(--neutral-200);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all .12s ease;
+    box-shadow: var(--shadow-xs);
+  }
+  .poll-option:hover { background: var(--neutral-50); border-color: var(--neutral-400); }
+  .poll-option.selected {
+    background: var(--brand-50);
+    border-color: var(--brand-600);
+    box-shadow: var(--shadow-xs), 0 0 0 1px var(--brand-600);
+  }
+  .poll-option .po-radio {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: 1.5px solid var(--neutral-300);
+    background: var(--neutral-0);
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: all .12s;
+  }
+  .poll-option.selected .po-radio {
+    border-color: var(--brand-600);
+    background: var(--brand-600);
+  }
+  .poll-option.selected .po-radio::after {
+    content: ''; width: 8px; height: 8px; border-radius: 50%;
+    background: white;
+  }
+  .poll-option .po-body { flex: 1; min-width: 0; }
+  .poll-option .po-title {
+    font-size: 14px;
+    color: var(--neutral-900);
+    font-weight: 600;
+    line-height: 1.4;
+  }
+  .poll-option .po-desc {
+    font-size: 12.5px;
+    color: var(--neutral-600);
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+  .poll-other-wrap {
+    margin-top: 6px;
+    background: var(--neutral-0);
+    border: 1px solid var(--neutral-200);
+    border-radius: var(--radius-lg);
+    padding: 12px 14px;
+    transition: all .12s ease;
+  }
+  .poll-other-wrap.active {
+    border-color: var(--brand-600);
+    background: var(--brand-50);
+  }
+  .poll-other-wrap .po-label {
+    font-size: 11px; color: var(--neutral-500);
+    text-transform: uppercase; letter-spacing: 0.08em;
+    font-weight: 700;
+    margin-bottom: 6px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .poll-other-wrap input, .poll-other-wrap textarea {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: var(--neutral-900);
+    font-size: 14px;
+    padding: 2px 0;
+    outline: none;
+    font-family: inherit;
+    resize: vertical;
+  }
+  .poll-other-wrap input::placeholder, .poll-other-wrap textarea::placeholder { color: var(--neutral-400); }
+
+  /* Entity search/autocomplete */
+  .entity-search-wrap { margin-top: 16px; position: relative; }
+  .entity-search-label {
+    font-size: 11px; color: var(--neutral-500);
+    text-transform: uppercase; letter-spacing: 0.08em;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .entity-search-box {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--neutral-0);
+    border: 1px solid var(--neutral-300);
+    border-radius: var(--radius-md);
+    padding: 10px 12px;
+    transition: border-color .12s, box-shadow .12s;
+    box-shadow: var(--shadow-xs);
+  }
+  .entity-search-box:focus-within { border-color: var(--brand-600); box-shadow: var(--ring-focus); }
+  .entity-search-box input {
+    flex: 1;
+    background: transparent; border: none;
+    color: var(--neutral-900);
+    font-size: 14px;
+    outline: none;
+  }
+  .entity-search-box input::placeholder { color: var(--neutral-400); }
+  .entity-search-box .esh-icon { color: var(--neutral-400); flex-shrink: 0; }
+  .entity-suggestions {
+    position: absolute; left: 0; right: 0;
+    top: calc(100% + 6px);
+    background: var(--neutral-0);
+    border: 1px solid var(--neutral-200);
+    border-radius: var(--radius-md);
+    z-index: 8;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    max-height: 280px; overflow-y: auto;
+  }
+  .entity-suggestions::-webkit-scrollbar { width: 6px; }
+  .entity-suggestions::-webkit-scrollbar-thumb { background: var(--neutral-200); border-radius: 3px; }
+  .entity-suggestion {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: background .12s;
+    border-bottom: 1px solid var(--neutral-100);
+  }
+  .entity-suggestion:last-child { border-bottom: none; }
+  .entity-suggestion:hover, .entity-suggestion.kbd-active { background: var(--neutral-50); }
+  .entity-suggestion .esi-icon {
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    background: var(--neutral-100);
+    border: 1px solid var(--neutral-200);
+    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--neutral-700);
+    flex-shrink: 0;
+  }
+  .entity-suggestion .esi-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .entity-suggestion .esi-name { font-size: 13px; color: var(--neutral-900); font-weight: 500; }
+  .entity-suggestion .esi-name b { color: var(--brand-700); font-weight: 700; }
+  .entity-suggestion .esi-meta { font-size: 11px; color: var(--neutral-500); margin-top: 1px; }
+  .entity-suggestion .esi-add {
+    font-size: 11px; font-weight: 600;
+    color: var(--neutral-600);
+    border: 1px solid var(--neutral-200);
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: var(--neutral-50);
+  }
+  .entity-suggestion:hover .esi-add {
+    color: var(--brand-700); border-color: var(--brand-300); background: var(--brand-50);
+  }
+  .entity-suggestions .es-empty {
+    padding: 14px 16px;
+    font-size: 12.5px;
+    color: var(--neutral-500);
+    text-align: center;
+  }
+
+  /* Right sidebar accordion */
+  .panel-block.collapsible .panel-head {
+    cursor: pointer;
+    user-select: none;
+  }
+  .panel-block.collapsible .panel-head:hover { background: var(--neutral-50); }
+  .panel-block .panel-chevron {
+    width: 16px; height: 16px;
+    color: var(--neutral-400);
+    transition: transform .2s ease;
+    display: inline-block;
+  }
+  .panel-block.expanded .panel-chevron { transform: rotate(180deg); color: var(--neutral-700); }
+  .panel-block .panel-body { display: none; }
+  .panel-block.expanded .panel-body { display: block; }
+
+  /* Hide right scrollbar background */
+  .right-scroll { scrollbar-width: thin; }
+  .right-scroll::-webkit-scrollbar-track { background: transparent; }
+
+  /* Progress in left sidebar — slight visual variation */
+  .left-progress-block .progress-step {
+    padding: 9px 8px;
+  }
+
+  /* Primary monitoring prompt panel — brand-tinted */
+  .panel-block.primary-panel {
+    background: var(--brand-50);
+    border-color: var(--brand-200);
+  }
+  .panel-block.primary-panel .panel-head { background: transparent; }
+  .panel-block.primary-panel.collapsible .panel-head:hover { background: var(--brand-100); }
+  .panel-block.primary-panel .panel-body { border-top-color: var(--brand-200); }
+
+  /* Preview mode segmented control */
+  .mode-seg {
+    display: inline-flex;
+    border: 1px solid var(--neutral-300);
+    border-radius: 8px;
+    overflow: hidden;
+    align-self: center;
+    box-shadow: var(--shadow-xs);
+    background: var(--neutral-0);
+  }
+  .mode-seg-btn {
+    padding: 8px 16px;
+    font-size: 12.5px; font-weight: 600;
+    border: none;
+    border-right: 1px solid var(--neutral-300);
+    background: transparent;
+    color: var(--neutral-600);
+    cursor: pointer;
+    font-family: inherit;
+    transition: all .12s;
+  }
+  .mode-seg-btn:last-child { border-right: none; }
+  .mode-seg-btn:hover { background: var(--neutral-50); color: var(--neutral-900); }
+  .mode-seg-btn.active { background: var(--brand-50); color: var(--brand-700); }
+
+  /* Modal toast */
+  .toast-success {
+    position: absolute;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--neutral-900);
+    border: 1px solid var(--neutral-900);
+    color: white;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 13px; font-weight: 500;
+    display: none;
+    align-items: center; gap: 8px;
+    box-shadow: var(--shadow-lg);
+    z-index: 30;
+  }
+  .toast-success.show { display: inline-flex; animation: fadein .25s ease; }
+  .toast-success svg { color: var(--success-text); }
+  @keyframes fadein { from { opacity: 0; transform: translate(-50%, 6px); } to { opacity: 1; transform: translate(-50%, 0); } }
+
+  /* Success final page */
+  .success-page {
+    max-width: 640px; margin: 0 auto;
+    padding: 60px 28px 80px;
+    text-align: center;
+  }
+  .success-icon {
+    width: 80px; height: 80px;
+    border-radius: 20px;
+    background: var(--success-bg);
+    color: var(--success-text);
+    border: 1px solid var(--success-border);
+    display: inline-flex; align-items: center; justify-content: center;
+    margin-bottom: 20px;
+  }
+  .success-page h1 {
+    font-size: 30px; margin: 0 0 12px;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+    color: var(--neutral-900);
+    line-height: 1.2;
+  }
+  .success-page .strat-name {
+    color: var(--brand-700);
+  }
+  .success-page p {
+    color: var(--neutral-600);
+    margin: 0 0 28px 0;
+    line-height: 1.6;
+    font-size: 14px;
+  }
+  .summary-meta {
+    background: var(--neutral-0);
+    border: 1px solid var(--neutral-200);
+    border-radius: var(--radius-lg);
+    padding: 4px 18px;
+    margin: 0 auto 28px;
+    max-width: 480px;
+    text-align: left;
+    box-shadow: var(--shadow-xs);
+  }
+  .summary-meta .meta-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 0;
+    font-size: 13px;
+    border-bottom: 1px solid var(--neutral-200);
+  }
+  .summary-meta .meta-row:last-child { border-bottom: none; }
+  .meta-label { color: var(--neutral-500); font-weight: 500; }
+  .meta-value { color: var(--neutral-900); font-weight: 600; }
+</style>
+<style>
+/* Injected by automation: hide banners/persona switches */
+[id*="banner"], [class*="banner"], [id*="view-as"], [class*="view-as"], [class*="persona"], [class*="persona-switch"] { display: none !important; }
+#synthetic-demo-chip { position: fixed; top: 10px; right: 12px; z-index: 9999; background: #111827; color: #ffffff; border-radius: 10px; padding: 3px 8px; font: 12px/16px system-ui, -apple-system, Segoe UI, Roboto, sans-serif; opacity: 0.85; }
+@media (prefers-color-scheme: light) { #synthetic-demo-chip { background: #333; color: #fff; } }
+</style>
+<style id="presenter-style">/* Presenter Mode */
+#presenterBtn{position:fixed;bottom:16px;right:16px;z-index:9999;background:#315fb3;color:#fff;border:0;border-radius:24px;padding:10px 14px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.35)}
+#presenterPanel{position:fixed;top:0;right:0;height:100%;width:360px;transform:translateX(100%);transition:transform .2s ease;z-index:9998;background:#f9fafb;color:#111827;border-left:1px solid #e5e7eb;box-shadow:-2px 0 8px rgba(0,0,0,.45)}
+#presenterPanel.open{transform:translateX(0)}
+#presenterPanel header{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:1px solid #e5e7eb}
+#presenterPanel .steps{max-height:calc(100% - 140px);overflow:auto;padding:10px 12px}
+#presenterPanel .step{border:1px solid #e5e7eb;border-radius:8px;padding:8px;margin-bottom:8px;background:#ffffff}
+#presenterPanel .step.active{border-color:#3b82f6}
+#presenterPanel .controls{position:absolute;bottom:0;left:0;right:0;padding:10px 12px;border-top:1px solid #e5e7eb;display:flex;gap:8px}
+#presenterPanel .controls button{flex:1;background:#1f3a6e;color:#111827;border:1px solid #e5e7eb;border-radius:6px;padding:8px 10px;cursor:pointer}
+#presenterClose{background:transparent;color:#2563eb;border:0;cursor:pointer}
+.step .h{font-weight:600;margin-bottom:6px}
+.step .say{font-size:13px;color:#c7d3ee}
+.step .click{font-size:12px;color:#2563eb;margin-top:4px}
+</style>
+</head>
+<body>
+<div id="synthetic-demo-chip">Synthetic Demo</div>
+<div class="app">
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="icon-btn" id="leftToggle" title="Toggle progress">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <div class="logo-wrap" title="Polaris I/O">
+        <img src="assets/logo-lockup.svg" alt="Polaris I/O" />
+      </div>
+      <div class="divider"></div>
+    </div>
+    <div class="topbar-center">
+      <span class="crumb">ABM Intelligence</span>
+      <span class="crumb-sep">›</span>
+      <span class="crumb">Agents</span>
+      <span class="crumb-sep">›</span>
+      <span class="crumb-active">New agent</span>
+    </div>
+    <div class="topbar-right">
+      <span class="topbar-status"><span class="live-dot"></span>Draft</span>
+      <button class="icon-btn" title="Help">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 015 0c0 2-2.5 2-2.5 4M12 17h.01"/></svg>
+      </button>
+      <button class="icon-btn" id="rightToggle" title="Agent summary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg>
+      </button>
+      <div class="avatar">V</div>
+    </div>
+  </header>
+
+  <!-- MAIN GRID -->
+  <div class="main-grid" id="mainGrid">
+    <!-- LEFT SIDEBAR -->
+    <aside class="left-sidebar">
+      <div class="left-sidebar-inner" id="leftScroll"></div>
+    </aside>
+
+    <!-- CENTER CONTENT -->
+    <main class="content">
+      <div class="editing-banner" id="editingBanner">
+        <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:6px;"><path d="M12 9v4M12 17h.01"/><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg> Editing a previous step. Save changes to return to where you left off.</span>
+        <button class="return-btn" id="returnToCurrent">Back to current step</button>
+      </div>
+
+      <div class="scroll-wrap" id="scrollWrap">
+        <div id="mainArea"></div>
+      </div>
+
+      <div class="input-area-wrap" id="inputWrap">
+        <div class="input-area">
+          <textarea id="chatInput" placeholder="Reply to Polaris…"></textarea>
+          <div class="input-row-bottom">
+            <div class="input-row-left">
+              <button class="icon-btn" title="Attach"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg></button>
+              <button class="icon-btn" title="Voice"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M19 10a7 7 0 01-14 0M12 17v4"/></svg></button>
+            </div>
+            <div class="input-row-right">
+              <span class="input-mode-pill">Polaris Setup</span>
+              <button class="send-btn" id="sendBtn" disabled>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="toast-success" id="toast">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5 9-11"/></svg>
+        <span id="toastText">Saved</span>
+      </div>
+    </main>
+
+    <!-- RIGHT SIDEBAR -->
+    <aside class="right-sidebar">
+      <div class="right-inner">
+        <div class="right-tabs">
+          <h3>Agent strategy</h3>
+          <div class="right-actions">
+            <button class="mini-btn" title="Collapse" id="rightCollapse">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="right-scroll" id="rightScroll"></div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   STATE
+   ============================================================ */
+const STEPS = [
+  // index 0 - special empty state (now combined entry: Frame 1 + Frame 2)
+  { id: 'empty',         label: 'Empty state',         short: 'Start' },
+  { id: 'primary',       label: 'Primary prompt',      short: 'Primary monitoring prompt' },
+  { id: 'scope',         label: 'Entity scope',        short: 'Entity scope & confirmation' },
+  { id: 'objective',     label: 'Business objective',  short: 'Business objective' },
+  { id: 'seller',        label: 'Organization context', short: 'Organization context' },
+  { id: 'focus',         label: 'Focus / Lens',         short: 'Focus / Lens' },
+  { id: 'criteria',      label: 'Signal criteria',      short: 'Signal criteria' },
+  { id: 'exclusions',    label: 'Exclusions',           short: 'Exclusions' },
+  { id: 'sensitivity',   label: 'Sensitivity',          short: 'Sensitivity' },
+  { id: 'cadence',       label: 'Cadence',              short: 'Cadence' },
+  { id: 'draft',         label: 'Draft review',         short: 'Draft strategy review' },
+  { id: 'preview',       label: 'Preview-light',        short: 'Preview-light' },
+  { id: 'refinement',    label: 'Refinement',           short: 'Preview refinement' },
+  { id: 'activation',    label: 'Activation review',    short: 'Final activation review' },
+  { id: 'success',       label: 'Activation confirmed', short: 'Activation confirmation' }
+];
+
+// Helper: step index by id (avoids hardcoded magic numbers)
+function STEP(id) { return STEPS.findIndex(s => s.id === id); }
+
+const state = {
+  step: 0,
+  maxStep: 0,
+  editing: null,        // step user temporarily jumped back to
+  returnStep: null,     // where to return
+  leftSidebarOpen: false,
+  rightSidebarOpen: false,
+  leftManuallyClosed: false,
+  refinementMode: 'healthy',  // healthy | noisy | narrow
+
+  // Sub-step state for multi-question screens
+  primarySubStep: 0,    // 0..3 for primary monitoring prompt
+  sellerSubStep: 0,     // 0..3 for organization relevance
+
+  // Accordion: which panel is expanded in the right sidebar
+  expandedPanel: 'primaryPrompt',
+
+  // Entity search
+  entitySearch: '',
+  entitySearchActive: false,
+
+  data: {
+    // Primary monitoring prompt — now collected via 4 sub-questions
+    primaryAnswers: {
+      intent: [],
+      entityType: [],
+      strategyFocus: [],
+      direction: ''      // free text, optional
+    },
+    entities: [
+      { id: 'e1', name: 'Riverview Health System', type: 'Account', role: 'primary' },
+      { id: 'e2', name: 'Northstar Health',         type: 'Account', role: 'primary' },
+      { id: 'e3', name: 'Healthcare Facilities Market', type: 'Market', role: 'context' },
+      { id: 'e4', name: 'Regional Healthcare Labor Market', type: 'Market', role: 'context' },
+      { id: 'e5', name: 'Outpatient Care Market', type: 'Market', role: 'context' }
+    ],
+    objective: [],
+    // Organization context — now 4 sub-answers
+    sellerAnswers: {
+      sellerCtx: [],
+      offerings: [],
+      motion: [],
+      whyMatters: []
+    },
+    focus: [],
+    signalCriteria: [],
+    exclusions: [],
+    sensitivity: 'balanced',
+    cadence: 'daily',
+    strategyName: 'Riverview Facilities Agent'
+  }
+};
+
+// Mock platform entity database for autocomplete
+const ENTITY_DB = [
+  { name: 'Mercy Memorial Hospital', type: 'Account' },
+  { name: 'St. Francis Health Network', type: 'Account' },
+  { name: 'Bayside Medical Group', type: 'Account' },
+  { name: 'Cleveland Clinic', type: 'Account' },
+  { name: 'HCA Healthcare', type: 'Account' },
+  { name: 'Tenet Healthcare', type: 'Account' },
+  { name: 'Sutter Health', type: 'Account' },
+  { name: 'Kaiser Permanente', type: 'Account' },
+  { name: 'Providence Health', type: 'Account' },
+  { name: 'Ascension Healthcare', type: 'Account' },
+  { name: 'Hospital Real Estate Market', type: 'Market' },
+  { name: 'Healthcare Energy & Sustainability Market', type: 'Market' },
+  { name: 'Medical Equipment Maintenance Industry', type: 'Industry' },
+  { name: 'US Healthcare Procurement', type: 'Industry' },
+  { name: 'Outpatient Facility Construction', type: 'Market' },
+  { name: 'Hospital CFO Network', type: 'Person' },
+  { name: 'Riverview Health CFO', type: 'Person' },
+  { name: 'Riverview VP Facilities', type: 'Person' }
+];
+
+// Sub-question definitions
+const PRIMARY_QUESTIONS = [
+  {
+    key: 'intent',
+    title: 'What kind of monitoring matters most right now?',
+    hint: 'Polaris will tune detection to this intent first. You can adjust later.',
+    options: [
+      { id: 'growth',     title: 'Growth opportunities',  desc: 'Surface openings, expansions, and accounts to act on.' },
+      { id: 'risk',       title: 'Risk monitoring',       desc: 'Catch exposures, regulatory changes, and deteriorations early.' },
+      { id: 'operational',title: 'Operational change',    desc: 'Track hiring, capacity, vendor, and execution shifts.' }
+    ]
+  },
+  {
+    key: 'entityType',
+    title: 'What kind of thing should Polaris monitor?',
+    hint: 'This decides how the strategy is scoped — we\'ll confirm specific entities next.',
+    options: [
+      { id: 'account',  title: 'A specific account or company', desc: 'Like a hospital system, supplier, or customer.' },
+      { id: 'market',   title: 'A market, industry, or segment', desc: 'Like healthcare facilities or regional outpatient care.' },
+      { id: 'person',   title: 'A person or stakeholder',        desc: 'Like a CFO, VP, or buyer who matters to your motion.' }
+    ]
+  },
+  {
+    key: 'strategyFocus',
+    title: 'What should this strategy ultimately surface?',
+    hint: 'Pick the outcome closest to how you\'ll use the signals.',
+    options: [
+      { id: 'revenue',     title: 'New revenue opportunities to act on', desc: 'Surface buying intent and expansion moments.' },
+      { id: 'disruption',  title: 'Risks and disruptions to navigate',   desc: 'Get ahead of changes that affect existing business.' },
+      { id: 'change',      title: 'Operational and market changes',      desc: 'Stay current on movement that reshapes your strategy.' }
+    ]
+  },
+  {
+    key: 'direction',
+    title: 'Anything specific Polaris should look for?',
+    hint: 'Optional. Add detail Polaris should use as a hint when shaping the draft strategy.',
+    options: null,   // free text only
+    freeOnly: true,
+    optional: true,
+    placeholder: 'e.g. Monitor for facility expansion, vendor consolidation, hiring, and budget movement tied to non-clinical operations.'
+  }
+];
+
+const SELLER_QUESTIONS = [
+  {
+    key: 'sellerCtx',
+    title: 'What does your organization sell, manage, or care about most?',
+    hint: 'High-level — we\'ll get specific next.',
+    options: [
+      { id: 'services',  title: 'Services',             desc: 'Like facilities, energy, consulting, or managed services.' },
+      { id: 'products',  title: 'Products',             desc: 'Like equipment, devices, or software products.' },
+      { id: 'platforms', title: 'Platforms or data',    desc: 'Like a SaaS platform, marketplace, or data product.' }
+    ]
+  },
+  {
+    key: 'offerings',
+    title: 'Which specific offerings relate to this strategy?',
+    hint: 'These help Polaris frame why a Signal matters.',
+    options: [
+      { id: 'integrated', title: 'Integrated facilities services',  desc: 'Janitorial, engineering, parking, energy, maintenance.' },
+      { id: 'energy',     title: 'Energy & sustainability services', desc: 'ESG, efficiency, retrofit, decarbonization.' },
+      { id: 'parking',    title: 'Parking & patient access',         desc: 'Patient access, transport, valet.' }
+    ]
+  },
+  {
+    key: 'motion',
+    title: 'What\'s the commercial motion driving this strategy?',
+    hint: 'Polaris matches Signals to your sales motion.',
+    options: [
+      { id: 'expand',  title: 'Expand existing accounts', desc: 'Grow into adjacent services or sites within today\'s customers.' },
+      { id: 'newlogo', title: 'Win new logos',            desc: 'Land net-new accounts in this market.' },
+      { id: 'retain',  title: 'Retain at-risk customers',  desc: 'Protect accounts where displacement risk is rising.' }
+    ]
+  },
+  {
+    key: 'whyMatters',
+    title: 'How would you frame why a Signal matters?',
+    hint: 'This becomes the "why it matters" framing on every Signal Polaris emits.',
+    options: [
+      { id: 'buyer',   title: 'Helps us reach a buyer or budget', desc: 'When new capital, RFPs, or buyer movement surface.' },
+      { id: 'timing',  title: 'Tells us when timing is right',     desc: 'When events align with our pursuit cadence.' },
+      { id: 'displace',title: 'Suggests a path to displace a competitor', desc: 'When an incumbent is weakening or contract is in review.' }
+    ]
+  }
+];
+
+const OBJECTIVES = [
+  { id: 'growth',     label: 'Growth opportunities' },
+  { id: 'risk',       label: 'Risk monitoring' },
+  { id: 'operations', label: 'Operational pressure' },
+  { id: 'competitive',label: 'Competitive movement' },
+  { id: 'market',     label: 'Market change' },
+  { id: 'stakeholder',label: 'Stakeholder movement' },
+  { id: 'cost',       label: 'Cost optimization' },
+  { id: 'partner',    label: 'Partnership opportunities' },
+  { id: 'regulatory', label: 'Regulatory change' }
+];
+const FOCUSES = [
+  { id: 'growth',         label: 'Growth / Revenue', recommend: true },
+  { id: 'risk',           label: 'Risk' },
+  { id: 'operational',    label: 'Operational', recommend: true },
+  { id: 'competitive',    label: 'Competitive' },
+  { id: 'market',         label: 'Market / Industry' },
+  { id: 'relationship',   label: 'Relationship / Stakeholder' }
+];
+const SUGGESTED_CRITERIA = [
+  'Facility expansion',
+  'Vendor review or consolidation',
+  'Facilities hiring',
+  'Energy or sustainability investment',
+  'Parking or patient access pressure',
+  'Budget movement tied to non-clinical operations',
+  'Leadership change in facilities/operations',
+  'New initiative or capital plan'
+];
+const SUGGESTED_EXCLUSIONS = [
+  'Generic healthcare news',
+  'Clinical-only updates',
+  'Awards or community events',
+  'Old or historical updates',
+  'Announcements with no facilities, operations, budget, vendor, or patient access implication'
+];
+const SENSITIVITY_OPTIONS = [
+  { id: 'high',     label: 'High Precision',   desc: 'Only show strong, clearly relevant Signals.' },
+  { id: 'balanced', label: 'Balanced',         desc: 'Show strong Signals and hold earlier developing items as Watch.', recommend: true },
+  { id: 'broad',    label: 'Broad Monitoring', desc: 'Capture more early movement, with more review required.' }
+];
+const CADENCE_OPTIONS = [
+  { id: 'weekly',  label: 'Weekly',  desc: 'Evaluate once per week.' },
+  { id: 'daily',   label: 'Daily',   desc: 'Evaluate once per day.', recommend: true },
+  { id: '3x',      label: '3× Daily', desc: 'Three runs per day.' },
+  { id: 'hourly',  label: 'Hourly',  desc: 'Evaluate every hour (plan-gated).' }
+];
+
+const DEMO_PROMPT = "Monitor Riverview Health System for facility expansion, vendor consolidation, hiring, and operational changes that could affect our integrated facilities services.";
+const DEMO_SELLER = "ABM wants to grow integrated facilities, parking, janitorial, engineering, and energy optimization services across regional healthcare accounts.";
+
+/* ============================================================
+   ELEMENTS
+   ============================================================ */
+const els = {
+  mainGrid: document.getElementById('mainGrid'),
+  mainArea: document.getElementById('mainArea'),
+  inputWrap: document.getElementById('inputWrap'),
+  chatInput: document.getElementById('chatInput'),
+  sendBtn: document.getElementById('sendBtn'),
+  rightScroll: document.getElementById('rightScroll'),
+  leftScroll: document.getElementById('leftScroll'),
+  scrollWrap: document.getElementById('scrollWrap'),
+  toast: document.getElementById('toast'),
+  toastText: document.getElementById('toastText'),
+  editingBanner: document.getElementById('editingBanner'),
+  returnBtn: document.getElementById('returnToCurrent'),
+  leftToggle: document.getElementById('leftToggle'),
+  rightToggle: document.getElementById('rightToggle'),
+  rightCollapse: document.getElementById('rightCollapse')
+};
+
+/* ============================================================
+   UTIL
+   ============================================================ */
+function escapeHtml(s){
+  return (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function setStep(n, opts){
+  opts = opts || {};
+  if (opts.edit) {
+    state.editing = n;
+    state.returnStep = state.returnStep ?? state.step;
+    state.step = n;
+  } else {
+    state.editing = null;
+    state.returnStep = null;
+    state.step = n;
+    if (n > state.maxStep) state.maxStep = n;
+  }
+  render();
+  // Scroll to show new content: bottom on advance, top on edit-jump
+  setTimeout(() => {
+    els.scrollWrap.scrollTop = opts.edit ? 0 : els.scrollWrap.scrollHeight;
+  }, 50);
+}
+function advance(){
+  setStep(state.step + 1);
+}
+function returnFromEdit(){
+  if (state.returnStep != null) {
+    state.step = state.returnStep;
+    state.editing = null;
+    state.returnStep = null;
+    render();
+  }
+}
+function showToast(msg){
+  els.toastText.textContent = msg;
+  els.toast.classList.add('show');
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(() => els.toast.classList.remove('show'), 1700);
+}
+
+/* ============================================================
+   LAYOUT TOGGLES
+   ============================================================ */
+function updateGridClasses(){
+  els.mainGrid.classList.toggle('left-open', state.leftSidebarOpen);
+  els.mainGrid.classList.toggle('right-open', state.rightSidebarOpen);
+  els.leftToggle.classList.toggle('active', state.leftSidebarOpen);
+  els.rightToggle.classList.toggle('active', state.rightSidebarOpen);
+}
+els.leftToggle.addEventListener('click', () => {
+  state.leftSidebarOpen = !state.leftSidebarOpen;
+  state.leftManuallyClosed = !state.leftSidebarOpen;
+  updateGridClasses();
+});
+els.rightToggle.addEventListener('click', () => {
+  state.rightSidebarOpen = !state.rightSidebarOpen;
+  updateGridClasses();
+});
+els.rightCollapse.addEventListener('click', () => {
+  state.rightSidebarOpen = false;
+  updateGridClasses();
+});
+
+/* ============================================================
+   RENDER MAIN AREA
+   ============================================================ */
+function render(){
+  // Auto-open left sidebar with Progress once user enters the flow
+  if (state.step >= STEP('primary') && !state.leftManuallyClosed && !state.leftSidebarOpen) {
+    state.leftSidebarOpen = true;
+  }
+  // Auto-open right sidebar once primary prompt has been completed (entered scope)
+  if (state.maxStep > STEP('primary') && !state.rightSidebarOpen) {
+    state.rightSidebarOpen = true;
+  }
+  updateGridClasses();
+
+  // Editing banner
+  els.editingBanner.classList.toggle('show', state.editing != null);
+
+  // V2: input area is no longer used for primary/seller (they're now poll-style)
+  els.inputWrap.style.display = 'none';
+
+  // Render content
+  const stepId = STEPS[state.step].id;
+  const renderer = RENDERERS[stepId];
+  if (renderer) renderer();
+  renderRight();
+  renderLeft();
+}
+
+const RENDERERS = {
+  empty: renderEmpty,
+  primary: renderPrimary,
+  scope: renderScope,
+  objective: renderObjective,
+  seller: renderSeller,
+  focus: renderFocus,
+  criteria: renderCriteria,
+  exclusions: renderExclusions,
+  sensitivity: renderSensitivity,
+  cadence: renderCadence,
+  draft: renderDraft,
+  preview: renderPreview,
+  refinement: renderRefinement,
+  activation: renderActivation,
+  success: renderSuccess
+};
+
+/* Helper: build chat history for steps prior to current */
+function chatHistory() {
+  const blocks = [];
+  const s = state.step;
+
+  // 1: primary monitoring prompt (4 sub-questions) — show summary after completion
+  if (s > STEP('primary')) {
+    blocks.push(aiMsg(`<b>Let's shape your first monitoring strategy.</b><div class="hint">I'll ask a few quick questions to scope what Polaris should monitor.</div>`));
+    blocks.push(userMsg(primaryAnswersSummary()));
+  }
+  // 2: scope
+  if (s > STEP('scope')) {
+    blocks.push(aiMsg(`<b>I found these matching entities.</b><div class="hint">Which should be <b>primary</b> monitoring targets, and which should provide <b>context</b>?</div>`));
+    blocks.push(userMsg(`Primary: ${primaryEntityNames()}. Context: ${contextEntityNames()}.`));
+  }
+  // 3: objective
+  if (s > STEP('objective')) {
+    blocks.push(aiMsg(`<b>What business objective should this strategy support?</b>`));
+    blocks.push(userMsg(objectiveLabels().join(', ') || '—'));
+  }
+  // 4: seller (4 sub-questions)
+  if (s > STEP('seller')) {
+    blocks.push(aiMsg(`<b>Let's add commercial context — what does your organization sell or care about in relation to this strategy?</b>`));
+    blocks.push(userMsg(sellerAnswersSummary()));
+  }
+  // 5: focus
+  if (s > STEP('focus')) {
+    blocks.push(aiMsg(`<b>Which type of intelligence should Polaris prioritize?</b><div class="hint">Recommended based on your answers: <b>Growth / Revenue + Operational</b>.</div>`));
+    blocks.push(userMsg(focusLabels().join(', ') || '—'));
+  }
+  // 6: criteria
+  if (s > STEP('criteria')) {
+    blocks.push(aiMsg(`<b>What kinds of changes should Polaris treat as meaningful Signals for this strategy?</b>`));
+    blocks.push(userMsg(state.data.signalCriteria.join(' · ') || '—'));
+  }
+  // 7: exclusions
+  if (s > STEP('exclusions')) {
+    blocks.push(aiMsg(`<b>What should Polaris ignore, even if it mentions the entity, market, industry, or person?</b>`));
+    blocks.push(userMsg(state.data.exclusions.join(' · ') || '—'));
+  }
+  // 8: sensitivity
+  if (s > STEP('sensitivity')) {
+    blocks.push(aiMsg(`<b>How selective should Polaris be?</b>`));
+    blocks.push(userMsg(sensitivityLabel()));
+  }
+  // 9: cadence
+  if (s > STEP('cadence')) {
+    blocks.push(aiMsg(`<b>How often should Polaris evaluate new changes?</b>`));
+    blocks.push(userMsg(cadenceLabel()));
+  }
+  return blocks.join('');
+}
+
+/* Summaries for sub-step screens */
+function primaryAnswersSummary() {
+  const a = state.data.primaryAnswers;
+  const parts = [];
+  if (a.intent?.length) parts.push('Intent: ' + answerLabel(PRIMARY_QUESTIONS[0], a.intent));
+  if (a.entityType?.length) parts.push('Scope: ' + answerLabel(PRIMARY_QUESTIONS[1], a.entityType));
+  if (a.strategyFocus?.length) parts.push('Outcome: ' + answerLabel(PRIMARY_QUESTIONS[2], a.strategyFocus));
+  if (a.direction) parts.push('Detail: ' + escapeHtml(a.direction));
+  return parts.join('<br/>') || '—';
+}
+function sellerAnswersSummary() {
+  const a = state.data.sellerAnswers;
+  const parts = [];
+  if (a.sellerCtx?.length) parts.push('Sells: ' + answerLabel(SELLER_QUESTIONS[0], a.sellerCtx));
+  if (a.offerings?.length) parts.push('Offerings: ' + answerLabel(SELLER_QUESTIONS[1], a.offerings));
+  if (a.motion?.length) parts.push('Motion: ' + answerLabel(SELLER_QUESTIONS[2], a.motion));
+  if (a.whyMatters?.length) parts.push('Why-it-matters: ' + answerLabel(SELLER_QUESTIONS[3], a.whyMatters));
+  return parts.join('<br/>') || '—';
+}
+function answerLabel(q, answerId) {
+  if (Array.isArray(answerId)) {
+    if (!q.options) return escapeHtml(answerId.join(', '));
+    return answerId.map(id => {
+      const opt = q.options.find(o => o.id === id);
+      return opt ? escapeHtml(opt.title) : escapeHtml(id);
+    }).join(', ') || '—';
+  }
+  if (!q.options) return escapeHtml(answerId);
+  if (answerId === '__custom__') return '<i>custom answer</i>';
+  const opt = q.options.find(o => o.id === answerId);
+  if (opt) return escapeHtml(opt.title);
+  return escapeHtml(answerId);
+}
+
+function aiMsg(html){
+  return `<div class="chat-message"><div class="msg-avatar ai">
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24"><path fill="#2E90FA" fill-rule="evenodd" d="M10.703 6.74a.75.75 0 0 0-1.406 0L8.78 8.134c-.7 1.892-.985 2.615-1.509 3.139-.523.523-1.246.808-3.138 1.508l-1.394.516a.75.75 0 0 0 0 1.406l1.394.516c1.892.7 2.615.985 3.138 1.508.524.524.809 1.247 1.509 3.14l.516 1.393a.75.75 0 0 0 1.406 0l.516-1.394c.7-1.892.985-2.615 1.508-3.139.524-.523 1.247-.808 3.14-1.508l1.393-.516a.75.75 0 0 0 0-1.406l-1.394-.516c-1.892-.7-2.615-.985-3.139-1.508-.523-.524-.808-1.247-1.508-3.14l-.516-1.393Zm8-4a.75.75 0 0 0-1.406 0l-.221.597c-.314.848-.405 1.048-.548 1.191-.142.143-.343.234-1.19.548l-.598.22a.75.75 0 0 0 0 1.407l.597.221c.848.314 1.049.405 1.191.548.143.143.234.343.548 1.19l.22.598a.75.75 0 0 0 1.407 0l.221-.597c.314-.848.405-1.048.548-1.191.142-.143.343-.234 1.19-.548l.598-.22a.75.75 0 0 0 0-1.407l-.597-.221c-.848-.314-1.049-.405-1.191-.548-.143-.143-.234-.343-.548-1.19l-.22-.598Z" clip-rule="evenodd"/></svg>
+  </div>
+  <div class="msg-body"><div class="msg-author">Polaris<span class="badge">AI</span></div><div class="msg-text">${html}</div></div></div>`;
+}
+function userMsg(html){
+  return `<div class="chat-message"><div class="msg-avatar user">V</div>
+  <div class="msg-body"><div class="msg-author">You</div><div class="msg-text">${html}</div></div></div>`;
+}
+
+/* ============================================================
+   STEP RENDERERS
+   ============================================================ */
+function renderEmpty(){
+  els.mainArea.innerHTML = `
+    <div class="combined-entry">
+      <div class="entry-grid">
+        <div class="entry-card primary">
+          <div class="ec-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 2a14 14 0 010 20M2 12h20"/></svg>
+          </div>
+          <h2>Set up your new agent</h2>
+          <p>Let's create your first Intelligence Agent. Polaris will help you define what this agent monitors, which entities matter, what should count as a Signal, what should be ignored, and how often it should run — with a preview before it goes live.</p>
+          <div class="ec-cta">
+            <button class="btn btn-primary" onclick="setStep(STEP('primary'))">Configure agent
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:4px"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="entry-card secondary">
+          <div class="ec-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2H6a2 2 0 01-2-2z"/><path d="M16 3v6h6M8 13h8M8 17h8M8 9h2"/></svg>
+          </div>
+          <h2>How agents work</h2>
+          <p>Each Intelligence Agent has its own compiled strategy. You'll describe what to monitor, refine entities and Signal criteria, preview against recent events, and only then activate — so you're confident before any real Signals surface.</p>
+          <div class="ec-cta">
+            <button class="btn btn-secondary">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 015 0c0 2-2.5 2-2.5 4M12 17h.01"/></svg>
+              Learn how agents work
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderPrimary(){
+  renderSubQuestionStep({
+    container: 'primary',
+    introHtml: `<b>Let's shape your first monitoring strategy.</b><div class="hint">I'll ask a few quick questions to scope what Polaris should monitor. You can move back to revisit any answer.</div>`,
+    questions: PRIMARY_QUESTIONS,
+    answers: state.data.primaryAnswers,
+    subStepKey: 'primarySubStep',
+    onComplete: () => {
+      if (state.editing != null) { showToast('Primary monitoring prompt updated'); returnFromEdit(); }
+      else advance();
+    }
+  });
+}
+
+function renderSubQuestionStep({ container, introHtml, questions, answers, subStepKey, onComplete }) {
+  const total = questions.length;
+  let idx = state[subStepKey];
+  if (idx >= total) idx = total - 1;
+  if (idx < 0) idx = 0;
+  state[subStepKey] = idx;
+  const q = questions[idx];
+  const answer = Array.isArray(answers[q.key]) ? answers[q.key] : (answers[q.key] || '');
+
+  // Build options
+  let optionsHtml = '';
+  if (q.options) {
+    const sel = Array.isArray(answer) ? answer : [];
+    optionsHtml = `<div class="poll-options">` +
+      q.options.map(o => `
+        <div class="poll-option ${sel.includes(o.id) ? 'selected' : ''}" onclick="selectPollOption('${container}', '${q.key}', '${o.id}')">
+          <div class="po-radio"></div>
+          <div class="po-body">
+            <div class="po-title">${o.title}</div>
+            ${o.desc ? `<div class="po-desc">${o.desc}</div>` : ''}
+          </div>
+        </div>
+      `).join('') +
+      `</div>`;
+  } else if (q.freeOnly) {
+    optionsHtml = `<div class="poll-other-wrap active" style="margin-top:14px;">
+      <div class="po-label">Your answer</div>
+      <input id="pollFreeInput" type="text" placeholder="${q.placeholder || ''}"
+        value="${escapeHtml(answer)}"
+        oninput="updatePollFree('${container}', '${q.key}', this.value)" />
+    </div>`;
+  }
+
+  const canNext = q.optional ? true : (Array.isArray(answer) ? answer.length > 0 : !!answer);
+  const isLast = idx === total - 1;
+  const nextLabel = isLast ? (state.editing != null ? 'Save changes' : 'Continue') : 'Next';
+
+  const navHtml = `
+    <div class="poll-nav">
+      <button class="poll-arrow" onclick="prevSubStep('${subStepKey}')" ${idx === 0 ? 'disabled' : ''}>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <span class="step-counter"><b>${idx + 1}</b> of ${total}</span>
+      <button class="poll-arrow" onclick="nextSubStep('${subStepKey}', ${total}, '${container}')" ${canNext ? '' : 'disabled'}>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      </button>
+    </div>
+  `;
+
+  const actionRow = `
+    <div class="action-row">
+      <button class="btn btn-primary" onclick="advanceSubStep('${container}', ${total}, '${subStepKey}')" ${canNext ? '' : 'disabled'}>
+        ${nextLabel}
+        ${isLast ? '' : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>'}
+      </button>
+      ${state.editing != null && isLast ? '<button class="btn btn-ghost" onclick="returnFromEdit()">Cancel</button>' : ''}
+    </div>
+  `;
+
+  els.mainArea.innerHTML = `
+    <div class="chat-container">
+      ${chatHistory()}
+      ${aiMsg(`${introHtml}
+        <div style="margin-top:14px;">
+          <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;font-weight:700;margin-bottom:8px;">Question ${idx + 1} of ${total}</div>
+          <div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:4px;line-height:1.45;">${q.title}</div>
+          ${q.hint ? `<div class="hint">${q.hint}</div>` : ''}
+          ${optionsHtml}
+        </div>
+        ${navHtml}
+        ${actionRow}
+      `)}
+    </div>
+  `;
+
+  // Store the current container/questions for handlers
+  state._currentSubContainer = container;
+  state._currentSubQuestions = questions;
+  state._currentSubAnswers = answers;
+  state._currentSubKey = subStepKey;
+  state._currentSubOnComplete = onComplete;
+}
+
+function selectPollOption(container, key, optionId) {
+  const answers = state._currentSubAnswers;
+  if (!Array.isArray(answers[key])) answers[key] = [];
+  const i = answers[key].indexOf(optionId);
+  if (i === -1) answers[key].push(optionId);
+  else answers[key].splice(i, 1);
+  render();
+}
+function updatePollCustom(container, key, val) {
+  const answers = state._currentSubAnswers;
+  if (val) {
+    answers[key] = val;
+    answers['_custom_' + key] = val;
+  } else if (answers['_custom_' + key]) {
+    answers[key] = '';
+    delete answers['_custom_' + key];
+  }
+  // Don't re-render — just keep typed value live (renders would lose focus)
+  // But we need to update next button enabled state - lightweight DOM update
+  refreshPollNextEnabled();
+}
+function updatePollFree(container, key, val) {
+  const answers = state._currentSubAnswers;
+  answers[key] = val;
+  refreshPollNextEnabled();
+}
+function refreshPollNextEnabled() {
+  const answers = state._currentSubAnswers;
+  const questions = state._currentSubQuestions;
+  const idx = state[state._currentSubKey];
+  const q = questions[idx];
+  const canNext = !!answers[q.key];
+  document.querySelectorAll('.poll-arrow').forEach((btn, i) => {
+    if (i === 1) btn.disabled = !canNext;
+  });
+  const actionBtn = document.querySelector('.action-row .btn-primary');
+  if (actionBtn) actionBtn.disabled = !canNext;
+}
+function prevSubStep(subStepKey) {
+  if (state[subStepKey] > 0) {
+    state[subStepKey]--;
+    render();
+    setTimeout(() => { els.scrollWrap.scrollTop = 0; }, 50);
+  }
+}
+function nextSubStep(subStepKey, total, container) {
+  const q = state._currentSubQuestions[state[subStepKey]];
+  const ans = state._currentSubAnswers[q.key];
+  const hasAnswer = Array.isArray(ans) ? ans.length > 0 : !!ans;
+  if (!hasAnswer && !q.optional) return;
+  if (state[subStepKey] < total - 1) {
+    state[subStepKey]++;
+    render();
+    setTimeout(() => { els.scrollWrap.scrollTop = els.scrollWrap.scrollHeight; }, 50);
+  } else {
+    advanceSubStep(container, total, subStepKey);
+  }
+}
+function advanceSubStep(container, total, subStepKey) {
+  const q = state._currentSubQuestions[state[subStepKey]];
+  const ans = state._currentSubAnswers[q.key];
+  const hasAnswer = Array.isArray(ans) ? ans.length > 0 : !!ans;
+  if (!hasAnswer && !q.optional) return;
+  if (state[subStepKey] < total - 1) {
+    state[subStepKey]++;
+    render();
+    setTimeout(() => { els.scrollWrap.scrollTop = els.scrollWrap.scrollHeight; }, 50);
+  } else {
+    // Completed all sub-questions
+    state[subStepKey] = 0; // reset for next visit
+    state._currentSubOnComplete();
+  }
+}
+
+function renderScope(){
+  const visibleEntities = state.data.entities.filter(e => e.role !== 'removed');
+  const entityCards = visibleEntities.map((e) => {
+    const idx = state.data.entities.indexOf(e);
+    return `
+    <div class="entity-card">
+      <div class="ent-main">
+        <div class="ent-icon">${entityTypeIcon(e.type)}</div>
+        <div>
+          <div class="ent-name">${escapeHtml(e.name)}</div>
+          <div class="ent-meta">
+            <span class="ent-tag">${e.type}</span>
+            <span class="ent-tag ${e.role}">${e.role === 'primary' ? 'Primary' : 'Context'}</span>
+          </div>
+        </div>
+      </div>
+      <div class="ent-actions">
+        <button class="role-btn ${e.role === 'primary' ? 'primary-active' : ''}" onclick="setEntityRole(${idx}, 'primary')">Primary</button>
+        <button class="role-btn ${e.role === 'context' ? 'context-active' : ''}" onclick="setEntityRole(${idx}, 'context')">Context</button>
+        <button class="role-btn" onclick="setEntityRole(${idx}, 'removed')" title="Remove from scope">×</button>
+      </div>
+    </div>
+  `;}).join('');
+
+  // Build suggestions dropdown
+  const q = (state.entitySearch || '').trim().toLowerCase();
+  let suggestionsHtml = '';
+  if (state.entitySearchActive && q.length > 0) {
+    const existing = new Set(state.data.entities.filter(e => e.role !== 'removed').map(e => e.name.toLowerCase()));
+    const matches = ENTITY_DB.filter(e =>
+      e.name.toLowerCase().includes(q) && !existing.has(e.name.toLowerCase())
+    ).slice(0, 6);
+    if (matches.length) {
+      suggestionsHtml = `<div class="entity-suggestions">` + matches.map(m => {
+        const highlighted = m.name.replace(new RegExp('(' + escapeRegExp(q) + ')', 'ig'), '<b>$1</b>');
+        return `<div class="entity-suggestion" onclick="addEntityFromSearch('${escapeAttr(m.name)}', '${m.type}')">
+          <div class="esi-icon">${entityTypeIcon(m.type)}</div>
+          <div class="esi-text">
+            <div class="esi-name">${highlighted}</div>
+            <div class="esi-meta">${m.type}</div>
+          </div>
+          <span class="esi-add">+ Add</span>
+        </div>`;
+      }).join('') + `</div>`;
+    } else {
+      suggestionsHtml = `<div class="entity-suggestions"><div class="es-empty">No matches in platform database. Press Enter to add "<b>${escapeHtml(state.entitySearch)}</b>" as a custom entity.</div></div>`;
+    }
+  }
+
+  const removedCount = state.data.entities.filter(e => e.role === 'removed').length;
+  const undoRemovedHtml = removedCount > 0
+    ? `<button class="btn btn-ghost" style="font-size:11.5px;padding:5px 10px;margin-top:8px;" onclick="restoreRemovedEntities()">Restore ${removedCount} removed</button>`
+    : '';
+
+  const continueLabel = state.editing != null ? 'Save changes' : 'Continue';
+  const canContinue = state.data.entities.some(e => e.role === 'primary');
+
+  els.mainArea.innerHTML = `
+    <div class="chat-container">
+      ${chatHistory()}
+      ${aiMsg(`<b>I found these matching entities based on your answers.</b>
+        <div class="hint">Mark which should be <b>primary</b> monitoring targets, which should provide <b>context</b>, or remove them. You can also add more from the platform database.</div>
+        <div class="entity-list">${entityCards || '<div style="font-size:12.5px;color:var(--text-faint);padding:6px 2px;">No entities selected. Add some from the search below.</div>'}</div>
+        ${undoRemovedHtml}
+
+        <div class="entity-search-wrap">
+          <div class="entity-search-label">Add entity from platform database</div>
+          <div class="entity-search-box">
+            <span class="esh-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+            </span>
+            <input id="entitySearchInput" type="text" placeholder="Search accounts, markets, industries, or people..."
+              value="${escapeAttr(state.entitySearch)}"
+              oninput="onEntitySearchInput(this.value)"
+              onfocus="state.entitySearchActive=true;"
+              onkeydown="if(event.key==='Enter') addCustomEntityFromInput()"
+              autocomplete="off" />
+          </div>
+          ${suggestionsHtml}
+        </div>
+
+        <div class="action-row">
+          <button class="btn btn-primary" onclick="confirmScope()" ${canContinue ? '' : 'disabled'}>${continueLabel}</button>
+          ${state.editing != null ? '<button class="btn btn-ghost" onclick="returnFromEdit()">Cancel</button>' : ''}
+        </div>
+      `)}
+    </div>
+  `;
+
+  // Re-focus the input only when there is active search text — prevents re-render loop
+  if (state.entitySearchActive && state.entitySearch) {
+    setTimeout(() => {
+      const el = document.getElementById('entitySearchInput');
+      if (el) {
+        el.focus();
+        el.setSelectionRange(el.value.length, el.value.length);
+      }
+    }, 0);
+  }
+}
+function escapeRegExp(s){ return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+function escapeAttr(s){ return (s||'').replace(/"/g, '&quot;'); }
+function onEntitySearchInput(val) {
+  state.entitySearch = val;
+  state.entitySearchActive = true;
+  // Re-render but preserve focus (handled in renderScope)
+  render();
+}
+function addEntityFromSearch(name, type) {
+  // If exists as removed, restore as context. Otherwise add as context.
+  const existing = state.data.entities.find(e => e.name === name);
+  if (existing) {
+    existing.role = 'context';
+  } else {
+    state.data.entities.push({ id: 'u' + Date.now(), name, type, role: 'context' });
+  }
+  state.entitySearch = '';
+  state.entitySearchActive = false;
+  showToast(`${name} added`);
+  render();
+}
+function addCustomEntityFromInput() {
+  const val = (state.entitySearch || '').trim();
+  if (!val) return;
+  // If a suggested match exists, use it
+  const match = ENTITY_DB.find(e => e.name.toLowerCase() === val.toLowerCase());
+  if (match) {
+    addEntityFromSearch(match.name, match.type);
+    return;
+  }
+  // Custom: treat as Account by default
+  state.data.entities.push({ id: 'u' + Date.now(), name: val, type: 'Account', role: 'context' });
+  state.entitySearch = '';
+  state.entitySearchActive = false;
+  showToast(`${val} added as Account`);
+  render();
+}
+function restoreRemovedEntities() {
+  state.data.entities.forEach(e => { if (e.role === 'removed') e.role = 'context'; });
+  render();
+}
+
+function entityTypeIcon(type) {
+  if (type === 'Account') {
+    return '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l8-4 8 4v14M9 9h.01M13 9h.01M9 13h.01M13 13h.01M9 17h.01M13 17h.01"/></svg>';
+  }
+  if (type === 'Market' || type === 'Industry') {
+    return '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18"/></svg>';
+  }
+  return '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a8 8 0 0116 0v1"/></svg>';
+}
+
+function setEntityRole(idx, role) {
+  state.data.entities[idx].role = role;
+  render();
+}
+
+function confirmScope() {
+  if (state.editing != null) { showToast('Scope updated'); returnFromEdit(); return; }
+  advance();
+}
+
+function renderObjective(){
+  const chips = OBJECTIVES.map(o => `
+    <span class="chip ${state.data.objective.includes(o.id) ? 'selected' : ''}" onclick="toggleObjective('${o.id}')">${o.label}</span>
+  `).join('');
+  const continueLabel = state.editing != null ? 'Save changes' : 'Continue';
+  const canContinue = state.data.objective.length > 0;
+  els.mainArea.innerHTML = `
+    <div class="chat-container">
+      ${chatHistory()}
+      ${aiMsg(`<b>What business objective should this strategy support?</b>
+        <div class="hint">Select one or more. Polaris will tune Signal detection accordingly.</div>
+        <div class="chip-row">${chips}</div>
+        <div class="action-row">
+          <button class="btn btn-primary" onclick="confirmObjective()" ${canContinue ? '' : 'disabled'}>${continueLabel}</button>
+          ${state.editing != null ? '<button class="btn btn-ghost" onclick="returnFromEdit()">Cancel</button>' : ''}
+        </div>
+      `)}
+    </div>
+  `;
+}
+function toggleObjective(id) {
+  const i = state.data.objective.indexOf(id);
+  if (i === -1) state.data.objective.push(id); else state.data.objective.splice(i, 1);
+  render();
+}
+function confirmObjective() {
+  if (!state.data.objective.length) return;
+  if (state.editing != null) { showToast('Objective updated'); returnFromEdit(); return; }
+  advance();
+}
+
+function renderSeller(){
+  renderSubQuestionStep({
+    container: 'seller',
+    introHtml: `<b>Let's add commercial context.</b><div class="hint">This helps Polaris explain why a Signal matters in commercial or strategic terms.</div>`,
+    questions: SELLER_QUESTIONS,
+    answers: state.data.sellerAnswers,
+    subStepKey: 'sellerSubStep',
+    onComplete: () => {
+      if (state.editing != null) { showToast('Organization context updated'); returnFromEdit(); }
+      else advance();
+    }
+  });
+}
+
+function renderFocus(){
+  const chips = FOCUSES.map(f => `
+    <span class="chip ${f.recommend ? 'recommend' : ''} ${state.data.focus.includes(f.id) ? 'selected' : ''}" onclick="toggleFocus('${f.id}')">${f.label}</span>
+  `).join('');
+  const continueLabel = state.editing != null ? 'Save changes' : 'Continue';
+  const canContinue = state.data.focus.length > 0;
+  els.mainArea.innerHTML = `
+    <div class="chat-container">
+      ${chatHistory()}
+      ${aiMsg(`<b>Which type of intelligence should Polaris prioritize?</b>
+        <div class="hint">Recommended based on your answers: <b>Growth / Revenue + Operational</b>.</div>
+        <div class="chip-row">${chips}</div>
+        <div class="action-row">
+          <button class="btn btn-primary" onclick="confirmFocus()" ${canContinue ? '' : 'disabled'}>${continueLabel}</button>
+          ${state.editing != null ? '<button class="btn btn-ghost" onclick="returnFromEdit()">Cancel</button>' : ''}
+        </div>
+      `)}
+    </div>
+  `;
+}
+function toggleFocus(id) {
+  const i = state.data.focus.indexOf(id);
+  if (i === -1) state.data.focus.push(id); else state.data.focus.splice(i, 1);
+  render();
+}
+function confirmFocus() {
+  if (!state.data.focus.length) return;
+  if (state.editing != null) { showToast('Focus updated'); returnFromEdit(); return; }
+  advance();
+}
+
+function renderCriteria(){
+  renderEditableListStep({
+    key: 'signalCriteria',
+    title: 'What kinds of changes should Polaris treat as meaningful Signals for this strategy?',
+    hint: 'A good Signal should indicate that something changed, why it matters, and what the team might do next. Add suggested or your own.',
+    suggested: SUGGESTED_CRITERIA,
+    placeholder: 'e.g. New capital plan or procurement RFP',
+    confirmFn: 'confirmCriteriaList'
+  });
+}
+function renderExclusions(){
+  renderEditableListStep({
+    key: 'exclusions',
+    title: 'What should Polaris ignore, even if it mentions the entity, market, industry, or person?',
+    hint: 'This helps Polaris avoid noisy Signals and generic summaries.',
+    suggested: SUGGESTED_EXCLUSIONS,
+    placeholder: 'e.g. Press releases without facilities implication',
+    confirmFn: 'confirmExclusionsList'
+  });
+}
+function confirmCriteriaList(){
+  if (!state.data.signalCriteria.length) return;
+  if (state.editing != null) { showToast('Signal criteria updated'); returnFromEdit(); }
+  else advance();
+}
+function confirmExclusionsList(){
+  if (!state.data.exclusions.length) return;
+  if (state.editing != null) { showToast('Exclusions updated'); returnFromEdit(); }
+  else advance();
+}
+
+function renderEditableListStep({ key, title, hint, suggested, placeholder, confirmFn }) {
+  const items = state.data[key];
+  const continueLabel = state.editing != null ? 'Save changes' : 'Continue';
+  const canContinue = items.length > 0;
+  const itemsHtml = items.map((it, idx) => `
+    <div class="edit-list-item">
+      <span class="li-bullet">●</span>
+      <span class="li-text">${escapeHtml(it)}</span>
+      <button class="li-remove" onclick="removeListItem('${key}', ${idx})">×</button>
+    </div>
+  `).join('');
+  const suggestedHtml = suggested.map((s, i) => `
+    <span class="chip ${items.includes(s) ? 'selected' : ''}" onclick="toggleSuggested('${key}', ${i})">${escapeHtml(s)}</span>
+  `).join('');
+
+  els.mainArea.innerHTML = `
+    <div class="chat-container">
+      ${chatHistory()}
+      ${aiMsg(`<b>${title}</b>
+        <div class="hint">${hint}</div>
+        <div style="margin-top:10px;"><div style="font-size:11.5px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;font-weight:600;margin-bottom:6px;">Suggested</div>
+          <div class="chip-row">${suggestedHtml}</div>
+        </div>
+        <div style="margin-top:14px;"><div style="font-size:11.5px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;font-weight:600;margin-bottom:6px;">Your list</div>
+          <div class="edit-list">
+            ${itemsHtml || '<div style="font-size:12.5px;color:var(--text-faint);padding:6px 2px;">No items yet. Tap a suggestion above or add your own.</div>'}
+            <div class="add-item-row">
+              <input id="addInput" type="text" placeholder="${placeholder}" onkeydown="if(event.key==='Enter') addListItem('${key}')" />
+              <button onclick="addListItem('${key}')">Add</button>
+            </div>
+          </div>
+        </div>
+        <div class="action-row">
+          <button class="btn btn-primary" onclick="${confirmFn}()" ${canContinue ? '' : 'disabled'}>${continueLabel}</button>
+          ${state.editing != null ? '<button class="btn btn-ghost" onclick="returnFromEdit()">Cancel</button>' : ''}
+        </div>
+      `)}
+    </div>
+  `;
+}
+function toggleSuggested(key, idx) {
+  const map = { signalCriteria: SUGGESTED_CRITERIA, exclusions: SUGGESTED_EXCLUSIONS };
+  const item = map[key][idx];
+  const i = state.data[key].indexOf(item);
+  if (i === -1) state.data[key].push(item);
+  else state.data[key].splice(i, 1);
+  render();
+}
+function removeListItem(key, idx) {
+  state.data[key].splice(idx, 1);
+  render();
+}
+function addListItem(key) {
+  const input = document.getElementById('addInput');
+  if (!input) return;
+  const val = input.value.trim();
+  if (val && !state.data[key].includes(val)) {
+    state.data[key].push(val);
+    render();
+  }
+}
+
+function renderSensitivity(){
+  const cards = SENSITIVITY_OPTIONS.map(o => `
+    <div class="option-card ${state.data.sensitivity === o.id ? 'selected' : ''}" onclick="state.data.sensitivity='${o.id}'; render();">
+      <div class="opt-title">${o.label}${o.recommend ? ' <span class="opt-badge">Recommended</span>' : ''}</div>
+      <div class="opt-desc">${o.desc}</div>
+    </div>
+  `).join('');
+  const continueLabel = state.editing != null ? 'Save changes' : 'Continue';
+  els.mainArea.innerHTML = `
+    <div class="chat-container">
+      ${chatHistory()}
+      ${aiMsg(`<b>How selective should Polaris be?</b>
+        <div class="hint">Recommended default is <b>Balanced</b>. Borderline items become Watch records; weak items are rejected.</div>
+        <div class="option-grid">${cards}</div>
+        <div class="action-row">
+          <button class="btn btn-primary" onclick="confirmSensitivity()">${continueLabel}</button>
+          ${state.editing != null ? '<button class="btn btn-ghost" onclick="returnFromEdit()">Cancel</button>' : ''}
+        </div>
+      `)}
+    </div>
+  `;
+}
+function confirmSensitivity() {
+  if (state.editing != null) { showToast('Sensitivity updated'); returnFromEdit(); return; }
+  advance();
+}
+
+function renderCadence(){
+  const cards = CADENCE_OPTIONS.map(o => `
+    <div class="option-card ${state.data.cadence === o.id ? 'selected' : ''}" onclick="state.data.cadence='${o.id}'; render();">
+      <div class="opt-title">${o.label}${o.recommend ? ' <span class="opt-badge">Recommended</span>' : ''}</div>
+      <div class="opt-desc">${o.desc}</div>
+    </div>
+  `).join('');
+  const continueLabel = state.editing != null ? 'Save changes' : 'Build draft agent';
+  els.mainArea.innerHTML = `
+    <div class="chat-container">
+      ${chatHistory()}
+      ${aiMsg(`<b>How often should Polaris evaluate new changes?</b>
+        <div class="hint">Recommended default is <b>Daily</b>. Cadence may be limited by plan settings.</div>
+        <div class="option-grid">${cards}</div>
+        <div class="action-row">
+          <button class="btn btn-primary" onclick="confirmCadence()">${continueLabel}</button>
+          ${state.editing != null ? '<button class="btn btn-ghost" onclick="returnFromEdit()">Cancel</button>' : ''}
+        </div>
+      `)}
+    </div>
+  `;
+}
+function confirmCadence() {
+  if (state.editing != null) { showToast('Cadence updated'); returnFromEdit(); return; }
+  advance();
+}
+
+function renderDraft(){
+  const e = state.data.entities;
+  const primaryPills = e.filter(x => x.role === 'primary').map(x => `<span class="pill primary">${escapeHtml(x.name)}</span>`).join(' ') || '<span class="pill">—</span>';
+  const contextPills = e.filter(x => x.role === 'context').map(x => `<span class="pill context">${escapeHtml(x.name)}</span>`).join(' ') || '<span class="pill">—</span>';
+  const objPills = objectiveLabels().map(l => `<span class="pill">${escapeHtml(l)}</span>`).join(' ') || '<span class="pill">—</span>';
+  const focusPills = focusLabels().map(l => `<span class="pill primary">${escapeHtml(l)}</span>`).join(' ') || '<span class="pill">—</span>';
+  const criteriaList = state.data.signalCriteria.length
+    ? state.data.signalCriteria.map(c => `<div>• ${escapeHtml(c)}</div>`).join('')
+    : '<span class="pill">—</span>';
+  const exclList = state.data.exclusions.length
+    ? state.data.exclusions.map(c => `<div>• ${escapeHtml(c)}</div>`).join('')
+    : '<span class="pill">—</span>';
+
+  els.mainArea.innerHTML = `
+    <div class="chat-container">
+      ${chatHistory()}
+      ${aiMsg(`<b>Here's the strategy I'll preview. Does this look right?</b>
+        <div class="hint">You can edit any section before previewing how this agent would behave.</div>
+        <div class="review-card">
+          <h3>${escapeHtml(state.data.strategyName)}</h3>
+          <p class="rev-purpose">Monitors Riverview-network healthcare accounts for facility expansion, vendor consolidation, hiring, and operational shifts that affect integrated facilities services.</p>
+
+          ${reviewSection('Primary entities', primaryPills, STEP('scope'))}
+          ${reviewSection('Context entities', contextPills, STEP('scope'))}
+          ${reviewSection('Business objective', objPills, STEP('objective'))}
+          ${reviewSection('Organization context', sellerAnswersSummary(), STEP('seller'))}
+          ${reviewSection('Focus', focusPills, STEP('focus'))}
+          ${reviewSection('Signal criteria', criteriaList, STEP('criteria'))}
+          ${reviewSection('Exclusions', exclList, STEP('exclusions'))}
+          ${reviewSection('Sensitivity', `<span class="pill primary">${sensitivityLabel()}</span>`, STEP('sensitivity'))}
+          ${reviewSection('Cadence', `<span class="pill primary">${cadenceLabel()}</span>`, STEP('cadence'))}
+        </div>
+        <div class="action-row">
+          <button class="btn btn-primary" onclick="advance()">Preview agent</button>
+          <button class="btn btn-secondary">Save draft</button>
+        </div>
+      `)}
+    </div>
+  `;
+}
+function reviewSection(label, value, editStep) {
+  return `<div class="review-section">
+    <div class="rev-label">${label}</div>
+    <div class="rev-value">${value}</div>
+    <button class="rev-edit" onclick="setStep(${editStep}, {edit:true})">Edit</button>
+  </div>`;
+}
+
+function renderPreview(){
+  const counts = previewCounts();
+  els.mainArea.innerHTML = `
+    <div class="chat-container">
+      ${chatHistory()}
+      ${aiMsg(`<b>I'll preview this strategy against recent source events.</b>
+        <div class="hint">Nothing is created yet — this is a sandbox over the last 14 days of source events.</div>
+        <div class="preview-metrics">
+          <div class="metric-card emit"><div class="mc-label">${dot('var(--success)')} Would emit</div><div class="mc-value">${counts.emit}</div></div>
+          <div class="metric-card watch"><div class="mc-label">${dot('var(--warning)')} Would watch</div><div class="mc-value">${counts.watch}</div></div>
+          <div class="metric-card reject"><div class="mc-label">${dot('var(--text-muted)')} Would reject</div><div class="mc-value">${counts.reject}</div></div>
+        </div>
+
+        <div class="signal-section">
+          <div class="signal-section-title">${dot('var(--success)')} Sample Signals (3)</div>
+          ${sampleSignalCard({
+            title: 'Riverview outpatient expansion may create integrated facilities opportunity',
+            claim: 'Riverview&rsquo;s new outpatient pavilion approval suggests near-term facilities growth that may require broader support across janitorial, engineering, parking, energy, and maintenance.',
+            why: 'ABM already supports Riverview at several sites. The expansion may create an opening to move from site-level services into a broader integrated facilities model.',
+            strength: 'High', confidence: 'High',
+            evidence: 'Board approval, capital planning reference, facilities hiring activity.',
+            action: 'Create an Insight for the account lead focused on expansion-driven integrated facilities support.'
+          })}
+          ${sampleSignalCard({
+            title: 'Northstar Health energy RFP signals sustainability vendor consolidation',
+            claim: 'Northstar issued an energy &amp; sustainability RFP referencing single-vendor preference across 12 facilities.',
+            why: 'ABM&rsquo;s energy optimization services match the RFP scope; entering early could displace incumbents.',
+            strength: 'High', confidence: 'Med',
+            evidence: 'Public RFP, procurement contact, board ESG commitment.',
+            action: 'Notify ABM energy lead; draft RFP response brief.'
+          })}
+          ${sampleSignalCard({
+            title: 'Healthcare facilities hiring up 14% YoY across primary market',
+            claim: 'Facilities-related roles (engineering, HVAC, environmental services) trending upward across the Riverview region.',
+            why: 'Indicates capacity expansion pressure &mdash; an early sign that outsourcing decisions may surface.',
+            strength: 'Med', confidence: 'High',
+            evidence: 'BLS data, regional posting indices, hospital news.',
+            action: 'Add to weekly digest; flag accounts with above-trend hiring.'
+          })}
+        </div>
+
+        <div class="signal-section">
+          <div class="signal-section-title">${dot('var(--warning)')} Watch example (1)</div>
+          <div class="signal-card watch-card">
+            <div class="sc-head">
+              <p class="sc-title">Northstar parking access complaints surfacing in patient reviews</p>
+              <div class="sc-tags"><span class="strength-tag med">Med strength</span><span class="conf-tag high">Held as Watch</span></div>
+            </div>
+            <div class="sc-body">Early-developing pattern. Polaris will monitor and emit if it strengthens.</div>
+          </div>
+        </div>
+
+        <div class="signal-section">
+          <div class="signal-section-title">${dot('var(--text-muted)')} Reject example (1)</div>
+          <div class="signal-card reject-card">
+            <div class="sc-head">
+              <p class="sc-title">Riverview hosts community health fair</p>
+              <div class="sc-tags"><span class="strength-tag" style="background:var(--surface-3);color:var(--text-muted);">Rejected</span></div>
+            </div>
+            <div class="sc-body">Matched your exclusions: <i>"awards or community events"</i>.</div>
+          </div>
+        </div>
+
+        <div class="action-row">
+          <button class="btn btn-primary" onclick="advance()">Continue</button>
+          <div class="mode-seg">
+            <button class="mode-seg-btn ${state.refinementMode==='healthy'?'active':''}" onclick="state.refinementMode='healthy';render();">Healthy</button>
+            <button class="mode-seg-btn ${state.refinementMode==='noisy'?'active':''}" onclick="state.refinementMode='noisy';render();">Noisy</button>
+            <button class="mode-seg-btn ${state.refinementMode==='narrow'?'active':''}" onclick="state.refinementMode='narrow';render();">Narrow</button>
+          </div>
+        </div>
+      `)}
+    </div>
+  `;
+}
+function dot(color){ return `<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${color};"></span>`; }
+function previewCounts(){
+  if (state.refinementMode === 'noisy')  return { emit: 47, watch: 18, reject: 12 };
+  if (state.refinementMode === 'narrow') return { emit: 2,  watch: 1,  reject: 64 };
+  return { emit: 8, watch: 12, reject: 47 };
+}
+function nextPreviewModeLabel(){
+  if (state.refinementMode === 'healthy') return 'noisier preview';
+  if (state.refinementMode === 'noisy')   return 'narrower preview';
+  return 'healthy preview';
+}
+function cyclePreviewMode(){
+  if (state.refinementMode === 'healthy') state.refinementMode = 'noisy';
+  else if (state.refinementMode === 'noisy') state.refinementMode = 'narrow';
+  else state.refinementMode = 'healthy';
+  render();
+}
+function sampleSignalCard({ title, claim, why, strength, confidence, evidence, action }) {
+  return `
+    <div class="signal-card">
+      <div class="sc-head">
+        <p class="sc-title">${title}</p>
+        <div class="sc-tags">
+          <span class="strength-tag ${strength.toLowerCase()==='high'?'high':'med'}">${strength} strength</span>
+          <span class="conf-tag high">${confidence} conf.</span>
+        </div>
+      </div>
+      <div class="sc-body" style="margin-top:8px;">
+        <div class="sc-row"><span class="lbl">Claim</span><span class="val">${claim}</span></div>
+        <div class="sc-row"><span class="lbl">Why it matters</span><span class="val">${why}</span></div>
+        <div class="sc-row"><span class="lbl">Evidence</span><span class="val">${evidence}</span></div>
+        <div class="sc-row"><span class="lbl">Action</span><span class="val">${action}</span></div>
+      </div>
+    </div>
+  `;
+}
+
+function renderRefinement(){
+  let banner = '';
+  if (state.refinementMode === 'healthy') {
+    banner = `
+      <div class="refinement-banner healthy">
+        <div class="rb-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5 9-11"/></svg></div>
+        <div class="rb-body">
+          <p class="rb-title">This preview looks healthy.</p>
+          <p class="rb-desc">The sample Signals are specific, relevant, and tied to this agent’s objective. I recommend activating it.</p>
+        </div>
+      </div>`;
+  } else if (state.refinementMode === 'noisy') {
+    banner = `
+      <div class="refinement-banner noisy">
+        <div class="rb-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg></div>
+        <div class="rb-body">
+          <p class="rb-title">This preview looks broad.</p>
+          <p class="rb-desc">Several sample Signals are generic or weakly connected to the objective. I recommend tightening Signal criteria, exclusions, or sensitivity before activating.</p>
+        </div>
+      </div>`;
+  } else {
+    banner = `
+      <div class="refinement-banner narrow">
+        <div class="rb-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></div>
+        <div class="rb-body">
+          <p class="rb-title">This preview may be too narrow.</p>
+          <p class="rb-desc">This agent would surface very few Signals. I recommend broadening scope, adding context entities, or expanding criteria.</p>
+        </div>
+      </div>`;
+  }
+
+  els.mainArea.innerHTML = `
+    <div class="chat-container">
+      ${chatHistory()}
+      ${aiMsg(`Based on the preview, here&rsquo;s what I recommend:
+        ${banner}
+        <div class="action-row">
+          ${state.refinementMode === 'healthy'
+            ? '<button class="btn btn-primary" onclick="advance()">Activate Strategy</button>'
+            : '<button class="btn btn-primary" onclick="advance()">Continue</button>'}
+          ${state.refinementMode === 'noisy' ? `<button class="btn btn-secondary" onclick="setStep(${STEP('criteria')},{edit:true})">Tighten Signal criteria</button>` : ''}
+          ${state.refinementMode === 'noisy' ? `<button class="btn btn-secondary" onclick="setStep(${STEP('exclusions')},{edit:true})">Adjust exclusions</button>` : ''}
+          ${state.refinementMode === 'narrow' ? `<button class="btn btn-secondary" onclick="setStep(${STEP('scope')},{edit:true})">Broaden scope</button>` : ''}
+          ${state.refinementMode === 'narrow' ? `<button class="btn btn-secondary" onclick="setStep(${STEP('criteria')},{edit:true})">Expand Signal criteria</button>` : ''}
+          <button class="btn btn-ghost" onclick="setStep(${STEP('preview')})">Preview again</button>
+        </div>
+      `)}
+    </div>
+  `;
+}
+
+function renderActivation(){
+  const e = state.data.entities;
+  const primaryPills = e.filter(x => x.role === 'primary').map(x => `<span class="pill primary">${escapeHtml(x.name)}</span>`).join(' ');
+  const contextPills = e.filter(x => x.role === 'context').map(x => `<span class="pill context">${escapeHtml(x.name)}</span>`).join(' ');
+
+  els.mainArea.innerHTML = `
+    <div class="chat-container">
+      ${chatHistory()}
+      ${aiMsg(`<b>Ready to activate this agent?</b>
+        <div class="review-card" style="margin-top:14px;">
+          <h3>${escapeHtml(state.data.strategyName)}</h3>
+          <p class="rev-purpose">Once activated, this agent will evaluate new source events on schedule and surface Signals in the Agent View and relevant entity hubs.</p>
+          ${reviewSection('Status', '<span class="pill" style="background:var(--success-soft);color:var(--success);border-color:rgba(18,183,106,0.3);">Ready to activate</span>', STEP('draft'))}
+          ${reviewSection('Primary entities', primaryPills, STEP('scope'))}
+          ${reviewSection('Context entities', contextPills, STEP('scope'))}
+          ${reviewSection('Focus', focusLabels().map(l => `<span class="pill primary">${escapeHtml(l)}</span>`).join(' '), STEP('focus'))}
+          ${reviewSection('Sensitivity', `<span class="pill primary">${sensitivityLabel()}</span>`, STEP('sensitivity'))}
+          ${reviewSection('Cadence', `<span class="pill primary">${cadenceLabel()}</span>`, STEP('cadence'))}
+          ${reviewSection('Preview', `<span class="pill" style="background:var(--success-soft);color:var(--success);border-color:rgba(18,183,106,0.3);">${previewCounts().emit} would emit · ${previewCounts().watch} watch</span>`, STEP('preview'))}
+        </div>
+        <div class="action-row">
+          <button class="btn btn-primary" onclick="advance()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" style="margin-right:2px"><path d="M5 12l5 5 9-11"/></svg> Activate agent</button>
+          <button class="btn btn-secondary" onclick="setStep(STEP('preview'))">Preview again</button>
+          <button class="btn btn-ghost">Save draft</button>
+        </div>
+      `)}
+    </div>
+  `;
+}
+
+function renderSuccess(){
+  els.mainArea.innerHTML = `
+    <div class="chat-container">
+      ${chatHistory()}
+      <div class="success-page">
+        <div class="success-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12l5 5 9-11"/></svg>
+        </div>
+        <h1><span class="strat-name">${escapeHtml(state.data.strategyName)}</span><br/>is now active.</h1>
+        <p>This agent will evaluate new source events on schedule. Signals will appear in the Agent View and in relevant entity hubs when they affect entities in scope.</p>
+        <div class="summary-meta">
+          <div class="meta-row"><span class="meta-label">Intelligence Agent</span><span class="meta-value">Riverview Facilities Agent</span></div>
+          <div class="meta-row"><span class="meta-label">Agent version</span><span class="meta-value">v1 · activated just now</span></div>
+          <div class="meta-row"><span class="meta-label">Evaluation schedule</span><span class="meta-value">${cadenceLabel()}</span></div>
+          <div class="meta-row"><span class="meta-label">Primary entities</span><span class="meta-value">${state.data.entities.filter(x => x.role === 'primary').length}</span></div>
+          <div class="meta-row"><span class="meta-label">Context entities</span><span class="meta-value">${state.data.entities.filter(x => x.role === 'context').length}</span></div>
+        </div>
+        <div class="action-row" style="justify-content:center;">
+          <button class="btn btn-primary">View Agent</button>
+          <button class="btn btn-secondary">Go to Instance Home</button>
+          <button class="btn btn-ghost" onclick="resetFlow()">Create another agent</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function resetFlow() {
+  state.step = 0; state.maxStep = 0;
+  state.editing = null; state.returnStep = null;
+  state.rightSidebarOpen = false;
+  state.leftSidebarOpen = false;
+  state.leftManuallyClosed = false;
+  state.refinementMode = 'healthy';
+  state.primarySubStep = 0;
+  state.sellerSubStep = 0;
+  state.expandedPanel = null;
+  state.entitySearch = '';
+  state.entitySearchActive = false;
+  state.data.primaryAnswers = { intent: [], entityType: [], strategyFocus: [], direction: '' };
+  state.data.objective = [];
+  state.data.sellerAnswers = { sellerCtx: [], offerings: [], motion: [], whyMatters: [] };
+  state.data.focus = [];
+  state.data.signalCriteria = [];
+  state.data.exclusions = [];
+  state.data.sensitivity = 'balanced';
+  state.data.cadence = 'daily';
+  state.data.entities = [
+    { id: 'e1', name: 'Riverview Health System', type: 'Account', role: 'primary' },
+    { id: 'e2', name: 'Northstar Health',         type: 'Account', role: 'primary' },
+    { id: 'e3', name: 'Healthcare Facilities Market', type: 'Market', role: 'context' },
+    { id: 'e4', name: 'Regional Healthcare Labor Market', type: 'Market', role: 'context' },
+    { id: 'e5', name: 'Outpatient Care Market', type: 'Market', role: 'context' }
+  ];
+  render();
+}
+
+/* ============================================================
+   LABELS & HELPERS
+   ============================================================ */
+function primaryEntityNames(){ return state.data.entities.filter(e => e.role==='primary').map(e => e.name).join(', ') || 'none'; }
+function contextEntityNames(){ return state.data.entities.filter(e => e.role==='context').map(e => e.name).join(', ') || 'none'; }
+function objectiveLabels(){ return state.data.objective.map(id => (OBJECTIVES.find(o => o.id === id) || {}).label).filter(Boolean); }
+function focusLabels(){ return state.data.focus.map(id => (FOCUSES.find(f => f.id === id) || {}).label).filter(Boolean); }
+function sensitivityLabel(){ return (SENSITIVITY_OPTIONS.find(s => s.id === state.data.sensitivity) || {}).label || ''; }
+function cadenceLabel(){ return (CADENCE_OPTIONS.find(c => c.id === state.data.cadence) || {}).label || ''; }
+
+/* ============================================================
+   RIGHT SIDEBAR
+   ============================================================ */
+function renderRight(){
+  const blocks = [];
+
+  // Only show strategy blocks once primary prompt was captured
+  const hasPrimary = !!state.data.primaryAnswers.intent;
+  if (state.maxStep > STEP('primary') || (state.step === STEP('primary') && hasPrimary)) {
+    blocks.push(primaryPromptBlock());
+  }
+  if (state.maxStep >= STEP('scope') + 1 || state.step > STEP('scope')) blocks.push(entitiesBlock());
+  if (state.maxStep >= STEP('objective') + 1 || state.step > STEP('objective')) blocks.push(objectiveBlock());
+  if ((state.maxStep >= STEP('seller') + 1 || state.step > STEP('seller')) && state.data.sellerAnswers.sellerCtx?.length) blocks.push(sellerBlock());
+  if (state.maxStep >= STEP('focus') + 1 || state.step > STEP('focus')) blocks.push(focusBlock());
+  if (state.maxStep >= STEP('criteria') + 1 || state.step > STEP('criteria')) blocks.push(criteriaBlock());
+  if (state.maxStep >= STEP('exclusions') + 1 || state.step > STEP('exclusions')) blocks.push(exclusionsBlock());
+  if (state.maxStep >= STEP('sensitivity') + 1 || state.step > STEP('sensitivity')) blocks.push(sensitivityBlock());
+  if (state.maxStep >= STEP('cadence') + 1 || state.step > STEP('cadence')) blocks.push(cadenceBlock());
+
+  if (blocks.length === 0) {
+    blocks.push(`<div class="right-empty-hint">This panel will fill in as you answer setup questions. Once the agent is configured, it becomes a live summary you can edit anytime.</div>`);
+  }
+
+  els.rightScroll.innerHTML = blocks.join('');
+}
+
+function renderLeft(){
+  els.leftScroll.innerHTML = `
+    <div class="left-header">
+      <span class="left-title">Progress</span>
+      <span class="left-count">${stepsCompleted()} / ${STEPS.length - 1}</span>
+    </div>
+    ${progressBlock(true)}
+  `;
+}
+function stepsCompleted(){
+  // count of fully-completed steps (anything < maxStep that's not the entry)
+  return Math.min(state.step, STEPS.length - 1);
+}
+
+function progressBlock(forLeftSidebar){
+  const items = STEPS.slice(1).map((s, i) => {
+    const idx = i + 1;
+    let cls = 'progress-step';
+    if (idx < state.step) cls += ' completed clickable';
+    else if (idx === state.step) cls += ' active clickable';
+    else if (idx <= state.maxStep) cls += ' completed clickable';
+    else cls += ' locked';
+
+    const circleContent = idx < state.step || (idx <= state.maxStep && idx !== state.step)
+      ? '<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><path d="M5 12l5 5 9-11"/></svg>'
+      : '';
+
+    const handler = idx <= state.maxStep
+      ? `onclick="goToStepFromProgress(${idx})"`
+      : '';
+
+    return `<div class="${cls}" ${handler}>
+      <div class="ps-circle">${circleContent}</div>
+      <div class="ps-text">${s.short}</div>
+      <div class="ps-line"></div>
+    </div>`;
+  }).join('');
+
+  if (forLeftSidebar) {
+    return `<div class="left-progress-block"><div class="progress-steps" style="padding:0;">${items}</div></div>`;
+  }
+  return `<div class="panel-block">
+    <div class="panel-head">
+      <div class="panel-title">${dot('var(--brand)')} Progress · ${Math.min(state.step, STEPS.length-1)} of ${STEPS.length - 1}</div>
+    </div>
+    <div class="progress-steps">${items}</div>
+  </div>`;
+}
+
+function goToStepFromProgress(idx){
+  if (idx > state.maxStep) return;
+  if (idx === state.step) return;
+  // Going to a previous step = edit mode; if going to current max step, just normal nav
+  if (idx < state.maxStep || (state.editing != null && idx !== state.maxStep)) {
+    setStep(idx, { edit: true });
+  } else {
+    setStep(idx);
+  }
+}
+
+function primaryPromptBlock(){
+  return accordionBlock({
+    id: 'primaryPrompt',
+    title: 'Primary monitoring prompt',
+    titleClass: 'brand',
+    blockClass: 'primary-panel',
+    editStep: STEP('primary'),
+    body: `<div class="pb-content">${escapeHtml(primaryAnswersFlat())}</div>`
+  });
+}
+function primaryAnswersFlat() {
+  const a = state.data.primaryAnswers;
+  const parts = [];
+  parts.push('Intent: ' + (a.intent?.length ? answerLabelPlain(PRIMARY_QUESTIONS[0], a.intent) : '—'));
+  parts.push('Scope: ' + (a.entityType?.length ? answerLabelPlain(PRIMARY_QUESTIONS[1], a.entityType) : '—'));
+  parts.push('Outcome: ' + (a.strategyFocus?.length ? answerLabelPlain(PRIMARY_QUESTIONS[2], a.strategyFocus) : '—'));
+  if (a.direction) parts.push('Detail: ' + a.direction);
+  return parts.join('\n');
+}
+function answerLabelPlain(q, answerId) {
+  if (Array.isArray(answerId)) {
+    if (!q.options) return answerId.join(', ');
+    return answerId.map(id => {
+      const opt = q.options.find(o => o.id === id);
+      return opt ? opt.title : id;
+    }).join(', ') || '—';
+  }
+  if (!q.options) return answerId;
+  const opt = q.options.find(o => o.id === answerId);
+  return opt ? opt.title : answerId;
+}
+
+function strategyBlock({ id, title, editStep, body }){
+  return accordionBlock({ id, title, editStep, body: `<div class="pb-content">${body}</div>` });
+}
+
+function accordionBlock({ id, title, titleClass, blockClass, editStep, body }){
+  const expanded = state.expandedPanel === id ? 'expanded' : '';
+  return `<div class="panel-block collapsible ${expanded} ${blockClass || ''}" data-pid="${id}">
+    <div class="panel-head" onclick="togglePanel('${id}', event)">
+      <div class="panel-title ${titleClass || ''}">${title}</div>
+      <div class="panel-actions">
+        ${editStep != null ? `<button class="mini-btn" title="Edit" onclick="event.stopPropagation(); setStep(${editStep}, {edit:true})">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 113 3L7 19l-4 1 1-4z"/></svg>
+        </button>` : ''}
+        <span class="panel-chevron">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </span>
+      </div>
+    </div>
+    <div class="panel-body">${body}</div>
+  </div>`;
+}
+function togglePanel(id, ev){
+  if (ev) ev.stopPropagation();
+  state.expandedPanel = state.expandedPanel === id ? null : id;
+  renderRight();
+}
+
+function entitiesBlock(){
+  const prim = state.data.entities.filter(e => e.role==='primary');
+  const ctx = state.data.entities.filter(e => e.role==='context');
+  let body = '';
+  if (prim.length) {
+    body += `<div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;font-weight:600;margin-bottom:4px;">Primary</div><div class="pill-row">${prim.map(e => `<span class="pill primary">${escapeHtml(e.name)}</span>`).join('')}</div>`;
+  }
+  if (ctx.length) {
+    body += `<div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;font-weight:600;margin:8px 0 4px;">Context</div><div class="pill-row">${ctx.map(e => `<span class="pill context">${escapeHtml(e.name)}</span>`).join('')}</div>`;
+  }
+  return strategyBlock({ id: 'entities', title: 'Entities & Scope', editStep: STEP('scope'), body });
+}
+function objectiveBlock(){
+  const body = `<div class="pill-row">${objectiveLabels().map(l => `<span class="pill">${escapeHtml(l)}</span>`).join('')}</div>`;
+  return strategyBlock({ id: 'objective', title: 'Business Objective', editStep: STEP('objective'), body });
+}
+function sellerBlock(){
+  const a = state.data.sellerAnswers;
+  let parts = [];
+  if (a.sellerCtx?.length) parts.push('<b>Sells:</b> ' + answerLabelPlain(SELLER_QUESTIONS[0], a.sellerCtx));
+  if (a.offerings?.length) parts.push('<b>Offerings:</b> ' + answerLabelPlain(SELLER_QUESTIONS[1], a.offerings));
+  if (a.motion?.length)    parts.push('<b>Motion:</b> ' + answerLabelPlain(SELLER_QUESTIONS[2], a.motion));
+  if (a.whyMatters?.length)parts.push('<b>Why-it-matters:</b> ' + answerLabelPlain(SELLER_QUESTIONS[3], a.whyMatters));
+  const body = `<div class="pb-muted" style="font-size:12px;line-height:1.6;">${parts.map(p => escapeHtmlAllowingBold(p)).join('<br/>')}</div>`;
+  return strategyBlock({ id: 'seller', title: 'Organization Context', editStep: STEP('seller'), body });
+}
+function escapeHtmlAllowingBold(s){
+  return escapeHtml(s).replace(/&lt;b&gt;/g, '<b>').replace(/&lt;\/b&gt;/g, '</b>');
+}
+function focusBlock(){
+  const body = `<div class="pill-row">${focusLabels().map(l => `<span class="pill primary">${escapeHtml(l)}</span>`).join('')}</div>`;
+  return strategyBlock({ id: 'focus', title: 'Focus / Lens', editStep: STEP('focus'), body });
+}
+function criteriaBlock(){
+  const body = state.data.signalCriteria.length
+    ? `<ul>${state.data.signalCriteria.map(c => `<li>${escapeHtml(c)}</li>`).join('')}</ul>`
+    : '<div class="pb-muted">No criteria yet</div>';
+  return strategyBlock({ id: 'criteria', title: 'Signal Criteria', editStep: STEP('criteria'), body });
+}
+function exclusionsBlock(){
+  const body = state.data.exclusions.length
+    ? `<ul>${state.data.exclusions.map(c => `<li>${escapeHtml(c)}</li>`).join('')}</ul>`
+    : '<div class="pb-muted">None</div>';
+  return strategyBlock({ id: 'exclusions', title: 'Exclusions', editStep: STEP('exclusions'), body });
+}
+function sensitivityBlock(){
+  return strategyBlock({ id: 'sensitivity', title: 'Sensitivity', editStep: STEP('sensitivity'), body: `<span class="pill primary">${sensitivityLabel()}</span>` });
+}
+function cadenceBlock(){
+  return strategyBlock({ id: 'cadence', title: 'Cadence', editStep: STEP('cadence'), body: `<span class="pill primary">${cadenceLabel()}</span>` });
+}
+
+/* ============================================================
+   INPUT BINDING
+   ============================================================ */
+function bindInput(onSubmit) {
+  els.chatInput.oninput = () => { els.sendBtn.disabled = !els.chatInput.value.trim(); };
+  els.sendBtn.disabled = !els.chatInput.value.trim();
+  els.sendBtn.onclick = () => {
+    const val = els.chatInput.value;
+    if (!val.trim()) return;
+    onSubmit(val);
+    els.chatInput.value = '';
+    els.sendBtn.disabled = true;
+  };
+  els.chatInput.onkeydown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      els.sendBtn.onclick();
+    }
+  };
+  setTimeout(() => els.chatInput.focus(), 30);
+}
+
+function prefillPrompt(el){
+  els.chatInput.value = el.textContent;
+  els.chatInput.focus();
+  els.sendBtn.disabled = !els.chatInput.value.trim();
+}
+
+/* ============================================================
+   RETURN-FROM-EDIT BANNER
+   ============================================================ */
+els.returnBtn.addEventListener('click', returnFromEdit);
+
+/* ============================================================
+   INITIAL RENDER
+   ============================================================ */
+render();
+
+// Expose for inline handlers
+window.state = state;
+window.STEPS = STEPS;
+window.STEP = STEP;
+window.setStep = setStep;
+window.selectPollOption = selectPollOption;
+window.updatePollCustom = updatePollCustom;
+window.updatePollFree = updatePollFree;
+window.prevSubStep = prevSubStep;
+window.nextSubStep = nextSubStep;
+window.advanceSubStep = advanceSubStep;
+window.togglePanel = togglePanel;
+window.onEntitySearchInput = onEntitySearchInput;
+window.addEntityFromSearch = addEntityFromSearch;
+window.addCustomEntityFromInput = addCustomEntityFromInput;
+window.restoreRemovedEntities = restoreRemovedEntities;
+window.advance = advance;
+window.returnFromEdit = returnFromEdit;
+window.toggleObjective = toggleObjective;
+window.toggleFocus = toggleFocus;
+window.confirmObjective = confirmObjective;
+window.confirmFocus = confirmFocus;
+window.confirmScope = confirmScope;
+window.confirmSensitivity = confirmSensitivity;
+window.confirmCadence = confirmCadence;
+window.setEntityRole = setEntityRole;
+window.toggleSuggested = toggleSuggested;
+window.removeListItem = removeListItem;
+window.addListItem = addListItem;
+window.confirmCriteriaList = confirmCriteriaList;
+window.confirmExclusionsList = confirmExclusionsList;
+window.prefillPrompt = prefillPrompt;
+window.cyclePreviewMode = cyclePreviewMode;
+window.goToStepFromProgress = goToStepFromProgress;
+window.resetFlow = resetFlow;
+
+</script>
+<div id="presenterPanel" aria-label="Presenter mode">
+  <header><div>Presenter</div><button id="presenterClose">Close</button></header>
+  <div class="steps" id="presenterSteps"></div>
+  <div class="controls"><button id="prevStep">◀ Prev</button><button id="goStep">Go</button><button id="nextStep">Next ▶</button></div>
+</div>
+<button id="presenterBtn" title="Open Presenter">Presenter</button>
+<script id="presenter-script">(function(){
+  if(window.__presenterInstalled) return; window.__presenterInstalled=true;
+  const steps = [
+    {t:'Open: one picture for many seats (Hub)', page:'Command Hub.html', say:'One picture for many seats: hub shows the whole story quickly.', click:'Open Command Hub.'},
+    {t:'The theater: friendly, adversary, environment', page:'Theater Map.html', say:'A stylized map shows friendly, adversary and the corridor.', click:'Toggle layers; move the day slider.'},
+    {t:'Intelligence: signs point the same way', page:'Leading Indicators.html', say:'Watch signs from many sources converge over time.', click:'Slide to Day −3 and see four counted groups.'},
+    {t:'Adversary posture: capability vs intent', page:'Adversary Posture.html', say:'See capability vs intent, indicators and collection gaps.', click:'Open the relationship graph link.'},
+    {t:'Logistics: the benign case (DC‑CL‑417)', page:'Decision Case - DC-CL-417.html', say:'A benign thread: two alerts are one fact; verify and prepare.', click:'Use the stepper; approve the recommended option.'},
+    {t:'Operations: the hostile case (DC‑CI‑205)', page:'Decision Case - DC-CI-205.html', say:'A hostile thread: independent corroboration; authority approves.', click:'Mark verified, grant authority, then approve failover.'},
+    {t:'Communications: two alerts can be one fact', page:'Corroboration Lab.html', say:'Interactive: duplicates are excluded; independence requires group and replay.', click:'Add/duplicate/remove sources and watch the count.'},
+    {t:'Handoffs: who saw what, and when', page:'Incident Timeline.html', say:'One incident, six seats, with handoffs over time.', click:'Filter by seat chips.'},
+    {t:'Executive: decisions and measures', page:'Decision Reviews.html', say:'Decision‑Time snapshot and outcomes for the option taken.', click:'Open the case links and interval tables.'},
+    {t:'Role‑based distribution', page:'Distribution.html', say:'Distribution outputs from the same report; contracts proposed.', click:'Jump to ADV / VALE / RSP.'},
+    {t:'Close: propose a time‑boxed validation', page:'Decision Reviews.html#review-PAT-ADV-01', say:'Pick one area, agree baseline [X], run a time‑boxed validation.', click:'Open the pattern review stub.'}
+  ];
+  const stateKey='presenter_step';
+  const panel=document.getElementById('presenterPanel');
+  const stepsEl=document.getElementById('presenterSteps');
+  const btn=document.getElementById('presenterBtn');
+  const btnPrev=document.getElementById('prevStep');
+  const btnNext=document.getElementById('nextStep');
+  const btnGo=document.getElementById('goStep');
+  const btnClose=document.getElementById('presenterClose');
+  let ix=parseInt(localStorage.getItem(stateKey)||'0',10); if(isNaN(ix)||ix<0||ix>=steps.length) ix=0;
+  function render(){
+    stepsEl.innerHTML='';
+    steps.forEach((s,i)=>{
+      const d=document.createElement('div'); d.className='step'+(i===ix?' active':'');
+      d.innerHTML='<div class="h">'+(i+1)+'. '+s.t+'</div>'+
+                  '<div class="say">Say: '+s.say+'</div>'+
+                  '<div class="click">Click: '+s.click+'</div>';
+      d.addEventListener('click',()=>{ ix=i; localStorage.setItem(stateKey, ix); render(); });
+      stepsEl.appendChild(d);
+    });
+  }
+  function open(){ panel.classList.add('open'); render(); }
+  function close(){ panel.classList.remove('open'); }
+  function go(delta){ ix=Math.max(0, Math.min(steps.length-1, ix+delta)); localStorage.setItem(stateKey, ix); render(); }
+  function nav(){ const s=steps[ix]; if(s&&s.page){ window.location.href=s.page; } }
+  btn.addEventListener('click', open); btnClose.addEventListener('click', close);
+  btnPrev.addEventListener('click', ()=>go(-1)); btnNext.addEventListener('click', ()=>go(1)); btnGo.addEventListener('click', nav);
+  document.addEventListener('keydown', e=>{ if(!panel.classList.contains('open')) return; if(e.key==='ArrowRight'){ go(1); } else if(e.key==='ArrowLeft'){ go(-1); } });
+  // Auto‑open if coming from a prior step
+  if(localStorage.getItem(stateKey)!=null){ open(); }
+})();</script>
+</body>
+</html>
