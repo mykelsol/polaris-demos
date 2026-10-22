@@ -1,0 +1,289 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Polaris I/O — Joint Battlespace Awareness Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#ffffff;color:#111827;margin:0}
+    .wrap{max-width:1100px;margin:24px auto;padding:12px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .card{background:#ffffff;border:1px solid #e5e7eb;border-radius:8px;padding:12px}
+    .title{display:flex;justify-content:space-between;align-items:center}
+    .badge{display:inline-block;background:#24314d;color:#111827;border-radius:10px;padding:2px 8px;font-size:12px;margin-left:6px}
+    .stage-tabs{display:flex;gap:8px;margin:12px 0}
+    .stage-tabs button{background:#f3f4f6;color:#111827;border:1px solid #e5e7eb;border-radius:6px;padding:6px 10px;cursor:pointer;opacity:.7}
+    .stage-tabs button.active{opacity:1;border-color:#5f8bff}
+    .disabled{opacity:.5;pointer-events:none}
+    .row{display:flex;gap:10px;align-items:center}
+    table{width:100%;border-collapse:collapse}
+    th,td{border-bottom:1px solid #e5e7eb;padding:6px 8px;text-align:left;vertical-align:top}
+    .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+    .opt{border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;background:#f9fafb}
+    .opt header{padding:10px 12px;font-weight:600;background:#f3f4f6;border-bottom:1px solid #e5e7eb}
+    .opt header.recommended{border-top:3px solid #5fb3ff;background:#eaf2ff}
+    .opt .body{padding:10px 12px}
+    .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+    .dot.green{background:#6ee7a8}.dot.amber{background:#ffd166}.dot.red{background:#ff7b7b}.dot.blue{background:#5fb3ff}
+    .ack{margin:6px 0}
+    .lock{display:inline-flex;align-items:center;gap:6px;color:#ffb3b3}
+    .note{color:#4b5563;font-size:12px}
+    .actions{display:flex;gap:10px;align-items:center;margin-top:8px}
+    .btn{background:#1f3a6e;color:#111827;border:1px solid #e5e7eb;border-radius:6px;padding:6px 10px;cursor:pointer}
+    .btn.primary{background:#315fb3}
+    .pill{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid #e5e7eb}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  </style>
+<style id="presenter-style">/* Presenter Mode */
+#presenterBtn{position:fixed;bottom:16px;right:16px;z-index:9999;background:#315fb3;color:#fff;border:0;border-radius:24px;padding:10px 14px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.35)}
+#presenterPanel{position:fixed;top:0;right:0;height:100%;width:360px;transform:translateX(100%);transition:transform .2s ease;z-index:9998;background:#f9fafb;color:#111827;border-left:1px solid #e5e7eb;box-shadow:-2px 0 8px rgba(0,0,0,.45)}
+#presenterPanel.open{transform:translateX(0)}
+#presenterPanel header{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:1px solid #e5e7eb}
+#presenterPanel .steps{max-height:calc(100% - 140px);overflow:auto;padding:10px 12px}
+#presenterPanel .step{border:1px solid #e5e7eb;border-radius:8px;padding:8px;margin-bottom:8px;background:#ffffff}
+#presenterPanel .step.active{border-color:#3b82f6}
+#presenterPanel .controls{position:absolute;bottom:0;left:0;right:0;padding:10px 12px;border-top:1px solid #e5e7eb;display:flex;gap:8px}
+#presenterPanel .controls button{flex:1;background:#1f3a6e;color:#111827;border:1px solid #e5e7eb;border-radius:6px;padding:8px 10px;cursor:pointer}
+#presenterClose{background:transparent;color:#2563eb;border:0;cursor:pointer}
+.step .h{font-weight:600;margin-bottom:6px}
+.step .say{font-size:13px;color:#c7d3ee}
+.step .click{font-size:12px;color:#2563eb;margin-top:4px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="title">
+    <h2>Decision Case DC-CL-417 <span class="badge">Polaris Concept Inference</span></h2>
+    <div class="row"><button id="unlockAll" class="btn">Unlock all stages (Presenter)</button> <a href="Corroboration Lab.html" style="color:#2563eb">See this in the Corroboration Lab</a></div>
+  </div>
+
+  <div class="stage-tabs">
+    <button data-stage="0" class="active">1. Finding</button>
+    <button data-stage="1" class="disabled">2. Dependency</button>
+    <button data-stage="2" class="disabled">3. Explanations</button>
+    <button data-stage="3" class="disabled">4. Decision</button>
+    <button data-stage="4" class="disabled">5. Outcome</button>
+  </div>
+
+  <div id="stageFinding" class="card">
+    <h3>Finding (08:40Z)</h3>
+    <p>Two alerts: a missed heartbeat (EVD-001) and "movement stopped" (EVD-002). Opening provenance shows the same source group and replay ID, so they count as one observation.</p>
+    <label class="ack"><input type="checkbox" id="ackFinding"> I acknowledge the duplicate observation rule.</label>
+    <div class="row actions"><button id="toDependency" class="btn">Next: Dependency</button><span class="note">Requires acknowledgement</span></div>
+  </div>
+
+  <div id="stageDependency" class="card" style="display:none">
+    <h3>Dependency</h3>
+    <p>Relationship chain: <strong>MOV-RSP-417 → CARGO-PCM9 → SYS-MSS4 → TASK-RESTORE-04</strong>. <span class="pill">INV-PCM9-KESTREL: 0 qualified substitutes</span></p>
+    <div class="grid2">
+      <div>
+        <h4>Inspect</h4>
+        <label class="ack"><input type="checkbox" id="chkManifest"> Manifest</label><br>
+        <label class="ack"><input type="checkbox" id="chkDependency"> Dependency</label><br>
+        <label class="ack"><input type="checkbox" id="chkInventory"> Inventory</label>
+      </div>
+      <div class="note">All three must be reviewed before continuing.</div>
+    </div>
+    <div class="row actions"><button id="toExplanations" class="btn">Next: Explanations</button></div>
+  </div>
+
+  <div id="stageExplanations" class="card" style="display:none">
+    <h3>Explanations</h3>
+    <ul>
+      <li>Weather</li>
+      <li>Planned transfer at Atlas</li>
+      <li>Comms degradation</li>
+      <li>Tracker fault</li>
+      <li>Operational disruption (EXP-CL-04), priority raised by context from PAT-ADV-01</li>
+    </ul>
+    <div class="row">
+      <label class="ack"><input type="checkbox" id="ackAllExpl"> I have reviewed every explanation (none shows Confirmed before Outcome).</label>
+    </div>
+    <div class="row actions"><button id="toDecision" class="btn">Next: Decision</button></div>
+  </div>
+
+  <div id="stageDecision" class="card" style="display:none">
+    <h3>Decision (09:00Z)</h3>
+    <div class="note">Hard gates never offset each other. <strong>Fresh Route Status FAILS</strong>. <strong>Route-Change Authority FAILS</strong>. Adversary context raises priority; it never lifts a gate.</div>
+    <div class="grid3" style="margin-top:12px">
+      <div class="opt">
+        <header class="recommended">Verify and prepare the alternate route <span class="badge">Recommended</span></header>
+        <div class="body">
+          <table>
+            <tr><th>Speed</th><td>About 10 minutes to a verified picture</td></tr>
+            <tr><th>Resources</th><td>2 staff; no backup bandwidth used; fully reversible</td></tr>
+            <tr><th>Risk</th><td><span class="dot amber"></span>Moderate if wrong; reversible</td></tr>
+            <tr><th>Mission</th><td>SYS-MSS4 restoration stays on track</td></tr>
+            <tr><th>Control</th><td>Approver: watch lead; no gate lifted</td></tr>
+            <tr><th>Fit</th><td><span class="dot green"></span>Strong</td></tr>
+            <tr><th>For</th><td>Fast verification without committing alternates</td></tr>
+            <tr><th>Against</th><td>Short delay to certainty</td></tr>
+            <tr><th>What would change this</th><td>Fresh route status or confirmed operational disruption</td></tr>
+          </table>
+          <div class="actions"><button id="approveRecommended" class="btn primary">Approve</button></div>
+        </div>
+      </div>
+      <div class="opt">
+        <header>Reroute now via ROUTE-ALT-3 <span class="lock">🔒 Locked</span></header>
+        <div class="body">
+          <table>
+            <tr><th>Speed</th><td>About 5 minutes to switch</td></tr>
+            <tr><th>Resources</th><td>Commits alternate path; harder to undo</td></tr>
+            <tr><th>Risk</th><td><span class="dot red"></span>High if wrong</td></tr>
+            <tr><th>Mission</th><td>Potential delay to SYS-MSS4</td></tr>
+            <tr><th>Control</th><td>Gate affected: Fresh Route Status FAILS; needs authorized approver</td></tr>
+            <tr><th>Fit</th><td><span class="dot amber"></span>Partial</td></tr>
+          </table>
+          <div class="actions"><button id="requestAuthority" class="btn">Request authority</button></div>
+        </div>
+      </div>
+      <div class="opt">
+        <header>Wait and watch</header>
+        <div class="body">
+          <table>
+            <tr><th>Speed</th><td>Slow</td></tr>
+            <tr><th>Resources</th><td>Cheap</td></tr>
+            <tr><th>Risk</th><td><span class="dot red"></span>High if wrong</td></tr>
+            <tr><th>Mission</th><td>Risk to restoration if misjudged</td></tr>
+            <tr><th>Control</th><td>No gate lift</td></tr>
+            <tr><th>Fit</th><td><span class="dot amber"></span>Weak</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="stageOutcome" class="card" style="display:none">
+    <div class="row" style="justify-content:space-between">
+      <h3>Outcome (toggle Decision-Time / Outcome)</h3>
+      <div>
+        <label class="pill"><input type="checkbox" id="toggleOutcome"> Show Outcome</label>
+      </div>
+    </div>
+    <div id="decisionTimeBlock">
+      <p><strong>Decision-Time 09:00Z</strong> — identical before and after the outcome.</p>
+      <ul>
+        <li>Recommendation approved: Verify and prepare the alternate route.</li>
+        <li>Approver: <input id="approverName" placeholder="Name" style="background:#f9fafb;color:#111827;border:1px solid #e5e7eb;border-radius:4px;padding:3px 6px"></li>
+      </ul>
+    </div>
+    <div id="outcomeBlock" style="display:none">
+      <p><strong>Outcome 09:24Z</strong> — Verified at Atlas, loose power connector. Case set to Closed; pattern set to Resolved; a Decision Review was added.</p>
+      <div class="actions">
+        <a href="Analyst Reports.html" class="btn" style="text-decoration:none">Open the analyst report</a>
+        <a href="Decision Reviews.html#review-DC-CL-417" class="btn" style="text-decoration:none">Open the decision review</a>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  const tabs = document.querySelectorAll('.stage-tabs button');
+  const stages = ['stageFinding','stageDependency','stageExplanations','stageDecision','stageOutcome'];
+  const s = {stage:0, ackFinding:false, chkManifest:false, chkDependency:false, chkInventory:false, ackAllExpl:false, approved:false};
+  function setActive(ix){
+    stages.forEach((id,i)=>{ document.getElementById(id).style.display = (i===ix?'block':'none'); });
+    tabs.forEach((b,i)=>{ b.classList.toggle('active', i===ix); });
+  }
+  function gate(){
+    // enable/disable tabs based on state
+    tabs.forEach((b,i)=>{
+      let ok=false;
+      if(i===0) ok=true;
+      if(i===1) ok = s.ackFinding;
+      if(i===2) ok = s.ackFinding && s.chkManifest && s.chkDependency && s.chkInventory;
+      if(i===3) ok = s.ackFinding && s.chkManifest && s.chkDependency && s.chkInventory && s.ackAllExpl;
+      if(i===4) ok = s.approved; // outcome only after approve
+      b.classList.toggle('disabled', !ok);
+      b.disabled = !ok;
+    });
+  }
+  tabs.forEach((b,i)=> b.addEventListener('click', ()=>{ if(!b.disabled){ s.stage=i; setActive(i); }}));
+
+  document.getElementById('ackFinding').addEventListener('change', e=>{ s.ackFinding=e.target.checked; gate(); });
+  document.getElementById('toDependency').addEventListener('click', ()=>{ if(s.ackFinding){ s.stage=1; setActive(1); gate(); }});
+
+  ['chkManifest','chkDependency','chkInventory'].forEach(id=>{
+    document.getElementById(id).addEventListener('change', e=>{ s[id]=e.target.checked; gate(); });
+  });
+  document.getElementById('toExplanations').addEventListener('click', ()=>{
+    if(s.chkManifest && s.chkDependency && s.chkInventory){ s.stage=2; setActive(2); gate(); }
+  });
+  document.getElementById('ackAllExpl').addEventListener('change', e=>{ s.ackAllExpl=e.target.checked; gate(); });
+  document.getElementById('toDecision').addEventListener('click', ()=>{
+    if(s.ackAllExpl){ s.stage=3; setActive(3); gate(); }
+  });
+
+  document.getElementById('approveRecommended').addEventListener('click', ()=>{
+      localStorage.setItem('dc_cl_417_approved','true');
+
+    s.approved=true; s.stage=4; setActive(4); gate();
+  });
+  document.getElementById('requestAuthority').addEventListener('click', ()=>{
+    alert('Authority request sent. This option remains locked until approved.');
+  });
+  document.getElementById('toggleOutcome').addEventListener('change', e=>{
+    document.getElementById('decisionTimeBlock').style.display = e.target.checked ? 'none' : 'block';
+    document.getElementById('outcomeBlock').style.display = e.target.checked ? 'block' : 'none';
+  });
+  document.getElementById('unlockAll').addEventListener('click', ()=>{
+    s.ackFinding = s.chkManifest = s.chkDependency = s.chkInventory = s.ackAllExpl = true; gate();
+    alert('All stages unlocked for presenter mode.');
+  });
+  // init
+  setActive(0); gate();
+})();
+</script>
+<div id="presenterPanel" aria-label="Presenter mode">
+  <header><div>Presenter</div><button id="presenterClose">Close</button></header>
+  <div class="steps" id="presenterSteps"></div>
+  <div class="controls"><button id="prevStep">◀ Prev</button><button id="goStep">Go</button><button id="nextStep">Next ▶</button></div>
+</div>
+<button id="presenterBtn" title="Open Presenter">Presenter</button>
+<script id="presenter-script">(function(){
+  if(window.__presenterInstalled) return; window.__presenterInstalled=true;
+  const steps = [
+    {t:'Open: one picture for many seats (Hub)', page:'Command Hub.html', say:'One picture for many seats: hub shows the whole story quickly.', click:'Open Command Hub.'},
+    {t:'The theater: friendly, adversary, environment', page:'Theater Map.html', say:'A stylized map shows friendly, adversary and the corridor.', click:'Toggle layers; move the day slider.'},
+    {t:'Intelligence: signs point the same way', page:'Leading Indicators.html', say:'Watch signs from many sources converge over time.', click:'Slide to Day −3 and see four counted groups.'},
+    {t:'Adversary posture: capability vs intent', page:'Adversary Posture.html', say:'See capability vs intent, indicators and collection gaps.', click:'Open the relationship graph link.'},
+    {t:'Logistics: the benign case (DC‑CL‑417)', page:'Decision Case - DC-CL-417.html', say:'A benign thread: two alerts are one fact; verify and prepare.', click:'Use the stepper; approve the recommended option.'},
+    {t:'Operations: the hostile case (DC‑CI‑205)', page:'Decision Case - DC-CI-205.html', say:'A hostile thread: independent corroboration; authority approves.', click:'Mark verified, grant authority, then approve failover.'},
+    {t:'Communications: two alerts can be one fact', page:'Corroboration Lab.html', say:'Interactive: duplicates are excluded; independence requires group and replay.', click:'Add/duplicate/remove sources and watch the count.'},
+    {t:'Handoffs: who saw what, and when', page:'Incident Timeline.html', say:'One incident, six seats, with handoffs over time.', click:'Filter by seat chips.'},
+    {t:'Executive: decisions and measures', page:'Decision Reviews.html', say:'Decision‑Time snapshot and outcomes for the option taken.', click:'Open the case links and interval tables.'},
+    {t:'Role‑based distribution', page:'Distribution.html', say:'Distribution outputs from the same report; contracts proposed.', click:'Jump to ADV / VALE / RSP.'},
+    {t:'Close: propose a time‑boxed validation', page:'Decision Reviews.html#review-PAT-ADV-01', say:'Pick one area, agree baseline [X], run a time‑boxed validation.', click:'Open the pattern review stub.'}
+  ];
+  const stateKey='presenter_step';
+  const panel=document.getElementById('presenterPanel');
+  const stepsEl=document.getElementById('presenterSteps');
+  const btn=document.getElementById('presenterBtn');
+  const btnPrev=document.getElementById('prevStep');
+  const btnNext=document.getElementById('nextStep');
+  const btnGo=document.getElementById('goStep');
+  const btnClose=document.getElementById('presenterClose');
+  let ix=parseInt(localStorage.getItem(stateKey)||'0',10); if(isNaN(ix)||ix<0||ix>=steps.length) ix=0;
+  function render(){
+    stepsEl.innerHTML='';
+    steps.forEach((s,i)=>{
+      const d=document.createElement('div'); d.className='step'+(i===ix?' active':'');
+      d.innerHTML='<div class="h">'+(i+1)+'. '+s.t+'</div>'+
+                  '<div class="say">Say: '+s.say+'</div>'+
+                  '<div class="click">Click: '+s.click+'</div>';
+      d.addEventListener('click',()=>{ ix=i; localStorage.setItem(stateKey, ix); render(); });
+      stepsEl.appendChild(d);
+    });
+  }
+  function open(){ panel.classList.add('open'); render(); }
+  function close(){ panel.classList.remove('open'); }
+  function go(delta){ ix=Math.max(0, Math.min(steps.length-1, ix+delta)); localStorage.setItem(stateKey, ix); render(); }
+  function nav(){ const s=steps[ix]; if(s&&s.page){ window.location.href=s.page; } }
+  btn.addEventListener('click', open); btnClose.addEventListener('click', close);
+  btnPrev.addEventListener('click', ()=>go(-1)); btnNext.addEventListener('click', ()=>go(1)); btnGo.addEventListener('click', nav);
+  document.addEventListener('keydown', e=>{ if(!panel.classList.contains('open')) return; if(e.key==='ArrowRight'){ go(1); } else if(e.key==='ArrowLeft'){ go(-1); } });
+  // Auto‑open if coming from a prior step
+  if(localStorage.getItem(stateKey)!=null){ open(); }
+})();</script>
+</body>
+</html>

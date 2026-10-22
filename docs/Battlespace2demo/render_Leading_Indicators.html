@@ -1,0 +1,132 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Polaris I/O — Joint Battlespace Awareness Hub</title>
+<style>
+#li-module{max-width:1100px;margin:24px auto;color:#111827}
+.card{background:#ffffff;border:1px solid #e5e7eb;border-radius:8px;padding:12px;margin-bottom:12px}
+.row{display:flex;align-items:center;gap:12px}
+.lane{display:flex;gap:6px;align-items:center}
+.badge{display:inline-block;background:#24314d;color:#111827;border-radius:10px;padding:2px 8px;font-size:12px;margin-left:6px}
+.dot{width:8px;height:8px;border-radius:50%}
+</style><style id="presenter-style">/* Presenter Mode */
+#presenterBtn{position:fixed;bottom:16px;right:16px;z-index:9999;background:#315fb3;color:#fff;border:0;border-radius:24px;padding:10px 14px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.35)}
+#presenterPanel{position:fixed;top:0;right:0;height:100%;width:360px;transform:translateX(100%);transition:transform .2s ease;z-index:9998;background:#f9fafb;color:#111827;border-left:1px solid #e5e7eb;box-shadow:-2px 0 8px rgba(0,0,0,.45)}
+#presenterPanel.open{transform:translateX(0)}
+#presenterPanel header{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:1px solid #e5e7eb}
+#presenterPanel .steps{max-height:calc(100% - 140px);overflow:auto;padding:10px 12px}
+#presenterPanel .step{border:1px solid #e5e7eb;border-radius:8px;padding:8px;margin-bottom:8px;background:#ffffff}
+#presenterPanel .step.active{border-color:#3b82f6}
+#presenterPanel .controls{position:absolute;bottom:0;left:0;right:0;padding:10px 12px;border-top:1px solid #e5e7eb;display:flex;gap:8px}
+#presenterPanel .controls button{flex:1;background:#1f3a6e;color:#111827;border:1px solid #e5e7eb;border-radius:6px;padding:8px 10px;cursor:pointer}
+#presenterClose{background:transparent;color:#2563eb;border:0;cursor:pointer}
+.step .h{font-weight:600;margin-bottom:6px}
+.step .say{font-size:13px;color:#c7d3ee}
+.step .click{font-size:12px;color:#2563eb;margin-top:4px}
+</style>
+</head><body>
+<div id="li-module">
+  <h2>Watch signs build over time<span class="badge">T-minus timeline</span></h2>
+  <div class="card row">
+    <label>Day</label>
+    <input id="li-slider" type="range" min="-14" max="0" step="1" value="-14">
+    <span id="li-day">Day -14</span>
+    <span style="margin-left:16px">Counted groups: <strong id="li-count">0</strong></span>
+  </div>
+  <div class="card" id="lanes"></div>
+  <div class="card">Milestones: <strong>Day -3 Insight Ready</strong>; first sensor-confirmed sign after Insight Ready. Lead time: [X] days.</div>
+</div>
+<script>
+(function(){
+  const groups = [
+    {id:'SIGINT and emitter', code:'SG-RF', color:'#ffdf5f'},
+    {id:'Imagery', code:'SG-IMG', color:'#aac5ff'},
+    {id:'Movement and logistics', code:'SG-MOV', color:'#b0f3bf'},
+    {id:'Notices and interference', code:'SG-NOT', color:'#fbe0a6'},
+    {id:'Human and open', code:'SG-HUM', color:'#e8c6ff'},
+    {id:'Order of battle context (low weight)', code:'SG-CTX', color:'#8893a8', contextOnly:true}
+  ];
+  // Day relative to 0. Items present on or before their firstDay
+  const events = [
+    {group:'SG-RF', firstDay:-8},
+    {group:'SG-IMG', firstDay:-10},
+    {group:'SG-MOV', firstDay:-7},
+    {group:'SG-NOT', firstDay:-6},
+    {group:'SG-HUM', firstDay:-2},
+    {group:'SG-CTX', firstDay:-12}
+  ];
+  const lanes = document.getElementById('lanes');
+  function renderLanes(day){
+    lanes.innerHTML='';
+    let counted=0; let countedSet=new Set();
+    groups.forEach(g=>{
+      const row=document.createElement('div'); row.className='lane';
+      const dot=document.createElement('div'); dot.className='dot'; dot.style.background=g.color; row.appendChild(dot);
+      const label=document.createElement('div'); label.textContent=g.id; row.appendChild(label);
+      const has = events.find(e=>e.group===g.code && e.firstDay<=day);
+      if(has){
+        const m=document.createElement('span'); m.textContent=' present'; m.style.color='#9cc0ff'; row.appendChild(m);
+        if(!g.contextOnly){ countedSet.add(g.code); }
+      }
+      lanes.appendChild(row);
+    });
+    counted = countedSet.size;
+    document.getElementById('li-count').textContent = counted;
+  }
+  const slider=document.getElementById('li-slider');
+  const dlabel=document.getElementById('li-day');
+  function update(){ dlabel.textContent='Day ' + slider.value; renderLanes(parseInt(slider.value,10)); }
+  slider.addEventListener('input', update);
+  slider.value = -14; update();
+  // Nudge to Day -3 to verify count==4 by default once user drags
+})();
+</script>
+<div id="presenterPanel" aria-label="Presenter mode">
+  <header><div>Presenter</div><button id="presenterClose">Close</button></header>
+  <div class="steps" id="presenterSteps"></div>
+  <div class="controls"><button id="prevStep">◀ Prev</button><button id="goStep">Go</button><button id="nextStep">Next ▶</button></div>
+</div>
+<button id="presenterBtn" title="Open Presenter">Presenter</button>
+<script id="presenter-script">(function(){
+  if(window.__presenterInstalled) return; window.__presenterInstalled=true;
+  const steps = [
+    {t:'Open: one picture for many seats (Hub)', page:'Command Hub.html', say:'One picture for many seats: hub shows the whole story quickly.', click:'Open Command Hub.'},
+    {t:'The theater: friendly, adversary, environment', page:'Theater Map.html', say:'A stylized map shows friendly, adversary and the corridor.', click:'Toggle layers; move the day slider.'},
+    {t:'Intelligence: signs point the same way', page:'Leading Indicators.html', say:'Watch signs from many sources converge over time.', click:'Slide to Day −3 and see four counted groups.'},
+    {t:'Adversary posture: capability vs intent', page:'Adversary Posture.html', say:'See capability vs intent, indicators and collection gaps.', click:'Open the relationship graph link.'},
+    {t:'Logistics: the benign case (DC‑CL‑417)', page:'Decision Case - DC-CL-417.html', say:'A benign thread: two alerts are one fact; verify and prepare.', click:'Use the stepper; approve the recommended option.'},
+    {t:'Operations: the hostile case (DC‑CI‑205)', page:'Decision Case - DC-CI-205.html', say:'A hostile thread: independent corroboration; authority approves.', click:'Mark verified, grant authority, then approve failover.'},
+    {t:'Communications: two alerts can be one fact', page:'Corroboration Lab.html', say:'Interactive: duplicates are excluded; independence requires group and replay.', click:'Add/duplicate/remove sources and watch the count.'},
+    {t:'Handoffs: who saw what, and when', page:'Incident Timeline.html', say:'One incident, six seats, with handoffs over time.', click:'Filter by seat chips.'},
+    {t:'Executive: decisions and measures', page:'Decision Reviews.html', say:'Decision‑Time snapshot and outcomes for the option taken.', click:'Open the case links and interval tables.'},
+    {t:'Role‑based distribution', page:'Distribution.html', say:'Distribution outputs from the same report; contracts proposed.', click:'Jump to ADV / VALE / RSP.'},
+    {t:'Close: propose a time‑boxed validation', page:'Decision Reviews.html#review-PAT-ADV-01', say:'Pick one area, agree baseline [X], run a time‑boxed validation.', click:'Open the pattern review stub.'}
+  ];
+  const stateKey='presenter_step';
+  const panel=document.getElementById('presenterPanel');
+  const stepsEl=document.getElementById('presenterSteps');
+  const btn=document.getElementById('presenterBtn');
+  const btnPrev=document.getElementById('prevStep');
+  const btnNext=document.getElementById('nextStep');
+  const btnGo=document.getElementById('goStep');
+  const btnClose=document.getElementById('presenterClose');
+  let ix=parseInt(localStorage.getItem(stateKey)||'0',10); if(isNaN(ix)||ix<0||ix>=steps.length) ix=0;
+  function render(){
+    stepsEl.innerHTML='';
+    steps.forEach((s,i)=>{
+      const d=document.createElement('div'); d.className='step'+(i===ix?' active':'');
+      d.innerHTML='<div class="h">'+(i+1)+'. '+s.t+'</div>'+
+                  '<div class="say">Say: '+s.say+'</div>'+
+                  '<div class="click">Click: '+s.click+'</div>';
+      d.addEventListener('click',()=>{ ix=i; localStorage.setItem(stateKey, ix); render(); });
+      stepsEl.appendChild(d);
+    });
+  }
+  function open(){ panel.classList.add('open'); render(); }
+  function close(){ panel.classList.remove('open'); }
+  function go(delta){ ix=Math.max(0, Math.min(steps.length-1, ix+delta)); localStorage.setItem(stateKey, ix); render(); }
+  function nav(){ const s=steps[ix]; if(s&&s.page){ window.location.href=s.page; } }
+  btn.addEventListener('click', open); btnClose.addEventListener('click', close);
+  btnPrev.addEventListener('click', ()=>go(-1)); btnNext.addEventListener('click', ()=>go(1)); btnGo.addEventListener('click', nav);
+  document.addEventListener('keydown', e=>{ if(!panel.classList.contains('open')) return; if(e.key==='ArrowRight'){ go(1); } else if(e.key==='ArrowLeft'){ go(-1); } });
+  // Auto‑open if coming from a prior step
+  if(localStorage.getItem(stateKey)!=null){ open(); }
+})();</script>
+</body></html>
