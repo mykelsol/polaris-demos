@@ -29,7 +29,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:none;box-s
     </div>
     <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column">
       <div style="display:flex;flex-direction:column;gap:2px;padding:8px 12px 4px">
-        <div style="font-size:11px;font-weight:700;letter-spacing:.08em;color:#737373;padding:6px 6px 4px">WORKSPACES</div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:.08em;color:#737373;padding:6px 6px 4px">BATTLESPACE</div>
         <sc-for list="{{ sideWs }}" as="w" hint-placeholder-count="4">
           <button onClick="{{ w.onClick }}" style="width:100%;border:0;text-align:left;cursor:pointer;display:flex;align-items:center;gap:10px;padding:8px;border-radius:6px;background:{{ w.bg }};color:{{ w.fg }};font-size:14px;font-weight:700" style-hover="background:{{ w.hover }}"><img src="assets/icons/bar-chart-square-02.svg" alt="" style="width:20px;height:20px"><span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ w.label }}</span><span style="padding:1px 7px;border-radius:9999px;background:{{ w.cBg }};color:{{ w.cFg }};font-size:11px;font-weight:700">{{ w.count }}</span></button>
         </sc-for>
@@ -73,6 +73,13 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:none;box-s
         <sc-if value="{{ isCase }}" hint-placeholder-val="{{ false }}"><span style="color:#525252;font-weight:500">DC-LOG-102</span><img src="assets/icons/chevron-right.svg" alt="" style="width:14px;height:14px;opacity:.4"><span style="color:#171717;font-weight:600">{{ stageLabel }}</span></sc-if>
       </nav>
       <div style="display:flex;gap:10px;align-items:center;flex:none">
+        <div role="search" style="display:flex;align-items:center;gap:8px;background:#f5f5f5;border:1px solid #e5e5e5;border-radius:8px;padding:4px 8px;min-width:280px">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#737373" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+          <input type="search" placeholder="Search..." style="flex:1;border:0;background:transparent;font-size:13px;color:#262626" onInput="void(0)">
+        </div>
+        <button onClick="{{ runAgents }}" style="border:1px solid #e5e5e5;background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;font-weight:600;color:#262626;cursor:pointer">Run Agents</button>
+        <button onClick="{{ togglePresenter }}" style="border:1px solid #e5e5e5;background:{{ presBg }};border-radius:8px;padding:6px 10px;font-size:12px;font-weight:600;color:#262626;cursor:pointer">Presenter</button>
+        <button onClick="{{ startAssist }}" style="border:0;background:#1570ef;color:#fff;border-radius:8px;padding:6px 10px;font-size:12px;font-weight:700;cursor:pointer;box-shadow:inset 0 -2px 0 0 rgba(0,0,0,.05)">Polaris Assist</button>
         <sc-if value="{{ isCase }}" hint-placeholder-val="{{ false }}"><div role="radiogroup" aria-label="View as" style="display:flex;background:#f5f5f5;border:1px solid #e5e5e5;border-radius:8px;padding:2px;gap:2px">
           <sc-for list="{{ roles }}" as="r" hint-placeholder-count="3">
             <button role="radio" aria-checked="{{ r.on }}" onClick="{{ r.onClick }}" style="white-space:nowrap;border:0;border-radius:6px;padding:5px 10px;font-size:12px;font-weight:600;cursor:pointer;background:{{ r.bg }};color:{{ r.fg }};box-shadow:{{ r.sh }}">{{ r.label }}</button>
@@ -621,7 +628,11 @@ class Component extends DCLogic {
       isHub:s.page==='hub',isCase:s.page==='case',hubReq:s.hubReq,
       goHub:()=>this.hubGo('patterns',null),openCase:()=>this.setState({page:'case'}),toEntities:()=>this.hubGo('entities',null),
       sideWs:[
-        {label:'Command Hub',count:12,...this.navSty(s.page==='hub'&&!s.hubReq.filter),onClick:()=>this.hubGo('patterns',null)},
+          {label:'Command Hub',count:12,...this.navSty(s.page==='hub'&&!s.hubReq.filter),onClick:()=>this.hubGo('patterns',null)},
+          {label:'Theater Map',count:1,...this.navSty(this.isF('tab','map')),onClick:()=>this.hubGo('signals',{k:'tab',v:'map'})},
+          {label:'Adversary Posture',count:1,...this.navSty(this.isF('tab','posture')),onClick:()=>this.hubGo('patterns',{k:'tab',v:'posture'})},
+          {label:'Leading Indicators',count:3,...this.navSty(this.isF('tab','indicators')),onClick:()=>this.hubGo('patterns',{k:'tab',v:'indicators'})}
+        ],
         {label:'Decisions',count:1,...this.navSty(s.page==='case'),onClick:()=>this.setState({page:'case'})},
         {label:'Reviews',count:4,...this.navSty(this.isF('tab','reviews')),onClick:()=>this.hubGo('patterns',{k:'tab',v:'reviews'})},
         {label:'Intelligence',count:24,...this.navSty(this.isF('tab','intelligence')),onClick:()=>this.hubGo('signals',null)}
