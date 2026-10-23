@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+<link rel="stylesheet" href="_ds/polaris-i-o-design-system-43c1d978-cfdf-41e8-9177-c28f7597357b/colors_and_type.css">
+<script src="_ds/polaris-i-o-design-system-43c1d978-cfdf-41e8-9177-c28f7597357b/_ds_bundle.js"></script>
+<title>360 Logistics — Cargo Tracking</title>
+<style>
+  html,body{margin:0;height:100%;background:#fafafa;color:#171717;font-family:'Plus Jakarta Sans',ui-sans-serif,system-ui,sans-serif;font-size:13px;-webkit-font-smoothing:antialiased}
+  .col{background:#fff;border:1px solid #e5e5e5;border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.05);display:flex;flex-direction:column}
+  .head{padding:12px 14px;border-bottom:1px solid #e5e5e5;display:flex;justify-content:space-between;align-items:center}
+  .cards{padding:10px}
+  .card{border:1px solid #e5e5e5;border-radius:10px;padding:10px 12px;margin-bottom:10px;background:#fff;display:flex;flex-direction:column;gap:6px}
+  .badge{font:700 10px sans-serif;letter-spacing:.06em;padding:3px 6px;border-radius:9999px;border:1px solid #bfdbfe;background:#eff6ff;color:#1d4ed8;align-self:flex-start}
+  .eta{font-size:11px;color:#525252}
+  .toolbar{display:flex;gap:8px;align-items:center}
+  .status{font:700 10px sans-serif;letter-spacing:.06em;padding:3px 6px;border-radius:9999px;border:1px solid #e5e5e5;background:#f5f5f5;color:#404040}
+  .status.ok{background:#f0fdf4;border-color:#bbf7d0;color:#15803d}
+  .status.warn{background:#fffbeb;border-color:#fde68a;color:#b45309}
+  .status.err{background:#fef2f2;border-color:#fecaca;color:#dc2626}
+</style>
+</head>
+<body>
+<div style="height:100vh;display:flex;flex-direction:column">
+  <header style="flex:none;height:56px;border-bottom:1px solid #e5e5e5;background:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 16px">
+    <div style="display:flex;align-items:center;gap:10px"><a href="./360 Logistics Operations Demo.dc.html" style="font-weight:600;color:#175cd3">360 Logistics</a><span style="color:#a3a3a3">/</span><span style="font-weight:700">Cargo Tracking</span></div>
+    <div class="toolbar">
+      <input id="cargoFilter" placeholder="Filter shipments (e.g., CARGO-A102)" style="border:1px solid #e5e5e5;border-radius:8px;padding:6px 10px"/>
+      <select id="modeFilter" style="border:1px solid #e5e5e5;border-radius:8px;padding:6px 10px"><option value="">All modes</option><option>Air</option><option>Land</option><option>Sea</option></select>
+      <select id="statusFilter" style="border:1px solid #e5e5e5;border-radius:8px;padding:6px 10px"><option value="">All status</option><option>In-flight</option><option>Loading</option><option>En route</option><option>In transit</option><option>Delayed</option><option>Delivered</option></select>
+      <button id="newReq" style="border:1px solid #d4d4d4;background:#fff;border-radius:8px;padding:6px 10px;font-weight:600;box-shadow:inset 0 -2px 0 rgba(0,0,0,.05)">New request</button>
+          <label style="display:flex;gap:6px;align-items:center;margin-left:8px"><input id="threatToggle" type="checkbox"> <span style="font-size:12px;color:#525252">Threat layer</span></label>
+    </div>
+  </header>
+  <main style="flex:1;min-height:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;padding:14px 16px">
+    <div class="col">
+      <div class="head"><span style="font-weight:600">Air</span><span style="font-size:11px;color:#737373" id="cntAir">2</span></div>
+      <div class="cards" id="colAir">
+        <div class="card" data-id="CARGO-A102" data-mode="Air" data-status="In-flight">
+          <span class="badge">AIR</span>
+          <div style="font-weight:600" class="title">CARGO-A102 · Alpha → Bravo</div>
+          <div class="eta">ETA 14:40Z · <span class="status ok">In-flight</span></div>
+          <div style="display:flex;gap:6px;align-items:center"><span style="font-size:11px;color:#737373">Set status:</span>
+            <select class="setStatus" style="border:1px solid #e5e5e5;border-radius:6px;padding:4px 6px">
+              <option>In-flight</option><option>Delayed</option><option>Delivered</option>
+            </select>
+          </div>
+        </div>
+        <div class="card" data-id="CARGO-A113" data-mode="Air" data-status="Loading">
+          <span class="badge">AIR</span>
+          <div style="font-weight:600" class="title">CARGO-A113 · Bravo → Delta</div>
+          <div class="eta">ETA 16:05Z · <span class="status warn">Loading</span></div>
+          <div style="display:flex;gap:6px;align-items:center"><span style="font-size:11px;color:#737373">Set status:</span>
+            <select class="setStatus" style="border:1px solid #e5e5e5;border-radius:6px;padding:4px 6px">
+              <option>Loading</option><option>In-flight</option><option>Delayed</option><option>Delivered</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="head"><span style="font-weight:600">Land</span><span style="font-size:11px;color:#737373" id="cntLand">2</span></div>
+      <div class="cards" id="colLand">
+        <div class="card" data-id="CARGO-L314" data-mode="Land" data-status="En route">
+          <span class="badge" style="background:#f5f5f5;border-color:#e5e5e5;color:#404040">LAND</span>
+          <div style="font-weight:600" class="title">CARGO-L314 · Alpha → Kestrel</div>
+          <div class="eta">ETA 18:20Z · <span class="status">En route</span></div>
+          <div style="display:flex;gap:6px;align-items:center"><span style="font-size:11px;color:#737373">Set status:</span>
+            <select class="setStatus" style="border:1px solid #e5e5e5;border-radius:6px;padding:4px 6px">
+              <option>En route</option><option>Delayed</option><option>Delivered</option>
+            </select>
+          </div>
+        </div>
+        <div class="card" data-id="CARGO-L322" data-mode="Land" data-status="Delayed">
+          <span class="badge" style="background:#f5f5f5;border-color:#e5e5e5;color:#404040">LAND</span>
+          <div style="font-weight:600" class="title">CARGO-L322 · Delta → Bravo</div>
+          <div class="eta">— · <span class="status warn">Delayed</span> · Weather hold</div>
+          <div style="display:flex;gap:6px;align-items:center"><span style="font-size:11px;color:#737373">Set status:</span>
+            <select class="setStatus" style="border:1px solid #e5e5e5;border-radius:6px;padding:4px 6px">
+              <option>Delayed</option><option>En route</option><option>Delivered</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="head"><span style="font-weight:600">Sea</span><span style="font-size:11px;color:#737373" id="cntSea">1</span></div>
+      <div class="cards" id="colSea">
+        <div class="card" data-id="CARGO-S221" data-mode="Sea" data-status="In transit">
+          <span class="badge" style="background:#e6fdf7;border-color:#99f6e4;color:#047857">SEA</span>
+          <div style="font-weight:600" class="title">CARGO-S221 · Delta → Alpha</div>
+          <div class="eta">ETA 22:10Z · <span class="status ok">In transit</span></div>
+          <div style="display:flex;gap:6px;align-items:center"><span style="font-size:11px;color:#737373">Set status:</span>
+            <select class="setStatus" style="border:1px solid #e5e5e5;border-radius:6px;padding:4px 6px">
+              <option>In transit</option><option>Delayed</option><option>Delivered</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    </main>
+  <div id="threatPanel" style="display:none;border-top:1px solid #e5e5e5;background:#fff;padding:10px 16px;font-size:12px;color:#404040">
+    <span style="font:700 10px sans-serif;letter-spacing:.06em;padding:3px 6px;border-radius:9999px;border:1px solid #fecaca;background:#fef2f2;color:#dc2626;margin-right:8px">HOTSPOT</span>
+    HSP-RED-12 (Alpha Corridor) ·
+    <span style="font:700 10px sans-serif;letter-spacing:.06em;padding:3px 6px;border-radius:9999px;border:1px solid #fde68a;background:#fffbeb;color:#b45309;margin:0 8px">CHECKPOINT</span>
+    CHK-ALP-04 ·
+    <span style="font:700 10px sans-serif;letter-spacing:.06em;padding:3px 6px;border-radius:9999px;border:1px solid #bfdbfe;background:#eff6ff;color:#1d4ed8;margin:0 8px">ADVISORY</span>
+    Comms degradation 14:00–16:00Z
+  </div>
+</div>
+<script>
+(function(){
+  const byId = s=>document.getElementById(s);
+  const filterInput = byId('cargoFilter');
+  const modeFilter = byId('modeFilter');
+  const statusFilter = byId('statusFilter');
+  const cards = Array.from(document.querySelectorAll('.card'));
+  function applyFilters(){
+    const q = (filterInput.value||'').trim().toLowerCase();
+    const m = (modeFilter.value||'').toLowerCase();
+    const st = (statusFilter.value||'').toLowerCase();
+    let cAir=0,cLand=0,cSea=0;
+    cards.forEach(card=>{
+      const id = (card.dataset.id||'').toLowerCase();
+      const mode = (card.dataset.mode||'').toLowerCase();
+      const status = (card.dataset.status||'').toLowerCase();
+      const okQ = !q || id.includes(q);
+      const okM = !m || mode===m;
+      const okS = !st || status===st;
+      const show = okQ && okM && okS;
+      card.style.display = show? 'flex':'none';
+      if(show){ if(mode==='air') cAir++; else if(mode==='land') cLand++; else if(mode==='sea') cSea++; }
+    });
+    byId('cntAir').textContent = cAir; byId('cntLand').textContent = cLand; byId('cntSea').textContent = cSea;
+  }
+  [filterInput, modeFilter, statusFilter].forEach(el=> el&&el.addEventListener('input', applyFilters));
+  document.querySelectorAll('.setStatus').forEach(sel=>{
+    sel.addEventListener('change', (e)=>{
+      const card = e.target.closest('.card');
+      const val = e.target.value; // e.g., 'Delayed'
+      card.dataset.status = val;
+      const eta = card.querySelector('.eta');
+      const chip = eta.querySelector('.status');
+      chip.textContent = val;
+      chip.className = 'status ' + (val==='Delivered' ? 'ok' : val==='Delayed' ? 'warn' : (val==='In-flight'||val==='In transit'||val==='En route') ? '' : '');
+      if(val==='Delivered'){
+        card.style.opacity = 0.85;
+      } else {
+        card.style.opacity = 1;
+      }
+      applyFilters();
+    });
+  });
+  const tp = document.getElementById('threatPanel');
+  const tt = document.getElementById('threatToggle');
+  if(tt){ tt.addEventListener('change', ()=>{ tp.style.display = tt.checked? 'block':'none'; }); }
+  applyFilters();
+})();
+</script>
+</body>
+</html>
