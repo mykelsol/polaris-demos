@@ -82,6 +82,22 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:none;box-s
       </div>
     </header>
     <sc-if value="{{ isHub }}" hint-placeholder-val="{{ true }}">
+      <div style="flex:none;background:#fff;border-bottom:1px solid #e5e5e5;padding:10px 24px;display:flex;flex-direction:column;gap:10px">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px">
+          <sc-for list="{{ metrics }}" as="m" hint-placeholder-count="6">
+            <button onClick="{{ m.onClick }}" style="text-align:left;border:1px solid #e5e5e5;background:#fff;border-radius:10px;padding:10px 12px;cursor:pointer;display:flex;align-items:center;gap:10px">
+              <span style="flex:none;width:8px;height:8px;border-radius:9999px;background:{{ m.dot }};box-shadow:0 0 0 4px {{ m.ring }}"></span>
+              <span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:11px;color:#737373;font-weight:700;letter-spacing:.06em">{{ m.label }}</span><span style="font-size:18px;font-weight:800;letter-spacing:-.02em;color:#171717">{{ m.count }}</span></span>
+            </button>
+          </sc-for>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+          <span style="font:700 10px sans-serif;letter-spacing:.06em;color:#737373">WHO THIS HELPS</span>
+          <sc-for list="{{ seats }}" as="h" hint-placeholder-count="5">
+            <button onClick="{{ h.onClick }}" style="border:1px solid #e5e5e5;background:#fff;border-radius:9999px;padding:6px 10px;font-size:12px;font-weight:600;color:#262626;cursor:pointer">{{ h.label }}</button>
+          </sc-for>
+        </div>
+      </div>
       <dc-import name="Hub Panel" filter-req="{{ hubReq }}" on-open-case="{{ openCase }}" hint-size="100%,100%" style="flex:1;min-height:0;display:flex;flex-direction:column"></dc-import>
     </sc-if>
     <sc-if value="{{ isCase }}" hint-placeholder-val="{{ false }}">
@@ -579,6 +595,23 @@ class Component extends DCLogic {
     const roleMeta={analyst:['DEMO-ANALYST','Analyst · cannot approve','DA'],lead:['USR-SUST-01','Joint Sustainment Watch Lead','JS'],exec:['DEMO-EXECUTIVE','Executive · redacted summary','DE']}[s.role];
     const nextOk=st<4&&this.u(st+1);
     return {
+      metrics:[
+        {label:'Watches',count:5,dot:'#1570ef',ring:'rgba(21,112,239,.12)',onClick:()=>this.hubGo('signals',{k:'tab',v:'watches'})},
+        {label:'Agents',count:12,dot:'#22c55e',ring:'rgba(34,197,94,.12)',onClick:()=>this.hubGo('signals',{k:'tab',v:'agents'})},
+        {label:'Signals',count:37,dot:'#0ea5e9',ring:'rgba(14,165,233,.12)',onClick:()=>this.hubGo('signals',null)},
+        {label:'Patterns',count:4,dot:'#f59e0b',ring:'rgba(245,158,11,.12)',onClick:()=>this.hubGo('patterns',null)},
+        {label:'Insight Ready',count:1,dot:'#16a34a',ring:'rgba(22,163,74,.12)',onClick:()=>this.hubGo('patterns',{k:'maturity',v:'Insight Ready'})},
+        {label:'Source Groups',count:3,dot:'#6b7280',ring:'rgba(107,114,128,.12)',onClick:()=>this.hubGo('signals',{k:'tab',v:'sources'})},
+        {label:'Reports',count:2,dot:'#9333ea',ring:'rgba(147,51,234,.12)',onClick:()=>this.hubGo('signals',{k:'tab',v:'reports'})},
+        {label:'Outputs',count:1,dot:'#ef4444',ring:'rgba(239,68,68,.12)',onClick:()=>this.hubGo('signals',{k:'tab',v:'outputs'})}
+      ],
+      seats:[
+        {label:'Intelligence',onClick:()=>this.hubGo('patterns',null)},
+        {label:'Operations',onClick:()=>this.hubGo('signals',{k:'tab',v:'ops'})},
+        {label:'Logistics',onClick:()=>this.hubGo('signals',{k:'tab',v:'logistics'})},
+        {label:'Comms',onClick:()=>this.hubGo('signals',{k:'tab',v:'comms'})},
+        {label:'Executive',onClick:()=>this.setState({role:'exec'})}
+      ],
       roles:[['analyst','Analyst'],['lead','Sustainment Lead'],['exec','Executive']].map(([k,l])=>({label:l,on:s.role===k,bg:s.role===k?'#ffffff':'transparent',fg:s.role===k?'#171717':'#525252',sh:s.role===k?'0 1px 2px rgba(0,0,0,.08)':'none',onClick:()=>this.setState({role:k})})),
       userTextDisplay:window.innerWidth<1280?"none":"flex",cols:window.innerWidth<1280?"200px minmax(0,1fr) 280px":"232px minmax(0,1fr) 340px",userId:roleMeta[0],userRole:roleMeta[1],userInitials:roleMeta[2],
       resp:s.resp,respBg:s.resp?'#f5f5f5':'#ffffff',toggleResp:()=>this.setState(x=>({resp:!x.resp})),
