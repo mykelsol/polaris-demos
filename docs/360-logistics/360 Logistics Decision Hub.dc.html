@@ -35,13 +35,13 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:none;box-s
         </sc-for>
       </div>
       <div style="display:flex;flex-direction:column;gap:2px;padding:8px 12px 4px">
-        <div style="font-size:11px;font-weight:700;letter-spacing:.08em;color:#737373;padding:6px 6px 4px">DECISION CASES</div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:.08em;color:#737373;padding:6px 6px 4px">DECISIONS</div>
         <sc-for list="{{ sideCases }}" as="c" hint-placeholder-count="4">
           <button onClick="{{ c.onClick }}" style="width:100%;border:0;text-align:left;cursor:pointer;display:flex;align-items:center;gap:10px;padding:8px;border-radius:6px;background:{{ c.bg }};color:{{ c.fg }};font-size:14px;font-weight:700" style-hover="background:{{ c.hover }}"><img src="assets/icons/shield-tick.svg" alt="" style="width:18px;height:18px;opacity:.7"><span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font:600 12px ui-monospace,'JetBrains Mono',Menlo,monospace">{{ c.label }}</span><span style="padding:1px 7px;border-radius:9999px;background:{{ c.cBg }};color:{{ c.cFg }};font-size:11px;font-weight:700">{{ c.count }}</span></button>
         </sc-for>
       </div>
       <div style="display:flex;flex-direction:column;gap:2px;padding:8px 12px 4px">
-        <div style="font-size:11px;font-weight:700;letter-spacing:.08em;color:#737373;padding:6px 6px 4px">ENTITIES</div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:.08em;color:#737373;padding:6px 6px 4px">INTELLIGENCE</div>
         <sc-for list="{{ sideEnts }}" as="e" hint-placeholder-count="4">
           <button onClick="{{ e.onClick }}" style="width:100%;border:0;text-align:left;cursor:pointer;display:flex;align-items:center;gap:10px;padding:8px;border-radius:6px;background:{{ e.bg }};color:{{ e.fg }};font-size:14px;font-weight:700" style-hover="background:{{ e.hover }}"><img src="assets/icons/target-04.svg" alt="" style="width:18px;height:18px;opacity:.7"><span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font:600 12px ui-monospace,'JetBrains Mono',Menlo,monospace">{{ e.label }}</span><span style="padding:1px 7px;border-radius:9999px;background:{{ e.cBg }};color:{{ e.cFg }};font-size:11px;font-weight:700">{{ e.count }}</span></button>
         </sc-for>
@@ -628,16 +628,20 @@ class Component extends DCLogic {
       isHub:s.page==='hub',isCase:s.page==='case',hubReq:s.hubReq,
       goHub:()=>this.hubGo('patterns',null),openCase:()=>this.setState({page:'case'}),toEntities:()=>this.hubGo('entities',null),
       sideWs:[
-          {label:'Command Hub',count:12,...this.navSty(s.page==='hub'&&!s.hubReq.filter),onClick:()=>this.hubGo('patterns',null)},
-          {label:'Theater Map',count:1,...this.navSty(this.isF('tab','map')),onClick:()=>this.hubGo('signals',{k:'tab',v:'map'})},
-          {label:'Adversary Posture',count:1,...this.navSty(this.isF('tab','posture')),onClick:()=>this.hubGo('patterns',{k:'tab',v:'posture'})},
-          {label:'Leading Indicators',count:3,...this.navSty(this.isF('tab','indicators')),onClick:()=>this.hubGo('patterns',{k:'tab',v:'indicators'})}
-        ],
+        {label:'Command Hub',count:12,...this.navSty(s.page==='hub'&&!s.hubReq.filter),onClick:()=>this.hubGo('patterns',null)},
+        {label:'Theater Map',count:1,...this.navSty(this.isF('tab','map')),onClick:()=>this.hubGo('signals',{k:'tab',v:'map'})},
+        {label:'Adversary Posture',count:1,...this.navSty(this.isF('tab','posture')),onClick:()=>this.hubGo('patterns',{k:'tab',v:'posture'})},
+        {label:'Leading Indicators',count:3,...this.navSty(this.isF('tab','indicators')),onClick:()=>this.hubGo('patterns',{k:'tab',v:'indicators'})},
         {label:'Decisions',count:1,...this.navSty(s.page==='case'),onClick:()=>this.setState({page:'case'})},
-        {label:'Reviews',count:4,...this.navSty(this.isF('tab','reviews')),onClick:()=>this.hubGo('patterns',{k:'tab',v:'reviews'})},
+        {label:'Decision Reviews',count:4,...this.navSty(this.isF('tab','reviews')),onClick:()=>this.hubGo('patterns',{k:'tab',v:'reviews'})},
         {label:'Intelligence',count:24,...this.navSty(this.isF('tab','intelligence')),onClick:()=>this.hubGo('signals',null)}
       ],
-      sideCases:[{label:'DC-LOG-102',count:1,...this.navSty(s.page==='case'),onClick:()=>this.setState({page:'case'})}],
+      sideCases:[
+        {label:'Decision Cases',count:1,...this.navSty(s.page==='case'),onClick:()=>this.setState({page:'case'})},
+        {label:'Decision Reviews',count:4,...this.navSty(this.isF('tab','reviews')),onClick:()=>this.hubGo('patterns',{k:'tab',v:'reviews'})},
+        {label:'Corroboration Lab',count:2,...this.navSty(this.isF('tab','corroboration')),onClick:()=>this.hubGo('patterns',{k:'tab',v:'corroboration'})},
+        {label:'Incident Timeline',count:3,...this.navSty(this.isF('tab','timeline')),onClick:()=>this.hubGo('signals',{k:'tab',v:'timeline'})}
+      ],
       sideEnts:[['MOV-RSP-417',2],['DEV-TRK-417',1],['LOC-TP-ATLAS',2],['LOC-DEST-KESTREL',0],['ROUTE-PRIMARY-7',2],['ROUTE-ALT-3',1]].map(([id,n])=>({label:id,count:n,...this.navSty(this.isF('entity',id)),onClick:()=>this.hubGo('signals',{k:'entity',v:id})})),
       sideAgents:[['movement','Movement Monitor',5],['route','Route Monitor',3],['dependency','Dependency Monitor',3],['comms','Communications Monitor',1]].map(([id,l,n])=>({label:l,count:n,...this.navSty(this.isF('agent',id)),onClick:()=>this.hubGo('signals',{k:'agent',v:id})})),clockLabel:clock,
       stages,note:{time:note[0],action:note[1],take:note[2]},
