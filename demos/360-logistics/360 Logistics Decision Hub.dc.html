@@ -29,19 +29,19 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:none;box-s
     </div>
     <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column">
       <div style="display:flex;flex-direction:column;gap:2px;padding:8px 12px 4px">
-        <div style="font-size:11px;font-weight:700;letter-spacing:.08em;color:#737373;padding:6px 6px 4px">WORKSPACES</div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:.08em;color:#737373;padding:6px 6px 4px">BATTLESPACE</div>
         <sc-for list="{{ sideWs }}" as="w" hint-placeholder-count="4">
           <button onClick="{{ w.onClick }}" style="width:100%;border:0;text-align:left;cursor:pointer;display:flex;align-items:center;gap:10px;padding:8px;border-radius:6px;background:{{ w.bg }};color:{{ w.fg }};font-size:14px;font-weight:700" style-hover="background:{{ w.hover }}"><img src="assets/icons/bar-chart-square-02.svg" alt="" style="width:20px;height:20px"><span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ w.label }}</span><span style="padding:1px 7px;border-radius:9999px;background:{{ w.cBg }};color:{{ w.cFg }};font-size:11px;font-weight:700">{{ w.count }}</span></button>
         </sc-for>
       </div>
       <div style="display:flex;flex-direction:column;gap:2px;padding:8px 12px 4px">
-        <div style="font-size:11px;font-weight:700;letter-spacing:.08em;color:#737373;padding:6px 6px 4px">DECISION CASES</div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:.08em;color:#737373;padding:6px 6px 4px">DECISIONS</div>
         <sc-for list="{{ sideCases }}" as="c" hint-placeholder-count="4">
           <button onClick="{{ c.onClick }}" style="width:100%;border:0;text-align:left;cursor:pointer;display:flex;align-items:center;gap:10px;padding:8px;border-radius:6px;background:{{ c.bg }};color:{{ c.fg }};font-size:14px;font-weight:700" style-hover="background:{{ c.hover }}"><img src="assets/icons/shield-tick.svg" alt="" style="width:18px;height:18px;opacity:.7"><span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font:600 12px ui-monospace,'JetBrains Mono',Menlo,monospace">{{ c.label }}</span><span style="padding:1px 7px;border-radius:9999px;background:{{ c.cBg }};color:{{ c.cFg }};font-size:11px;font-weight:700">{{ c.count }}</span></button>
         </sc-for>
       </div>
       <div style="display:flex;flex-direction:column;gap:2px;padding:8px 12px 4px">
-        <div style="font-size:11px;font-weight:700;letter-spacing:.08em;color:#737373;padding:6px 6px 4px">ENTITIES</div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:.08em;color:#737373;padding:6px 6px 4px">INTELLIGENCE</div>
         <sc-for list="{{ sideEnts }}" as="e" hint-placeholder-count="4">
           <button onClick="{{ e.onClick }}" style="width:100%;border:0;text-align:left;cursor:pointer;display:flex;align-items:center;gap:10px;padding:8px;border-radius:6px;background:{{ e.bg }};color:{{ e.fg }};font-size:14px;font-weight:700" style-hover="background:{{ e.hover }}"><img src="assets/icons/target-04.svg" alt="" style="width:18px;height:18px;opacity:.7"><span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font:600 12px ui-monospace,'JetBrains Mono',Menlo,monospace">{{ e.label }}</span><span style="padding:1px 7px;border-radius:9999px;background:{{ e.cBg }};color:{{ e.cFg }};font-size:11px;font-weight:700">{{ e.count }}</span></button>
         </sc-for>
@@ -612,6 +612,8 @@ class Component extends DCLogic {
         {label:'Comms',onClick:()=>this.hubGo('signals',{k:'tab',v:'comms'})},
         {label:'Executive',onClick:()=>this.setState({role:'exec'})}
       ],
+      runAgents:()=>this.hubGo('signals',{k:'tab',v:'agents'}),
+      startAssist:()=>this.setState({assist:0}),
       roles:[['analyst','Analyst'],['lead','Sustainment Lead'],['exec','Executive']].map(([k,l])=>({label:l,on:s.role===k,bg:s.role===k?'#ffffff':'transparent',fg:s.role===k?'#171717':'#525252',sh:s.role===k?'0 1px 2px rgba(0,0,0,.08)':'none',onClick:()=>this.setState({role:k})})),
       userTextDisplay:window.innerWidth<1280?"none":"flex",cols:window.innerWidth<1280?"200px minmax(0,1fr) 280px":"232px minmax(0,1fr) 340px",userId:roleMeta[0],userRole:roleMeta[1],userInitials:roleMeta[2],
       resp:s.resp,respBg:s.resp?'#f5f5f5':'#ffffff',toggleResp:()=>this.setState(x=>({resp:!x.resp})),
@@ -621,7 +623,12 @@ class Component extends DCLogic {
       isHub:s.page==='hub',isCase:s.page==='case',hubReq:s.hubReq,
       goHub:()=>this.hubGo('patterns',null),openCase:()=>this.setState({page:'case'}),toEntities:()=>this.hubGo('entities',null),
       sideWs:[
-        {label:'Command Hub',count:12,...this.navSty(s.page==='hub'&&!s.hubReq.filter),onClick:()=>this.hubGo('patterns',null)},
+        sideWs:[
+          {label:'Command Hub',count:12,...this.navSty(s.page==='hub'&&!s.hubReq.filter),onClick:()=>this.hubGo('patterns',null)},
+          {label:'Theater Map',count:1,...this.navSty(this.isF('tab','map')),onClick:()=>this.hubGo('signals',{k:'tab',v:'map'})},
+          {label:'Adversary Posture',count:1,...this.navSty(this.isF('tab','posture')),onClick:()=>this.hubGo('patterns',{k:'tab',v:'posture'})},
+          {label:'Leading Indicators',count:3,...this.navSty(this.isF('tab','indicators')),onClick:()=>this.hubGo('patterns',{k:'tab',v:'indicators'})}
+        ],
         {label:'Decisions',count:1,...this.navSty(s.page==='case'),onClick:()=>this.setState({page:'case'})},
         {label:'Reviews',count:4,...this.navSty(this.isF('tab','reviews')),onClick:()=>this.hubGo('patterns',{k:'tab',v:'reviews'})},
         {label:'Intelligence',count:24,...this.navSty(this.isF('tab','intelligence')),onClick:()=>this.hubGo('signals',null)}
