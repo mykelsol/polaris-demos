@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Command Post Intelligence Hub — Polaris I/O</title>
+<link rel="stylesheet" href="colors_and_type.css" />
+<style>
+  html, body, #root { height: 100%; margin: 0; }
+  body {
+    font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    color: #171717; background: #fafafa;
+    -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  button { font-family: inherit; }
+  button:focus-visible { outline: none; box-shadow: 0 0 0 4px rgba(21,112,239,0.24); }
+  input:focus, textarea:focus { outline: none; }
+  ::-webkit-scrollbar { width: 11px; height: 11px; }
+  ::-webkit-scrollbar-thumb { background: #d4d4d4; border-radius: 6px; border: 3px solid #fafafa; }
+  ::-webkit-scrollbar-thumb:hover { background: #a3a3a3; }
+  ::-webkit-scrollbar-track { background: transparent; }
+
+  @keyframes ap-fade  { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes ap-rise  { from { transform: translateY(6px); } to { transform: none; } }
+  @keyframes ap-pulse { 0% { transform: scale(0.85); opacity: 0.4; } 70% { transform: scale(1.5); opacity: 0; } 100% { opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .001ms !important; } }
+  @keyframes ap-slide { from { transform: translateX(34px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+  @keyframes ap-toast { from { transform: translate(-50%, 14px); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
+</style>
+</head>
+<body>
+<div id="root" data-screen-label="Command Post Intelligence Hub"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script src="./apollo-data.js"></script>
+<script type="text/babel" src="./apollo-ui.jsx"></script>
+<script type="text/babel" src="./apollo-viz.jsx"></script>
+<script type="text/babel" src="./apollo-hub.jsx"></script>
+<script type="text/babel" src="./apollo-tables.jsx"></script>
+<script type="text/babel" src="./apollo-assist.jsx"></script>
+<script type="text/babel" src="./apollo-entity.jsx"></script>
+<script type="text/babel" src="./apollo-agent.jsx"></script>
+<script type="text/babel" src="./apollo-insights.jsx"></script>
+<script type="text/babel" src="./apollo-operations.jsx"></script>
+<script type="text/babel" src="./apollo-distribution.jsx"></script>
+<script type="text/babel" src="./apollo-persistence.jsx"></script>
+<script type="text/babel" src="./apollo-strategy.jsx"></script>
+<script type="text/babel" src="./apollo-drawers.jsx"></script>
+<script type="text/babel" src="./apollo-modal.jsx"></script>
+<script type="text/babel" src="./apollo-chrome.jsx"></script>
+<script type="text/babel" src="./tweaks-panel.jsx"></script>
+<script type="text/babel" src="./apollo-app.jsx"></script>
+</body>
+</html>
