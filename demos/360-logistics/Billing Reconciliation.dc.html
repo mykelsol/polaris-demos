@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="_ds/polaris-i-o-design-system-43c1d978-cfdf-41e8-9177-c28f7597357b/colors_and_type.css">
+<script src="_ds/polaris-i-o-design-system-43c1d978-cfdf-41e8-9177-c28f7597357b/_ds_bundle.js"></script>
+<title>360 Logistics — Billing & Reconciliation</title>
+<style>
+  html,body{margin:0;height:100%;background:#fafafa;color:#171717;font-family:'Plus Jakarta Sans',ui-sans-serif,system-ui,sans-serif;font-size:13px;-webkit-font-smoothing:antialiased}
+  .panel{background:#fff;border:1px solid #e5e5e5;border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.05);display:flex;flex-direction:column}
+  .head{padding:12px 14px;border-bottom:1px solid #e5e5e5;display:flex;justify-content:space-between;align-items:center}
+  .grid{padding:10px;display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:12px}
+  table{width:100%;border-collapse:separate;border-spacing:0 8px}
+  th,td{font-size:12px}
+  .tag{font:700 10px sans-serif;letter-spacing:.06em;padding:3px 6px;border-radius:9999px;border:1px solid #fde68a;background:#fffbeb;color:#b45309}
+  .btn{border:1px solid #d4d4d4;background:#fff;border-radius:8px;padding:6px 10px;font-weight:600;cursor:pointer}
+</style>
+</head>
+<body>
+<header style="height:56px;border-bottom:1px solid #e5e5e5;background:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 16px">
+  <div style="display:flex;align-items:center;gap:10px"><a href="./index.html" style="font-weight:600;color:#175cd3">360 Logistics</a><span style="color:#a3a3a3">/</span><span style="font-weight:700">Billing & Reconciliation</span></div>
+  <div><a href="./360 Logistics Decision Hub.dc.html" class="btn">Open Decision Hub</a></div>
+</header>
+<main class="grid">
+  <section class="panel">
+    <div class="head"><span style="font-weight:600">Invoice discrepancies</span><span style="font-size:11px;color:#737373">3 open</span></div>
+    <div style="padding:10px">
+      <table>
+        <thead><tr><th style="text-align:left">Invoice</th><th>Load</th><th>Delta</th><th>Reason</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr style="background:#fff;border:1px solid #e5e5e5;border-radius:8px">
+            <td>210-000187</td><td>LD-7432</td><td>-$145</td><td><span class="tag">Detention</span></td><td><button class="btn">Approve adj.</button></td>
+          </tr>
+          <tr style="background:#fff;border:1px solid #e5e5e5;border-radius:8px">
+            <td>210-000203</td><td>LD-7519</td><td>-$90</td><td><span class="tag">Accessorial</span></td><td><button class="btn">Reject</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+  <aside class="panel">
+    <div class="head"><span style="font-weight:600">Decision Case</span><span style="font-size:11px;color:#737373">DCLOGBIL401</span></div>
+    <div style="padding:10px;display:flex;flex-direction:column;gap:8px">
+      <div><span class="tag" style="border-color:#bfdbfe;background:#eff6ff;color:#1d4ed8">GATES</span> POD received 30; Rate card match; Accessorial doc</div>
+      <div><span class="tag" style="border-color:#bfdbfe;background:#eff6ff;color:#1d4ed8">OPTIONS</span> Approve adj. 30; Reject w/ reason; Request docs</div>
+      <div><span class="tag" style="border-color:#bbf7d0;background:#f0fdf4;color:#15803d">KPIs</span> Exception rate, time30to30close, $ over/under vs plan</div>
+      <a href="./360 Logistics Decision Hub.dc.html" class="btn">Open in Decision Hub</a>
+    </div>
+  </aside>
+</main>
+</body>
+</html>
