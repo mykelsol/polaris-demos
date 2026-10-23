@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+<link rel="stylesheet" href="_ds/polaris-i-o-design-system-43c1d978-cfdf-41e8-9177-c28f7597357b/colors_and_type.css">
+<script src="_ds/polaris-i-o-design-system-43c1d978-cfdf-41e8-9177-c28f7597357b/_ds_bundle.js"></script>
+<title>360 Logistics — Aviation Scheduling</title>
+<style>
+  html,body{margin:0;height:100%;background:#fafafa;color:#171717;font-family:'Plus Jakarta Sans',ui-sans-serif,system-ui,sans-serif;font-size:13px;-webkit-font-smoothing:antialiased}
+  .panel{background:#fff;border:1px solid #e5e5e5;border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.05);display:flex;flex-direction:column}
+  .head{padding:12px 14px;border-bottom:1px solid #e5e5e5;display:flex;justify-content:space-between;align-items:center}
+  .fleet{padding:10px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+  .air{border:1px solid #e5e5e5;border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:4px}
+  .cal{padding:10px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .slot{border:1px solid #e5e5e5;border-radius:10px;padding:10px 12px;background:#fff;display:flex;flex-direction:column;gap:4px}
+  .tag{font:700 10px sans-serif;letter-spacing:.06em;padding:3px 6px;border-radius:9999px;border:1px solid #bbf7d0;background:#f0fdf4;color:#15803d;align-self:flex-start}
+  .toolbar{display:flex;gap:8px;align-items:center}
+  .tabs{display:flex;gap:6px}
+  .tabs button{border:1px solid #e5e5e5;background:#fff;border-radius:8px;padding:6px 10px;font-weight:600;cursor:pointer}
+  .tabs button[aria-pressed="true"]{background:#d1e9ff;border-color:#84caff;color:#175cd3}
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;align-items:center;justify-content:center}
+  .dialog{width:520px;max-width:92vw;background:#fff;border:1px solid #e5e5e5;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.2);padding:16px;display:flex;flex-direction:column;gap:10px}
+  .row{display:grid;grid-template-columns:140px 1fr;gap:10px;align-items:center}
+  input,select{border:1px solid #e5e5e5;border-radius:8px;padding:6px 10px}
+  .actions{display:flex;justify-content:flex-end;gap:8px;margin-top:6px}
+</style>
+</head>
+<body>
+<div style="height:100vh;display:flex;flex-direction:column">
+  <header style="flex:none;height:56px;border-bottom:1px solid #e5e5e5;background:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 16px">
+    <div style="display:flex;align-items:center;gap:10px"><a href="./360 Logistics Operations Demo.dc.html" style="font-weight:600;color:#175cd3">360 Logistics</a><span style="color:#a3a3a3">/</span><span style="font-weight:700">Aviation Scheduling</span></div>
+    <div class="toolbar">
+      <input id="fltFind" placeholder="Find flight or craft"/>
+      <div class="tabs" role="group" aria-label="Range">
+        <button id="tab0" aria-pressed="true">Today</button>
+        <button id="tab1" aria-pressed="false">+1 Day</button>
+        <button id="tab2" aria-pressed="false">+2 Days</button>
+      </div>
+      <button id="newFlight" style="border:1px solid #d4d4d4;background:#fff;border-radius:8px;padding:6px 10px;font-weight:600;box-shadow:inset 0 -2px 0 rgba(0,0,0,.05)">New flight</button>
+      <label style="display:flex;gap:6px;align-items:center;margin-left:8px"><input id="avThreatToggle" type="checkbox"> <span style="font-size:12px;color:#525252">Threat layer</span></label>
+    </div>
+  </header>
+  <main style="flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:12px;padding:14px 16px">
+    <section class="panel">
+      <div class="head"><span style="font-weight:600" id="schTitle">Schedule (Today)</span><span style="font-size:11px;color:#737373" id="util">Fleet utilization 72%</span></div>
+      <div class="cal" id="cal"></div>
+    </section>
+    <aside class="panel">
+      <div class="head"><span style="font-weight:600">Fleet</span><span style="font-size:11px;color:#737373" id="fleetAvail">Available 4 / 6</span></div>
+      <div class="fleet" id="fleet">
+        <div class="air"><div style="font-weight:700">C‑212</div><div style="font-size:12px;color:#525252">Fixed‑wing · Capacity 2.3t</div></div>
+        <div class="air"><div style="font-weight:700">Helo‑3</div><div style="font-size:12px;color:#525252">Rotary · Capacity 0.6t</div></div>
+        <div class="air"><div style="font-weight:700">Helo‑5</div><div style="font-size:12px;color:#525252">Rotary · Maintenance 18:00Z</div></div>
+        <div class="air"><div style="font-weight:700">C‑212b</div><div style="font-size:12px;color:#525252">Fixed‑wing · Standby</div></div>
+      </div>
+      <div style="padding:10px 12px;border-top:1px solid #e5e5e5"><div style="font:700 11px sans-serif;letter-spacing:.08em;color:#737373">NOTES</div><div style="font-size:12px;color:#525252">Rotary and fixed‑wing supported; calendar can flip across three days.</div></div>
+    </aside>
+  </main>
+  <div id="avThreatPanel" style="display:none;border-top:1px solid #e5e5e5;background:#fff;padding:10px 16px;font-size:12px;color:#404040">
+    <span style="font:700 10px sans-serif;letter-spacing:.06em;padding:3px 6px;border-radius:9999px;border:1px solid #bfdbfe;background:#eff6ff;color:#1d4ed8;margin-right:8px">NOTAM/TFR</span>
+    TFR-KST-221 (14:00Z–18:00Z)  
+    <span style="font:700 10px sans-serif;letter-spacing:.06em;padding:3px 6px;border-radius:9999px;border:1px solid #fecaca;background:#fef2f2;color:#dc2626;margin:0 8px">HOTSPOT</span>
+    BRV corridor advisory 
+  </div>
+</div>
+<div class="modal" id="modal">
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dlgTitle">
+    <div style="display:flex;justify-content:space-between;align-items:center"><div id="dlgTitle" style="font-weight:700">New flight</div><button id="closeDlg" title="Close" style="border:0;background:transparent;cursor:pointer;font-weight:700">×</button></div>
+    <div class="row"><label>Craft</label><select id="fCraft"><option>C‑212</option><option>Helo‑3</option><option>Helo‑5</option><option>C‑212b</option></select></div>
+    <div class="row"><label>Type</label><select id="fType"><option>Fixed‑wing</option><option>Rotary</option></select></div>
+    <div class="row"><label>Route</label><input id="fRoute" placeholder="KST → BRV"/></div>
+    <div class="row"><label>Times (Z)</label><div style="display:flex;gap:6px"><input id="fStart" placeholder="14:10Z" style="width:120px"/><input id="fEnd" placeholder="15:05Z" style="width:120px"/></div></div>
+    <div class="row"><label>Pax/Cargo</label><div style="display:flex;gap:6px"><input id="fPax" placeholder="Pax 12" style="width:120px"/><input id="fCargo" placeholder="Cargo 1.2t" style="width:120px"/></div></div>
+    <div class="actions"><button id="saveFlight" style="border:1px solid #d4d4d4;background:#fff;border-radius:8px;padding:6px 12px;font-weight:600">Add</button></div>
+  </div>
+</div>
+<script>
+(function(){
+  const cal = document.getElementById('cal');
+  const util = document.getElementById('util');
+  const schTitle = document.getElementById('schTitle');
+  const tabs = [document.getElementById('tab0'), document.getElementById('tab1'), document.getElementById('tab2')];
+  const modal = document.getElementById('modal');
+  const openBtn = document.getElementById('newFlight');
+  const closeBtn = document.getElementById('closeDlg');
+  const fields = id=>document.getElementById(id);
+  const dayData = [
+    [
+      {type:'Fixed‑wing', craft:'C‑212', route:'KST → BRV', time:'14:10Z–15:05Z', meta:'Pax 12 · Cargo 1.2t'},
+      {type:'Rotary', craft:'Helo‑3', route:'BRV → DLT', time:'15:20Z–16:00Z', meta:'Pax 6 · Shuttle'},
+      {type:'Fixed‑wing', craft:'C‑212', route:'DLT → KST', time:'16:45Z–17:30Z', meta:'Cargo backhaul'}
+    ],
+    [
+      {type:'Fixed‑wing', craft:'C‑212b', route:'KST → DLT', time:'12:10Z–13:00Z', meta:'Cargo 0.8t'},
+      {type:'Rotary', craft:'Helo‑5', route:'DLT → BRV', time:'14:00Z–14:40Z', meta:'Pax 4'}
+    ],
+    [
+      {type:'Rotary', craft:'Helo‑3', route:'KST → BRV', time:'09:10Z–09:45Z', meta:'Shuttle'},
+      {type:'Fixed‑wing', craft:'C‑212', route:'BRV → KST', time:'11:00Z–11:45Z', meta:'Pax 10'}
+    ]
+  ];
+  let cur=0;
+  function tagFor(t){
+    const fixed = t.includes('Fixed');
+    const cls = fixed? '' : ' style="background:#eff6ff;border-color:#bfdbfe;color:#1d4ed8"';
+    return `<span class="tag"${cls}>${fixed?'FIXED‑WING':'ROTARY'}</span>`;
+  }
+  function render(){
+    schTitle.textContent = ['Schedule (Today)','Schedule (+1 Day)','Schedule (+2 Days)'][cur];
+    cal.innerHTML = dayData[cur].map(s=>`<div class="slot">${tagFor(s.type)}<div style="font-weight:600">${s.craft} · ${s.route}</div><div style="font-size:12px;color:#525252">${s.time} · ${s.meta}</div></div>`).join('');
+    tabs.forEach((b,i)=>b.setAttribute('aria-pressed', i===cur?'true':'false'));
+    util.textContent = `Fleet utilization ${Math.min(95, 60 + dayData[cur].length*6)}%`;
+  }
+  tabs.forEach((b,i)=> b.addEventListener('click', ()=>{cur=i; render();}));
+  render();
+  // Threat toggle
+  const avt = document.getElementById('avThreatToggle');
+  const avp = document.getElementById('avThreatPanel');
+  if(avt){ avt.addEventListener('change', ()=>{ avp.style.display = avt.checked? 'block':'none'; }); }
+  // Modal
+  function open(){ modal.style.display='flex'; }
+  function close(){ modal.style.display='none'; }
+  openBtn.addEventListener('click', open); closeBtn.addEventListener('click', close);
+  modal.addEventListener('click', (e)=>{ if(e.target===modal) close(); });
+  document.getElementById('saveFlight').addEventListener('click', ()=>{
+    const rec = {
+      type: fields('fType').value,
+      craft: fields('fCraft').value,
+      route: fields('fRoute').value||'KST → BRV',
+      time: `${fields('fStart').value||'12:00Z'}–${fields('fEnd').value||'12:45Z'}`,
+      meta: `${fields('fPax').value||'Pax 0'}${fields('fCargo').value? ' · '+fields('fCargo').value: ''}`
+    };
+    dayData[cur].push(rec);
+    render();
+    close();
+  });
+})();
+</script>
+</body>
+</html>
