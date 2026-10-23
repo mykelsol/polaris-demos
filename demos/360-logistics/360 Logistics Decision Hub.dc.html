@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/polaris-i-o-design-system-43c1d978-cfdf-41e8-9177-c28f7597357b/colors_and_type.css">
+<script src="_ds/polaris-i-o-design-system-43c1d978-cfdf-41e8-9177-c28f7597357b/_ds_bundle.js"></script>
+<style>
+html,body{margin:0;height:100%;background:#fafafa;color:#171717;font-family:'Plus Jakarta Sans',ui-sans-serif,system-ui,sans-serif;font-size:13px;-webkit-font-smoothing:antialiased}
+a{color:#1570ef;text-decoration:none}a:hover{color:#175cd3;text-decoration:underline}
+button{font-family:inherit}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:none;box-shadow:0 0 0 4px rgba(21,112,239,.24)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</helmet>
+<div style="height:100vh;display:flex;flex-direction:column;min-width:1100px">
+  <div role="note" style="flex:none;background:#f5f3ff;border-bottom:1px solid #ddd6fe;color:#6d28d9;font:700 11px/1 'Plus Jakarta Sans',sans-serif;letter-spacing:.08em;text-align:center;padding:8px 16px">INTERNAL CONCEPT DEMO · ALL OPERATIONAL DATA SYNTHETIC · NOT CUSTOMER-VALIDATED · NO OPERATIONAL ACTION</div>
+
+  <div style="flex:1;min-height:0;display:flex">
+  <aside style="flex:none;width:268px;border-right:1px solid #e5e5e5;background:#fff;display:flex;flex-direction:column;min-height:0">
+    <div style="padding:18px 20px 16px;display:flex;align-items:center;justify-content:space-between">
+      <div aria-label="Polaris I/O" style="display:flex;align-items:baseline;gap:4px;font-weight:800;font-size:17px;letter-spacing:.04em"><span style="color:#001030">POLARIS</span><span style="color:#2868c0">I/O</span></div>
+      <button title="Quick switch" style="width:32px;height:32px;border:0;border-radius:6px;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="background:#f5f5f5"><img src="assets/icons/search-lg.svg" alt="" style="width:18px;height:18px;opacity:.7"></button>
+    </div>
+    <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column">
+      <div style="display:flex;flex-direction:column;gap:2px;padding:8px 12px 4px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.08em;color:#737373;padding:6px 6px 4px">WORKSPACES</div>
+        <sc-for list="{{ sideWs }}" as="w" hint-placeholder-count="4">
+          <button onClick="{{ w.onClick }}" style="width:100%;border:0;text-align:left;cursor:pointer;display:flex;align-items:center;gap:10px;padding:8px;border-radius:6px;background:{{ w.bg }};color:{{ w.fg }};font-size:14px;font-weight:700" style-hover="background:{{ w.hover }}"><img src="assets/icons/bar-chart-square-02.svg" alt="" style="width:20px;height:20px"><span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ w.label }}</span><span style="padding:1px 7px;border-radius:9999px;background:{{ w.cBg }};color:{{ w.cFg }};font-size:11px;font-weight:700">{{ w.count }}</span></button>
+        </sc-for>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:2px;padding:8px 12px 4px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.08em;color:#737373;padding:6px 6px 4px">DECISION CASES</div>
+        <sc-for list="{{ sideCases }}" as="c" hint-placeholder-count="4">
+          <button onClick="{{ c.onClick }}" style="width:100%;border:0;text-align:left;cursor:pointer;display:flex;align-items:center;gap:10px;padding:8px;border-radius:6px;background:{{ c.bg }};color:{{ c.fg }};font-size:14px;font-weight:700" style-hover="background:{{ c.hover }}"><img src="assets/icons/shield-tick.svg" alt="" style="width:18px;height:18px;opacity:.7"><span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font:600 12px ui-monospace,'JetBrains Mono',Menlo,monospace">{{ c.label }}</span><span style="padding:1px 7px;border-radius:9999px;background:{{ c.cBg }};color:{{ c.cFg }};font-size:11px;font-weight:700">{{ c.count }}</span></button>
+        </sc-for>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:2px;padding:8px 12px 4px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.08em;color:#737373;padding:6px 6px 4px">ENTITIES</div>
+        <sc-for list="{{ sideEnts }}" as="e" hint-placeholder-count="4">
+          <button onClick="{{ e.onClick }}" style="width:100%;border:0;text-align:left;cursor:pointer;display:flex;align-items:center;gap:10px;padding:8px;border-radius:6px;background:{{ e.bg }};color:{{ e.fg }};font-size:14px;font-weight:700" style-hover="background:{{ e.hover }}"><img src="assets/icons/target-04.svg" alt="" style="width:18px;height:18px;opacity:.7"><span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font:600 12px ui-monospace,'JetBrains Mono',Menlo,monospace">{{ e.label }}</span><span style="padding:1px 7px;border-radius:9999px;background:{{ e.cBg }};color:{{ e.cFg }};font-size:11px;font-weight:700">{{ e.count }}</span></button>
+        </sc-for>
+        <button onClick="{{ toEntities }}" style="border:0;background:transparent;text-align:left;padding:6px 8px;font-size:13px;color:#1570ef;font-weight:600;cursor:pointer">See all entities</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:2px;padding:8px 12px 12px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.08em;color:#737373;padding:6px 6px 4px">AGENTS</div>
+        <sc-for list="{{ sideAgents }}" as="a" hint-placeholder-count="4">
+          <button onClick="{{ a.onClick }}" style="width:100%;border:0;text-align:left;cursor:pointer;display:flex;align-items:center;gap:10px;padding:8px;border-radius:6px;background:{{ a.bg }};color:{{ a.fg }};font-size:14px;font-weight:700" style-hover="background:{{ a.hover }}"><span style="flex:none;width:8px;height:8px;border-radius:9999px;background:#1570ef;box-shadow:0 0 0 4px rgba(21,112,239,.15)"></span><span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ a.label }}</span><span style="padding:1px 7px;border-radius:9999px;background:{{ a.cBg }};color:{{ a.cFg }};font-size:11px;font-weight:700">{{ a.count }}</span></button>
+        </sc-for>
+      </div>
+    </div>
+    <div style="padding:8px 12px 16px;border-top:1px solid #e5e5e5">
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 8px">
+        <span style="flex:none;width:32px;height:32px;border-radius:9999px;background:#1570ef;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px">{{ userInitials }}</span>
+        <div style="flex:1;min-width:0"><div style="font:600 12px ui-monospace,Menlo,monospace;color:#171717">{{ userId }}</div><div style="font-size:11px;color:#737373;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ userRole }}</div></div>
+        <img src="assets/icons/log-out-01.svg" alt="Sign out" style="width:18px;height:18px;opacity:.6">
+      </div>
+    </div>
+  </aside>
+  <div style="flex:1;min-width:0;display:flex;flex-direction:column;min-height:0">
+    <header style="flex:none;height:64px;border-bottom:1px solid #e5e5e5;background:#fff;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:0 32px">
+      <nav style="display:flex;align-items:center;gap:8px;font-size:14px;min-width:0;white-space:nowrap;overflow:hidden">
+        <button onClick="{{ goHub }}" title="Decision Hub" style="display:flex;border:0;background:transparent;padding:0;cursor:pointer"><img src="assets/icons/home-line.svg" alt="Home" style="width:18px;height:18px;opacity:.55"></button>
+        <img src="assets/icons/chevron-right.svg" alt="" style="width:14px;height:14px;opacity:.4">
+        <button onClick="{{ goHub }}" style="border:0;background:transparent;padding:0;cursor:pointer;font-size:14px;color:#525252;font-weight:500">360 Logistics</button>
+        <img src="assets/icons/chevron-right.svg" alt="" style="width:14px;height:14px;opacity:.4">
+        <sc-if value="{{ isHub }}" hint-placeholder-val="{{ true }}"><span style="color:#171717;font-weight:600">Decision Hub</span></sc-if>
+        <sc-if value="{{ isCase }}" hint-placeholder-val="{{ false }}"><span style="color:#525252;font-weight:500">DC-LOG-102</span><img src="assets/icons/chevron-right.svg" alt="" style="width:14px;height:14px;opacity:.4"><span style="color:#171717;font-weight:600">{{ stageLabel }}</span></sc-if>
+      </nav>
+      <div style="display:flex;gap:10px;align-items:center;flex:none">
+        <sc-if value="{{ isCase }}" hint-placeholder-val="{{ false }}"><div role="radiogroup" aria-label="View as" style="display:flex;background:#f5f5f5;border:1px solid #e5e5e5;border-radius:8px;padding:2px;gap:2px">
+          <sc-for list="{{ roles }}" as="r" hint-placeholder-count="3">
+            <button role="radio" aria-checked="{{ r.on }}" onClick="{{ r.onClick }}" style="white-space:nowrap;border:0;border-radius:6px;padding:5px 10px;font-size:12px;font-weight:600;cursor:pointer;background:{{ r.bg }};color:{{ r.fg }};box-shadow:{{ r.sh }}">{{ r.label }}</button>
+          </sc-for>
+        </div></sc-if>
+        <button title="Notifications" style="width:32px;height:32px;border:0;border-radius:6px;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="background:#f5f5f5"><img src="assets/icons/bell-01.svg" alt="" style="width:18px;height:18px;opacity:.7"></button>
+      </div>
+    </header>
+    <sc-if value="{{ isHub }}" hint-placeholder-val="{{ true }}">
+      <dc-import name="Hub Panel" filter-req="{{ hubReq }}" on-open-case="{{ openCase }}" hint-size="100%,100%" style="flex:1;min-height:0;display:flex;flex-direction:column"></dc-import>
+    </sc-if>
+    <sc-if value="{{ isCase }}" hint-placeholder-val="{{ false }}">
+    <div style="flex:none;padding:24px 32px 0;background:#fff">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.08em;color:#737373;margin-bottom:6px">DECISION CASE</div>
+      <h1 style="margin:0;font-size:24px;font-weight:700;letter-spacing:-.01em">DC-LOG-102 · Movement RSP-417</h1>
+      <div style="font-size:13px;color:#737373;margin-top:6px">Harbor → Atlas → Kestrel · {{ clockLabel }}</div>
+      <div role="tablist" style="border-bottom:1px solid #e5e5e5;display:flex;gap:24px;margin-top:18px">
+        <sc-for list="{{ stages }}" as="t" hint-placeholder-count="5">
+          <button role="tab" aria-selected="{{ t.on }}" onClick="{{ t.onClick }}" style="border:0;background:transparent;padding:10px 4px;margin-bottom:-1px;font-size:14px;font-weight:600;cursor:pointer;color:{{ t.fg }};border-bottom:2px solid {{ t.line }}">{{ t.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+    <div style="flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 340px">
+
+    <main style="min-width:0;display:flex;flex-direction:column;min-height:0">
+      <div style="flex:1;overflow:auto;padding:24px 32px 32px;display:flex;flex-direction:column;gap:20px;background:#fafafa">
+        <section aria-label="Pattern" style="background:#fff;border:1px solid #e5e5e5;border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.05);padding:14px 16px;display:flex;gap:16px;align-items:flex-start">
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <span style="font:700 11px sans-serif;letter-spacing:.08em;color:#737373">PATTERN</span>
+              <button onClick="{{ selPattern }}" style="border:0;background:transparent;padding:0;cursor:pointer;font:600 11px ui-monospace,Menlo,monospace;color:#1570ef">PAT-CL-001</button>
+              <span style="font-size:11px;color:#525252;padding:2px 8px;border-radius:9999px;background:#f5f5f5;border:1px solid #e5e5e5">Insight Ready</span>
+              <span style="font-size:11px;color:#525252;padding:2px 8px;border-radius:9999px;background:#f5f5f5;border:1px solid #e5e5e5">Accelerating</span>
+              <span style="font:700 10px sans-serif;letter-spacing:.06em;padding:3px 6px;border-radius:9999px;background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8">POLARIS CONCEPT INFERENCE</span>
+              <span style="font:700 10px sans-serif;letter-spacing:.06em;padding:3px 6px;border-radius:9999px;background:#fffbeb;border:1px solid #fde68a;color:#b45309">VALIDATION REQUIRED</span>
+            </div>
+            <div style="font-size:15px;font-weight:600;line-height:1.4;letter-spacing:-.01em;text-wrap:pretty">RSP-417 status disruption has material dependency exposure, but shared-source alerts and open route gates prevent immediate reroute.</div>
+          </div>
+        </section>
+
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <h1 style="margin:0;font-size:22px;font-weight:700;letter-spacing:-.02em">{{ stageTitle }}</h1>
+          <div style="font-size:13px;color:#525252;line-height:1.5;max-width:760px;text-wrap:pretty">{{ stageDesc }}</div>
+        </div>
+
+        <sc-if value="{{ locked }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#fff;border:1px dashed #d4d4d4;border-radius:12px;padding:28px;display:flex;flex-direction:column;gap:14px;max-width:640px">
+            <div style="display:flex;align-items:center;gap:10px"><span style="width:28px;height:28px;border-radius:9999px;background:#f5f5f5;border:1px solid #e5e5e5;display:flex;align-items:center;justify-content:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#525252" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg></span><span style="font-weight:700;font-size:15px">Locked</span></div>
+            <div style="color:#525252">Complete these steps to open this stage.</div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <sc-for list="{{ lockReasons }}" as="l" hint-placeholder-count="2">
+                <div style="display:flex;gap:10px;align-items:center;font-size:13px;color:{{ l.fg }}"><span style="width:8px;height:8px;border-radius:9999px;background:{{ l.dot }}"></span><span>{{ l.text }}</span></div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ show0 }}" hint-placeholder-val="{{ true }}">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;align-items:start">
+            <div style="background:#fff;border:1px solid #e5e5e5;border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.05);overflow:hidden">
+              <div style="padding:14px 16px;border-bottom:1px solid #e5e5e5;display:flex;justify-content:space-between;align-items:center;gap:12px">
+                <div style="display:flex;flex-direction:column;gap:2px"><span style="font-weight:600">Movement alerts</span><span style="font-size:12px;color:#737373">Select an alert to inspect its provenance</span></div>
+                <div style="text-align:right;display:flex;flex-direction:column;gap:2px">
+                  <span style="font-size:24px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:{{ corrFg }}">{{ corrNum }}</span>
+                  <span style="font-size:11px;color:#525252">{{ corrLabel }}</span>
+                </div>
+              </div>
+              <sc-for list="{{ alerts }}" as="e" hint-placeholder-count="2">
+                <button onClick="{{ e.onClick }}" style="width:100%;border:0;border-bottom:1px solid #e5e5e5;text-align:left;cursor:pointer;padding:12px 16px;display:grid;grid-template-columns:64px minmax(0,1fr);gap:12px;align-items:start;background:{{ e.bg }};box-shadow:{{ e.sh }};opacity:{{ e.op }}">
+                  <span style="font:600 11px ui-monospace,Menlo,monospace;color:#171717">{{ e.id }}</span>
+                  <span style="display:flex;flex-direction:column;gap:3px;min-width:0"><span style="font-weight:500;text-decoration:{{ e.deco }}">{{ e.claim }}</span><span style="font:500 11px ui-monospace,Menlo,monospace;color:#737373">{{ e.meta }}</span><span style="align-self:flex-start;white-space:nowrap;font:700 10px sans-serif;letter-spacing:.06em;padding:3px 6px;border-radius:9999px;background:{{ e.tag.bg }};border:1px solid {{ e.tag.bd }};color:{{ e.tag.fg }}">{{ e.tag.label }}</span></span>
+                </button>
+              </sc-for>
+              <sc-if value="{{ revealed }}" hint-placeholder-val="{{ false }}">
+                <div style="padding:14px 16px;background:#fafafa;display:flex;flex-direction:column;gap:10px;border-bottom:1px solid #e5e5e5">
+                  <div style="display:flex;align-items:center;gap:8px"><span style="font:700 11px sans-serif;letter-spacing:.08em;color:#737373">LINEAGE</span><button onClick="{{ sel003 }}" style="border:0;background:transparent;padding:0;cursor:pointer;font:600 11px ui-monospace,Menlo,monospace;color:#1570ef">EVD-003</button><span style="font:700 10px sans-serif;letter-spacing:.06em;padding:3px 6px;border-radius:9999px;background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8">POLARIS CONCEPT INFERENCE</span></div>
+                  <div style="display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 16px;font-size:12px">
+                    <span style="color:#737373">Source group</span><span style="font:600 12px ui-monospace,Menlo,monospace">{{ sgShown }}</span>
+                    <span style="color:#737373">Replay</span><span style="font:600 12px ui-monospace,Menlo,monospace">{{ replayShown }}</span>
+                    <span style="color:#737373">Canonical evidence</span><span style="font:600 12px ui-monospace,Menlo,monospace">EVD-001</span>
+                  </div>
+                  <div style="font-size:12px;color:#404040;line-height:1.5">EVD-002 remains in the audit trail but contributes zero additional independent corroboration.</div>
+                </div>
+              </sc-if>
+              <label style="padding:14px 16px;display:flex;gap:10px;align-items:flex-start;cursor:{{ ackCursor }};color:{{ ackFg }}">
+                <input type="checkbox" checked="{{ ackIndep }}" disabled="{{ ackDisabled }}" onChange="{{ toggleAckIndep }}" style="margin-top:2px;width:16px;height:16px;accent-color:#1570ef">
+                <span style="line-height:1.5">I acknowledge EVD-001 and EVD-002 are not independent observations.</span>
+              </label>
+            </div>
+            <div style="background:#fff;border:1px solid #e5e5e5;border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.05);overflow:hidden">
+              <div style="padding:14px 16px;border-bottom:1px solid #e5e5e5;display:flex;flex-direction:column;gap:2px"><span style="font-weight:600">Context at decision time</span><span style="font-size:12px;color:#737373">Weather, communications and route status</span></div>
+              <sc-for list="{{ ctxRows }}" as="e" hint-placeholder-count="3">
+                <button onClick="{{ e.onClick }}" style="width:100%;border:0;border-bottom:1px solid #e5e5e5;text-align:left;cursor:pointer;padding:12px 16px;display:flex;flex-direction:column;gap:6px;background:{{ e.bg }};box-shadow:{{ e.sh }}">
+                  <span style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span style="font:600 11px ui-monospace,Menlo,monospace">{{ e.id }}</span><span style="font:700 10px sans-serif;letter-spacing:.06em;padding:3px 6px;border-radius:9999px;background:{{ e.tag.bg }};border:1px solid {{ e.tag.bd }};color:{{ e.tag.fg }}">{{ e.tag.label }}</span><sc-if value="{{ e.stale }}"><span style="font:700 10px sans-serif;letter-spacing:.06em;padding:3px 6px;border-radius:9999px;background:#fffbeb;border:1px solid #fde68a;color:#b45309">STALE</span></sc-if></span>
+                  <span style="font-weight:500;line-height:1.4">{{ e.claim }}</span>
+                  <span style="font-size:11px;color:#737373">{{ e.source }}</span>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ show1 }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;gap:10px;align-items:flex-start;background:#fffbeb;border:1px solid #fde68a;color:#b45309;border-radius:12px;padding:12px 14px;font-weight:600;font-size:13px">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:1px"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4M12 16h.01"></path></svg>
+            <span>Dependency exposure does not prove causal impact from the tracking disruption.</span>
+          </div>
+          <div style="background:#fff;border:1px solid #e5e5e5;border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.05);padding:20px 16px;display:flex;flex-direction:column;gap:16px">
+            <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:600">Dependency chain</span><span style="font-size:12px;color:#737373">Select a node or edge to inspect it</span></div>
+            <div style="display:flex;align-items:stretch;gap:0;overflow-x:auto;padding-bottom:4px">
+              <button onClick="{{ sel001 }}" style="flex:none;border:1px dashed #d4d4d4;background:#fafafa;border-radius:8px;padding:8px 10px;cursor:pointer;display:flex;flex-direction:column;gap:2px;justify-content:center;text-align:left"><span style="font:600 11px ui-monospace,Menlo,monospace;color:#525252">EVD-001</span><span style="font:500 10px ui-monospace,Menlo,monospace;color:#737373">SIG-CL-001</span></button>
+              <div style="flex:none;width:20px;display:flex;align-items:center;justify-content:center;color:#a3a3a3">→</div>
+              <sc-for list="{{ chain }}" as="c" hint-placeholder-count="7">
+                <sc-if value="{{ c.isNode }}">
+                  <button onClick="{{ c.onClick }}" style="flex:none;min-width:128px;border:1px solid {{ c.bd }};background:{{ c.bg }};border-radius:8px;padding:10px 12px;cursor:pointer;display:flex;flex-direction:column;gap:4px;text-align:left">
+                    <span style="font:700 12px ui-monospace,Menlo,monospace;color:#171717">{{ c.id }}</span>
+                    <span style="font-size:11px;color:#525252">{{ c.sub }}</span>
+                  </button>
+                </sc-if>
+                <sc-if value="{{ c.isEdge }}">
+                  <button onClick="{{ c.onClick }}" style="flex:1;min-width:92px;border:0;background:transparent;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:0 4px">
+                    <span style="font:600 11px ui-monospace,Menlo,monospace;color:{{ c.fg }};padding:2px 8px;border-radius:9999px;border:1px solid {{ c.bd }};background:{{ c.bg }}">{{ c.label }}</span>
+                    <span style="width:100%;height:1px;background:{{ c.line }}"></span>
+                    <span style="font:500 10px ui-monospace,Menlo,monospace;color:#737373">{{ c.rel }}</span>
+                  </button>
+                </sc-if>
+              </sc-for>
+              <div style="flex:none;width:20px;display:flex;align-items:center;justify-content:center;color:#a3a3a3">→</div>
+              <div style="flex:none;border:1px dashed #fde68a;background:#fffbeb;border-radius:8px;padding:8px 10px;display:flex;flex-direction:column;gap:2px;justify-content:center;max-width:150px"><span style="font-size:11px;color:#b45309;font-weight:600;line-height:1.3">Potential restoration exposure if delay persists</span><span style="font:600 10px ui-monospace,Menlo,monospace;color:#b45309">→ DC-LOG-102</span></div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;align-items:start">
+            <div style="background:#fff;border:1px solid #e5e5e5;border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.05);padding:16px;display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;justify-content:space-between;align-items:center"><span style="font:700 11px sans-serif;letter-spacing:.08em;color:#737373">SUBSTITUTE INVENTORY</span><button onClick="{{ sel010 }}" style="border:0;background:transparent;padding:0;cursor:pointer;font:600 11px ui-monospace,Menlo,monospace;color:#1570ef">EVD-010</button></div>
+              <div style="font-size:36px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1">0</div>
+              <div style="font-size:12px;color:#525252;line-height:1.5">Qualified PCM-9 substitutes at Kestrel · <span style="font-family:ui-monospace,Menlo,monospace">INV-PCM9-KESTREL</span></div>
+            </div>
+            <div style="background:#fff;border:1px solid #e5e5e5;border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.05);padding:16px;display:flex;flex-direction:column;gap:10px">
+              <span style="font:700 11px sans-serif;letter-spacing:.08em;color:#737373">REQUIRED INSPECTION</span>
+              <sc-for list="{{ depChecks }}" as="d" hint-placeholder-count="3">
+                <button onClick="{{ d.onClick }}" style="border:1px solid #e5e5e5;background:#fff;border-radius:8px;padding:8px 10px;cursor:pointer;display:flex;align-items:center;gap:10px;text-align:left">
+                  <span style="flex:none;width:16px;height:16px;border-radius:9999px;border:1px solid {{ d.bd }};background:{{ d.bg }};color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700">{{ d.mark }}</span>
+                  <span style="flex:1;font-weight:500">{{ d.label }}</span>
+                  <span style="font:600 11px ui-monospace,Menlo,monospace;color:#737373">{{ d.id }}</span>
+                </button>
+              </sc-for>
+            </div>
+            <div style="background:#fff;border:1px solid #e5e5e5;border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.05);padding:16px;display:flex;flex-direction:column;gap:10px">
+              <span style="font:700 11px sans-serif;letter-spacing:.08em;color:#737373">UNRESOLVED AT 09:00Z</span>
+              <div style="display:flex;flex-direction:column;gap:8px;font-size:13px">
+                <div style="display:flex;gap:8px;align-items:center"><span style="width:8px;height:8px;border-radius:9999px;background:#f59e0b"></span>Movement status</div>
+                <div style="display:flex;gap:8px;align-items:center"><span style="width:8px;height:8px;border-radius:9999px;background:#f59e0b"></span>Fresh primary-route status</div>
+                <div style="display:flex;gap:8px;align-items:center"><span style="width:8px;height:8px;border-radius:9999px;background:#f59e0b"></span>Alternate-route fuel sufficiency</div>
+                <div style="display:flex;gap:8px;align-items:center"><span style="width:8px;height:8px;border-radius:9999px;background:#f59e0b"></span>Route-change authority</div>
+              </div>
+              <button onClick="{{ sel007 }}" style="margin-top:4px;border:0;background:transparent;padding:0;text-align:left;cursor:pointer;font-size:12px;color:#1570ef;font-weight:600">Planned transfer at LOC-TP-ATLAS · EVD-007</button>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ show2 }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#fff;border:1px solid #e5e5e5;border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.05);overflow:hidden;overflow-x:auto">
+            <div style="display:grid;min-width:720px;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) minmax(0,.8fr);gap:12px;padding:10px 16px;background:#fafafa;border-bottom:1px solid #e5e5e5;font-size:12px;font-weight:600;color:#0c0e12">
+              <span>Explanation</span><span>Supporting evidence</span><span>Contradicting / limiting</span><span>Missing evidence</span><span>Source groups</span>
+            </div>
+            <sc-for list="{{ exps }}" as="x" hint-placeholder-count="4">
+              <div onClick="{{ x.onClick }}" style="display:grid;min-width:720px;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) minmax(0,.8fr);gap:12px;padding:14px 16px;border-bottom:1px solid #e5e5e5;cursor:pointer;align-items:start;background:{{ x.bg }};box-shadow:{{ x.sh }}">
+                <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+                  <span style="display:flex;gap:6px;align-items:center"><span style="font:600 11px ui-monospace,Menlo,monospace;color:#737373">{{ x.id }}</span><sc-if value="{{ x.reviewed }}"><span style="font-size:10px;font-weight:700;color:#15803d">REVIEWED</span></sc-if></span>
+                  <span style="font-weight:600;line-height:1.4">{{ x.name }}</span>
+                  <span style="align-self:flex-start;font-size:11px;font-weight:600;padding:2px 8px;border-radius:9999px;background:{{ x.pBg }};border:1px solid {{ x.pBd }};color:{{ x.pFg }}">{{ x.posture }}</span>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;min-width:0">
+                  <sc-for list="{{ x.sup }}" as="v"><span style="line-height:1.4"><span style="font:600 11px ui-monospace,Menlo,monospace;color:#15803d">{{ v.id }}</span> {{ v.t }}</span></sc-for>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;min-width:0">
+                  <sc-for list="{{ x.lim }}" as="v"><span style="line-height:1.4"><span style="font:600 11px ui-monospace,Menlo,monospace;color:#b45309">{{ v.id }}</span> {{ v.t }}</span></sc-for>
+                </div>
+                <div style="font-size:12px;color:#404040;line-height:1.4">{{ x.missing }}</div>
+                <div style="font:500 11px ui-monospace,Menlo,monospace;color:#525252;line-height:1.5">{{ x.groups }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;align-items:start">
+            <div style="background:#fff;border:1px solid #e5e5e5;border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.05);overflow:hidden">
+              <div style="padding:14px 16px;border-bottom:1px solid #e5e5e5;display:flex;justify-content:space-between;align-items:center"><span style="font-weight:600">Confidence dimensions</span><span style="font-size:11px;color:#737373">9 · not combined</span></div>
+              <sc-for list="{{ conf }}" as="c" hint-placeholder-count="9">
+                <div style="display:flex;justify-content:space-between;gap:12px;padding:9px 16px;border-bottom:1px solid #f5f5f5;font-size:12px"><span style="color:#404040">{{ c.name }}</span><span style="font-weight:600;text-align:right;color:{{ c.fg }}">{{ c.state }}</span></div>
+              </sc-for>
+            </div>
+            <div style="background:#fff;border:1px solid #e5e5e5;border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.05);overflow:hidden">
+              <div style="padding:14px 16px;border-bottom:1px solid #e5e5e5;display:flex;justify-content:space-between;align-items:center"><span style="font-weight:600">Hard gates</span><span style="font-size:11px;color:#737373">Non-compensating</span></div>
+              <sc-for list="{{ gates }}" as="g" hint-placeholder-count="6">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid #f5f5f5">
+                  <span style="display:flex;flex-direction:column;gap:2px"><span style="font-weight:500">{{ g.name }}</span><span style="font-size:11px;color:#737373">{{ g.note }}</span></span>
+                  <span style="flex:none;font:700 10px sans-serif;letter-spacing:.06em;padding:3px 8px;border-radius:9999px;background:{{ g.bg }};border:1px solid {{ g.bd }};color:{{ g.fg }}">{{ g.state }}</span>
+                </div>
+              </sc-for>
+              <div style="padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px">
+                <span style="font-size:12px;color:#525252">No aggregate evidence score can override a failed gate.</span>
+                <button onClick="{{ reviewGates }}" disabled="{{ gatesRev }}" style="flex:none;border:1px solid #d4d4d4;background:#fff;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;color:#404040;cursor:pointer;box-shadow:inset 0 -2px 0 0 rgba(0,0,0,.05)">{{ gatesBtn }}</button>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ show3 }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#fff;border:1px solid #e5e5e5;border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.05);padding:16px;display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span style="font:700 11px sans-serif;letter-spacing:.08em;color:#737373">RECOMMENDATION</span><span style="font:600 11px ui-monospace,Menlo,monospace;color:#525252">DC-LOG-102</span><span style="font:700 10px sans-serif;letter-spacing:.06em;padding:3px 6px;border-radius:9999px;background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8">POLARIS CONCEPT INFERENCE</span></div>
+            <div style="font-size:17px;font-weight:700;letter-spacing:.02em">VERIFY · PREPARE ALTERNATE · DO NOT EXECUTE REROUTE · DO NOT ATTRIBUTE CAUSE</div>
+            <div style="display:flex;gap:8px;align-items:center;font-size:13px;color:#404040;background:#fafafa;border:1px solid #e5e5e5;border-radius:8px;padding:8px 12px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#737373" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg><span style="font-size:11px;font-weight:700;letter-spacing:.06em;color:#737373">IMMUTABLE QUALIFIER</span><span>Prepare the alternate; do not execute reroute; do not attribute cause.</span></div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;align-items:start">
+            <div style="background:#fff;border:1px solid #e5e5e5;border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.05);overflow:hidden">
+              <div style="padding:14px 16px;border-bottom:1px solid #e5e5e5;font-weight:600">Disposition options</div>
+              <sc-for list="{{ options }}" as="o" hint-placeholder-count="5">
+                <div style="display:grid;grid-template-columns:110px minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px 16px;border-bottom:1px solid #e5e5e5;background:{{ o.bg }};box-shadow:{{ o.sh }}">
+                  <span style="font-weight:700;font-size:14px;color:{{ o.nameFg }}">{{ o.name }}</span>
+                  <span style="font-size:12px;color:#404040;line-height:1.45">{{ o.reason }}</span>
+                  <span style="font:700 10px sans-serif;letter-spacing:.06em;padding:3px 8px;border-radius:9999px;background:{{ o.cBg }};border:1px solid {{ o.cBd }};color:{{ o.cFg }}">{{ o.status }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <div style="background:#fff;border:1px solid #e5e5e5;border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.05);padding:16px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 16px;font-size:12px">
+              <span style="color:#737373">Evidence cutoff</span><span style="font:600 12px ui-monospace,Menlo,monospace">09:00Z</span>
+              <span style="color:#737373">Owner</span><span style="font:600 12px ui-monospace,Menlo,monospace">USR-SUST-01</span>
+              <span style="color:#737373">Approval object</span><span style="font:600 12px ui-monospace,Menlo,monospace">APP-CL-417</span>
+              <span style="color:#737373">Due / expiry</span><span style="font:italic 500 12px sans-serif;color:#a3a3a3">Fixture data required</span>
+              <span style="color:#737373;padding-top:8px;border-top:1px solid #f5f5f5">Permitted</span><span style="padding-top:8px;border-top:1px solid #f5f5f5;line-height:1.6;color:#15803d">Verify movement status · Refresh ROUTE-PRIMARY-7 · Prepare ROUTE-ALT-3</span>
+              <span style="color:#737373">Prohibited</span><span style="line-height:1.6;color:#dc2626">Execute reroute · Attribute cause · Task personnel · External communication</span>
+              <span style="color:#737373;padding-top:8px;border-top:1px solid #f5f5f5">Creates</span><span style="padding-top:8px;border-top:1px solid #f5f5f5;font:600 11px/1.8 ui-monospace,Menlo,monospace">TASK-VERIFY-417<br>TASK-REFRESH-ROUTE-7<br>TASK-STAGE-ALT-3</span>
+            </div>
+          </div>
+          <div style="background:#fff;border:1px solid #e5e5e5;border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.05);padding:16px;display:flex;flex-direction:column;gap:12px">
+            <sc-if value="{{ notApproved }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:600">Approval</span><span style="font:700 10px sans-serif;letter-spacing:.06em;padding:3px 6px;border-radius:9999px;background:#f5f5f5;border:1px solid #d4d4d4;color:#262626">HUMAN DEMO DECISION</span></div>
+              <sc-for list="{{ acks }}" as="a" hint-placeholder-count="3">
+                <label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer"><input type="checkbox" checked="{{ a.on }}" onChange="{{ a.onChange }}" disabled="{{ a.dis }}" style="margin-top:2px;width:16px;height:16px;accent-color:#1570ef"><span style="line-height:1.5">{{ a.text }}</span></label>
+              </sc-for>
+              <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+                <button onClick="{{ approve }}" disabled="{{ approveDisabled }}" style="border:0;border-radius:8px;padding:10px 16px;font-size:13px;font-weight:600;cursor:{{ apCursor }};background:{{ apBg }};color:{{ apFg }};box-shadow:inset 0 -2px 0 0 rgba(0,0,0,.05),inset 0 0 0 1px rgba(0,0,0,.18)" style-hover="background:{{ apHover }}">Approve synthetic verification plan</button>
+                <span style="font-size:12px;color:#737373">{{ approveHint }}</span>
+              </div>
+            </sc-if>
+            <sc-if value="{{ approved }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;gap:10px;align-items:center"><span style="font:600 12px ui-monospace,Menlo,monospace">APP-CL-417</span><span style="font-weight:600">Recorded 09:02Z by USR-SUST-01</span><span style="font:700 10px sans-serif;letter-spacing:.06em;padding:3px 6px;border-radius:9999px;background:#f5f5f5;border:1px solid #d4d4d4;color:#262626">HUMAN DEMO DECISION</span></div>
+              <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
+                <div style="border:1px solid #e5e5e5;border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:4px"><span style="font:600 11px ui-monospace,Menlo,monospace">TASK-VERIFY-417</span><span style="font-size:12px;color:#525252">Verify movement status · internal</span></div>
+                <div style="border:1px solid #e5e5e5;border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:4px"><span style="font:600 11px ui-monospace,Menlo,monospace">TASK-REFRESH-ROUTE-7</span><span style="font-size:12px;color:#525252">Refresh primary route status · internal</span></div>
+                <div style="border:1px solid #e5e5e5;border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:4px"><span style="font:600 11px ui-monospace,Menlo,monospace">TASK-STAGE-ALT-3</span><span style="font-size:12px;color:#525252">Prepare alternate · not executed</span></div>
+              </div>
+              <div style="font-size:12px;color:#525252">Synthetic internal tasks only. No network call, external tasking, route command or operational side effect.</div>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ show4 }}" hint-placeholder-val="{{ false }}">
+          <div role="radiogroup" aria-label="History view" style="align-self:flex-start;display:flex;background:#f5f5f5;border:1px solid #e5e5e5;border-radius:8px;padding:3px;gap:2px">
+            <sc-for list="{{ views }}" as="v" hint-placeholder-count="2">
+              <button role="radio" aria-checked="{{ v.on }}" onClick="{{ v.onClick }}" style="border:0;border-radius:6px;padding:7px 16px;font-size:13px;font-weight:600;cursor:pointer;background:{{ v.bg }};color:{{ v.fg }};box-shadow:{{ v.sh }}">{{ v.label }}</button>
+            </sc-for>
+          </div>
+          <sc-if value="{{ outcomeView }}" hint-placeholder-val="{{ true }}">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;align-items:start">
+              <div style="background:#fff;border:1px solid #e5e5e5;border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.05);overflow:hidden">
+                <div style="padding:14px 16px;border-bottom:1px solid #e5e5e5;font-weight:600">Later evidence</div>
+                <sc-for list="{{ timeline }}" as="t" hint-placeholder-count="4">
+                  <button onClick="{{ t.onClick }}" style="width:100%;border:0;border-bottom:1px solid #e5e5e5;background:{{ t.bg }};text-align:left;cursor:pointer;padding:12px 16px;display:grid;grid-template-columns:56px minmax(0,1fr);gap:12px">
+                    <span style="font:600 12px ui-monospace,Menlo,monospace;color:#525252">{{ t.time }}</span>
+                    <span style="display:flex;flex-direction:column;gap:4px"><span style="font-weight:500">{{ t.text }}</span><span style="font:500 11px ui-monospace,Menlo,monospace;color:#737373">{{ t.ids }}</span></span>
+                  </button>
+                </sc-for>
+              </div>
+              <div style="background:#fff;border:1px solid #e5e5e5;border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.05);padding:16px;display:flex;flex-direction:column;gap:12px">
+                <div style="display:flex;justify-content:space-between;align-items:center"><span style="font:600 12px ui-monospace,Menlo,monospace">OUT-CL-417</span><span style="font:700 10px sans-serif;letter-spacing:.06em;padding:3px 8px;border-radius:9999px;background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d">CLOSED 09:24Z</span></div>
+                <div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:11px;color:#737373">Human disposition</span><span style="font-size:17px;font-weight:700">Continue on primary plan</span></div>
+                <div style="display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 16px;font-size:12px;border-top:1px solid #f5f5f5;padding-top:12px">
+                  <span style="color:#737373">Corrective action</span><span>Remediate DEV-TRK-417 power connector</span>
+                  <span style="color:#737373">Remaining gap</span><span>Knowmadics event lifecycle semantics · <span style="color:#b45309;font-weight:600">VALIDATION REQUIRED</span></span>
+                  <span style="color:#737373">Reopen criteria</span><span style="font-style:italic;color:#a3a3a3">Fixture data required</span>
+                </div>
+                <div style="font-size:12px;color:#525252;line-height:1.5">The benign resolution is not presented as a prediction success.</div>
+              </div>
+            </div>
+          </sc-if>
+          <div style="background:#fff;border:1px solid #e5e5e5;border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.05);overflow:hidden">
+            <div style="padding:14px 16px;border-bottom:1px solid #e5e5e5;display:flex;justify-content:space-between;align-items:center"><span style="font-weight:600">{{ histTitle }}</span><span style="font:500 11px ui-monospace,Menlo,monospace;color:#737373">{{ histNote }}</span></div>
+            <sc-for list="{{ histExps }}" as="x" hint-placeholder-count="4">
+              <div style="display:grid;grid-template-columns:90px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 16px;border-bottom:1px solid #f5f5f5">
+                <span style="font:600 11px ui-monospace,Menlo,monospace;color:#737373">{{ x.id }}</span>
+                <span style="font-weight:500">{{ x.name }}</span>
+                <span style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:9999px;background:{{ x.pBg }};border:1px solid {{ x.pBd }};color:{{ x.pFg }}">{{ x.posture }}</span>
+              </div>
+            </sc-for>
+            <div style="padding:10px 16px;font-size:12px;color:#525252;background:#fafafa">{{ histFoot }}</div>
+          </div>
+        </sc-if>
+      </div>
+    </main>
+
+    <aside aria-label="Evidence inspector" style="background:#fff;border-left:1px solid #e5e5e5;overflow:auto;display:flex;flex-direction:column">
+      <div style="padding:16px 16px 12px;border-bottom:1px solid #e5e5e5;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;justify-content:space-between;align-items:center"><span style="font:700 11px sans-serif;letter-spacing:.08em;color:#737373">EVIDENCE INSPECTOR</span><span style="font:500 11px ui-monospace,Menlo,monospace;color:#737373">{{ insKind }}</span></div>
+        <div style="font:700 15px ui-monospace,Menlo,monospace;color:#171717">{{ insId }}</div>
+        <div style="font-size:13px;font-weight:500;line-height:1.45;text-wrap:pretty">{{ insTitle }}</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <sc-for list="{{ insChips }}" as="c" hint-placeholder-count="1">
+            <span style="font:700 10px sans-serif;letter-spacing:.06em;padding:3px 6px;border-radius:9999px;background:{{ c.bg }};border:1px solid {{ c.bd }};color:{{ c.fg }}">{{ c.label }}</span>
+          </sc-for>
+        </div>
+      </div>
+      <div style="padding:8px 16px 12px;display:flex;flex-direction:column">
+        <sc-for list="{{ insRows }}" as="r" hint-placeholder-count="8">
+          <div style="display:grid;grid-template-columns:104px minmax(0,1fr);gap:10px;padding:7px 0;border-bottom:1px solid #f5f5f5;font-size:12px">
+            <span style="color:#737373">{{ r.k }}</span>
+            <span style="line-height:1.45;word-break:break-word;color:{{ r.fg }};font-family:{{ r.ff }};font-style:{{ r.fs }};background:{{ r.bg }}">{{ r.v }}</span>
+          </div>
+        </sc-for>
+        <div style="padding-top:10px;font-size:11px;color:#737373;line-height:1.5">Proposed event contract · <span style="color:#b45309;font-weight:600">VALIDATION REQUIRED</span> · not a current Knowmadics API</div>
+      </div>
+      <div style="margin-top:auto;border-top:1px solid #e5e5e5;padding:16px;display:flex;flex-direction:column;gap:10px;background:#fafafa">
+        <div style="display:flex;justify-content:space-between;align-items:center"><span style="font:700 11px sans-serif;letter-spacing:.08em;color:#737373">POLARIS ASSIST</span><span style="font-size:11px;color:#737373">Preset questions</span></div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <sc-for list="{{ assistQs }}" as="q" hint-placeholder-count="5">
+            <button onClick="{{ q.onClick }}" style="border:1px solid {{ q.bd }};background:{{ q.bg }};border-radius:8px;padding:7px 10px;text-align:left;font-size:12px;color:#262626;cursor:pointer" style-hover="background:#f5f5f5">{{ q.q }}</button>
+          </sc-for>
+        </div>
+        <sc-if value="{{ hasAnswer }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#fff;border:1px solid #e5e5e5;border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:8px">
+            <div style="font-size:12px;line-height:1.55;color:#262626">{{ answer.text }}</div>
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <sc-for list="{{ answer.cites }}" as="c">
+                <button onClick="{{ c.onClick }}" style="border:0;background:transparent;padding:0;cursor:pointer;display:flex;gap:6px;align-items:center;text-align:left"><span style="font:600 11px ui-monospace,Menlo,monospace;color:#1570ef">{{ c.id }}</span><span style="font:700 9px sans-serif;letter-spacing:.06em;padding:2px 5px;border-radius:9999px;background:{{ c.tag.bg }};border:1px solid {{ c.tag.bd }};color:{{ c.tag.fg }}">{{ c.tag.label }}</span></button>
+              </sc-for>
+            </div>
+            <div style="font-size:11px;color:#737373;line-height:1.5">Limitation: {{ answer.lim }}</div>
+          </div>
+        </sc-if>
+      </div>
+    </aside>
+    </div>
+    </sc-if>
+  </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const M = 'Fixture data required';
+const T = {
+  KO:{label:'SYNTHETIC KNOWMADICS OUTPUT',bg:'#f5f3ff',bd:'#ddd6fe',fg:'#6d28d9'},
+  SC:{label:'SYNTHETIC CONTEXT',bg:'#ffffff',bd:'#ddd6fe',fg:'#6d28d9'},
+  PI:{label:'POLARIS CONCEPT INFERENCE',bg:'#eff6ff',bd:'#bfdbfe',fg:'#1d4ed8'},
+  HD:{label:'HUMAN DEMO DECISION',bg:'#f5f5f5',bd:'#d4d4d4',fg:'#262626'},
+  VR:{label:'VALIDATION REQUIRED',bg:'#fffbeb',bd:'#fde68a',fg:'#b45309'},
+  EX:{label:'EXCLUDED FROM CORROBORATION',bg:'#f5f5f5',bd:'#d4d4d4',fg:'#525252'}
+};
+const KO_SRC = 'Knowmadics concept layer · tracking';
+const R = {
+  'EVD-001':{kind:'Evidence',title:'Two missed tracker heartbeats reported for MOV-RSP-417',truth:'KO',source:KO_SRC,sg:'SG-KNOW-TRACK-01',evt:'08:40Z',sig:'SIG-CL-001',ents:'MOV-RSP-417 · DEV-TRK-417',life:'Active · canonical observation',role:'Supporting · status uncertainty',lim:'Heartbeat loss alone does not establish stoppage, loss or hostile action.'},
+  'EVD-002':{kind:'Evidence',title:'"Movement stopped" alert for MOV-RSP-417',truth:'KO',source:KO_SRC,sg:'SG-KNOW-TRACK-01',replay:'RPL-417-0840',evt:'08:41Z',sig:'SIG-CL-002',ents:'MOV-RSP-417',life:'Retained in audit trail · excluded from corroboration',role:'Derived from EVD-001 · 0 independent corroboration',lim:'Shares source group and replay with EVD-001.'},
+  'EVD-003':{kind:'Evidence',title:'EVD-001 and EVD-002 map to one canonical observation group',truth:'PI',source:'Polaris concept layer · lineage',sg:'SG-KNOW-TRACK-01',replay:'RPL-417-0840',sig:'SIG-CL-003',ents:'EVD-001 · EVD-002',life:'Active',role:'Limits corroboration count',lim:'Source-group semantics require Knowmadics validation.'},
+  'EVD-004':{kind:'Evidence',title:'Weather disruption context on the movement corridor',truth:'SC',source:'Synthetic context',sig:'SIG-CL-004',ents:'MOV-RSP-417',life:'Active',role:'Supports EXP-CL-01',lim:'Context only; does not confirm movement status.'},
+  'EVD-005':{kind:'Evidence',title:'Communications degradation near Transfer Point Atlas',truth:'SC',source:'Synthetic Communications Operations',sig:'SIG-CL-005',ents:'COMM-ZONE-ATLAS',life:'Active',role:'Supports EXP-CL-02',lim:'Degradation may explain missed heartbeats but does not confirm them.'},
+  'EVD-006':{kind:'Evidence',title:'Primary route status for ROUTE-PRIMARY-7 is stale',truth:'SC',source:'Synthetic Movement Control',sig:'SIG-CL-006',ents:'ROUTE-PRIMARY-7',life:'Stale at 09:00Z',role:'Fails fresh-route gate',lim:'Stale route information cannot be treated as current.',stale:true},
+  'EVD-007':{kind:'Evidence',title:'Planned transfer at LOC-TP-ATLAS',truth:'SC',source:'Synthetic Dispatch',sig:'SIG-CL-007',rel:'REL-002',ents:'MOV-RSP-417 · LOC-TP-ATLAS',life:'Active',role:'Supports EXP-CL-02',lim:'Schedule shows a plan, not arrival.'},
+  'EVD-008':{kind:'Evidence',title:'Manifest: MOV-RSP-417 carries CARGO-PCM9',truth:'SC',source:'Synthetic Logistics Operations',sig:'SIG-CL-008',ents:'MOV-RSP-417 · CARGO-PCM9',life:'Active',role:'Establishes materiality',lim:'Carriage does not establish delivery timing.'},
+  'EVD-009':{kind:'Evidence',title:'CARGO-PCM9 is required to restore SYS-MSS4 for TASK-RESTORE-04',truth:'SC',source:'Synthetic Maintenance Control',sig:'SIG-CL-009',ents:'CARGO-PCM9 · SYS-MSS4 · TASK-RESTORE-04',life:'Active',role:'Establishes materiality',lim:'Dependency exposure does not prove causal impact.'},
+  'EVD-010':{kind:'Evidence',title:'Kestrel holds no qualified PCM-9 substitute',truth:'SC',source:'Synthetic Logistics Operations',sig:'SIG-CL-010',ents:'INV-PCM9-KESTREL',life:'Active',role:'Makes exposure material',lim:'Does not establish that a mission delay has occurred.'},
+  'EVD-011':{kind:'Evidence',title:'ROUTE-ALT-3 is constrained; fuel sufficiency unknown',truth:'SC',source:'Synthetic Movement Control',sig:'SIG-CL-011',rel:'REL-010',ents:'ROUTE-ALT-3',life:'Active',role:'Blocks Reroute',lim:'Feasibility unresolved at 09:00Z.'},
+  'EVD-012':{kind:'Evidence',title:'Late dispatch update: weather hold at planned transfer',truth:'SC',source:'Synthetic Dispatch',sig:'SIG-CL-012',evt:'Valid 08:34Z',recv:'08:58Z',ents:'LOC-TP-ATLAS',life:'Active · late-arriving',role:'Strengthens EXP-CL-01 and EXP-CL-02',lim:'Arrived after the event it describes.'},
+  'EVD-013':{kind:'Evidence',title:'Movement verified at Atlas',truth:'SC',source:'Synthetic Dispatch',sig:'SIG-CL-013',evt:'09:18Z',ents:'MOV-RSP-417 · LOC-TP-ATLAS',life:'Post-decision',role:'Outcome evidence',lim:'Not available at the 09:00Z evidence cutoff.'},
+  'EVD-014':{kind:'Evidence',title:'Tracker inspection finds a loose power connector',truth:'SC',source:'Synthetic Maintenance Control',sig:'SIG-CL-014',ents:'DEV-TRK-417',life:'Post-decision',role:'Outcome evidence · closes case',lim:'Not available at the 09:00Z evidence cutoff.'},
+  'REL-005':{kind:'Relationship',title:'MOV-RSP-417 → carries → CARGO-PCM9',truth:'SC',source:'Synthetic Logistics Operations',owner:'Synthetic Logistics Operations',conf:'High within synthetic fixture',ev:'EVD-008',lim:'Carriage does not establish delivery timing.'},
+  'REL-006':{kind:'Relationship',title:'CARGO-PCM9 → required_by → SYS-MSS4',truth:'SC',source:'Synthetic Maintenance Control',owner:'Synthetic Maintenance Control',conf:'High within synthetic fixture',ev:'EVD-009',lim:'Dependency exposure does not prove causal impact.'},
+  'REL-007':{kind:'Relationship',title:'SYS-MSS4 → supports → TASK-RESTORE-04',truth:'SC',source:'Synthetic Maintenance Control',owner:'Synthetic Maintenance Control',conf:'High within synthetic fixture',ev:'EVD-009',lim:'Does not establish that RESTORE-04 is delayed.'},
+  'PAT-CL-001':{kind:'Pattern',title:'RSP-417 status disruption has material dependency exposure, but shared-source alerts and open route gates prevent immediate reroute.',truth:'PI',maturity:'Insight Ready',lifecycle:'Accelerating',sigs:'SIG-CL-001 – SIG-CL-012',lim:'Pattern assembly is PRODUCT VALIDATION REQUIRED.'},
+  'OUT-CL-417':{kind:'Outcome',title:'Continue on primary plan · case closed 09:24Z',truth:'HD',evt:'09:24Z',ents:'MOV-RSP-417 · DC-LOG-102',role:'Closure',lim:'Does not rewrite 09:00Z reasoning.'}
+};
+const EXPS = [
+  {id:'EXP-CL-01',name:'Weather or route delay',p:'Plausible and strengthening',pt:'amber',op:'Consistent with outcome',sup:[['EVD-004','Weather disruption'],['EVD-012','Late weather-hold update']],lim:[['EVD-006','Route status is stale']],missing:'Fresh primary-route status',groups:'Synthetic context · Synthetic Dispatch'},
+  {id:'EXP-CL-02',name:'Planned transfer / communications handoff',p:'Leading benign explanation; verification still required',pt:'amber',op:'Consistent with outcome',sup:[['EVD-007','Planned transfer at Atlas'],['EVD-005','Comms degradation'],['EVD-012','Late dispatch update']],lim:[['—','No confirmation of arrival at Atlas']],missing:'Verified movement status',groups:'Synthetic Dispatch · Synthetic Comms Ops'},
+  {id:'EXP-CL-03',name:'Tracker device or power failure',p:'Possible but unverified',pt:'neutral',op:'Confirmed · EVD-014',ok:true,sup:[['EVD-001','Missed heartbeats']],lim:[['EVD-002','Adds no independent support']],missing:'Device inspection',groups:'SG-KNOW-TRACK-01'},
+  {id:'EXP-CL-04',name:'Operational disruption requiring reroute or hold',p:'Cannot be ruled out; not established',pt:'amber',op:'Not supported by outcome',sup:[['EVD-001','Status loss']],lim:[['EVD-007','Planned transfer'],['EVD-012','Benign late context']],missing:'Movement status · fresh route · ALT-3 fuel',groups:'SG-KNOW-TRACK-01 · Synthetic Movement Control'}
+];
+EXPS.forEach(x=>{R[x.id]={kind:'Explanation',title:x.name,truth:'PI',posture:x.p,sup:x.sup.map(s=>s[0]).join(' · '),limit:x.lim.map(s=>s[0]).join(' · '),missingEv:x.missing,groups:x.groups,lim:'No explanation may be marked Confirmed before the outcome stage.'};});
+const CONF = [['Source-lineage confidence','High'],['Tracking-event quality','High for the missed-heartbeat observation'],['Dependency relationship confidence','High within synthetic fixture'],['Causal-attribution confidence','Low',1],['Current severity','Unresolved',1],['Mission-impact probability','Unknown',1],['Evidence sufficiency for verification','Sufficient'],['Evidence sufficiency for reroute','Insufficient',1],['Authorization readiness','Synthetic verification only']];
+const GATES = [['Mandatory provenance','PASS','EVD-001 contract fields present'],['Source independence','PASS','After EVD-002 replay exclusion'],['Fresh route status','FAIL','EVD-006 · ROUTE-PRIMARY-7 stale'],['Alternate-route fuel sufficiency','UNKNOWN','EVD-011 · ROUTE-ALT-3'],['Route-change authority','FAIL','Not held by demo user'],['Named decision owner','PASS','USR-SUST-01']];
+const GS = {PASS:['#f0fdf4','#bbf7d0','#15803d'],FAIL:['#fef2f2','#fecaca','#dc2626'],UNKNOWN:['#fffbeb','#fde68a','#b45309']};
+const OPTS = [
+  ['Verify','Recommended. Evidence is sufficient for verification; prepare the alternate without executing it.','RECOMMENDED','rec'],
+  ['Continue','Unavailable as a final disposition until fresh-route requirements pass.','UNAVAILABLE','amber'],
+  ['Reroute','Blocked by route freshness, fuel feasibility and authority gates.','BLOCKED','red'],
+  ['Reallocate','Visible with downstream tradeoff; not the chosen disposition.','AVAILABLE','neutral'],
+  ['Hold','Valid fallback when evidence or authority is insufficient.','FALLBACK','neutral']
+];
+const ACKS = ['All operational data is synthetic.','This records an internal verification plan only.','Polaris does not execute movement, route, attribution or external communication actions.'];
+const STAGES = [
+  {label:'Finding',title:'Two alerts, one observation',desc:'Decision-time evidence EVD-001 to EVD-006. Inspect provenance before treating the second alert as corroboration.'},
+  {label:'Dependency',title:'Why the movement still matters',desc:'The decision-relevant chain only: movement, cargo, dependent system and restoration task.'},
+  {label:'Explanations',title:'Four explanations remain open',desc:'Compare evidence for each explanation. Confidence stays multidimensional and hard gates are non-compensating.'},
+  {label:'Decision',title:'Decision Case DC-LOG-102',desc:'One bounded human decision at the 09:00Z evidence cutoff.'},
+  {label:'Outcome',title:'Outcome and audit history',desc:'Later evidence explains the anomaly. The 09:00Z reasoning is preserved unchanged.'}
+];
+const NOTES = [
+  ['0:45–2:45','Open the heartbeat event and the second stop alert, then open replay provenance.','The two alerts collapse into one source group.'],
+  ['2:45–4:00','Reveal the PCM-9 dependency.','Less corroboration does not mean low materiality.'],
+  ['4:00–6:30','Compare four explanations, then show the failed hard gates.','Strong evidence cannot override route, fuel or authority.'],
+  ['6:30–8:00','Open the Decision Case and approve Verify.','The human chooses a bounded response.'],
+  ['8:00–10:00','Reveal later verification and the tracker fault, then toggle Decision-Time vs Outcome.','Audit history preserves what was known when.']
+];
+const ASSIST = [
+  {q:'Which alerts share a source group?',a:'EVD-001 and EVD-002 share source group SG-KNOW-TRACK-01 and replay RPL-417-0840 (EVD-003). EVD-002 stays in the audit trail and adds no independent corroboration.',ax:'EVD-001 and EVD-002 map to one canonical observation group (EVD-003). Source-group and replay fields are redacted for this role.',c:['EVD-001','EVD-002','EVD-003'],lim:'Source-group semantics require Knowmadics validation.'},
+  {q:'Which evidence is stale?',a:'EVD-006: ROUTE-PRIMARY-7 status is stale at 09:00Z. EVD-012 arrived late: received 08:58Z, valid 08:34Z.',c:['EVD-006','EVD-012'],lim:'Customer freshness thresholds are not yet defined.'},
+  {q:'What makes this movement decision-relevant?',a:'MOV-RSP-417 carries CARGO-PCM9, which SYS-MSS4 requires for TASK-RESTORE-04. Kestrel holds no qualified PCM-9 substitute.',c:['EVD-008','EVD-009','EVD-010'],lim:'Dependency exposure does not prove causal impact from the tracking disruption.'},
+  {q:'Which hard gates fail?',a:'Fresh route status and route-change authority fail. Alternate-route fuel sufficiency is unknown. Provenance, source independence (after excluding EVD-002) and named owner pass.',c:['EVD-006','EVD-011','PAT-CL-001'],lim:'Hard-gate enforcement is PRODUCT VALIDATION REQUIRED.'},
+  {q:'Why is Verify proportionate?',a:'Evidence is sufficient for verification and insufficient for reroute, which three gates block. Verify addresses the PCM-9 exposure without a route change or causal attribution.',c:['PAT-CL-001','EXP-CL-02','EXP-CL-04'],lim:'Recommendation is a concept inference; the human owner decides.'}
+];
+const KEY = 'polaris-cl-demo-v3b';
+const DEF = {stage:0,sel:'EVD-001',insp:['EVD-001'],ackIndep:false,expRev:[],gatesRev:false,acks:[false,false,false],approved:false,view:'outcome',role:'lead',resp:false,presenter:false,assist:null,page:'hub',hubReq:{n:0,tab:'patterns',filter:null}};
+const REDACT = ['sg','replay','proc','recv','model','owner','conf'];
+
+class Component extends DCLogic {
+  constructor(p){super(p);let s=DEF;try{const v=JSON.parse(localStorage.getItem(KEY)||'null');if(v&&typeof v.stage==='number'&&v.stage>=0&&v.stage<5&&Array.isArray(v.insp)&&Array.isArray(v.acks)&&R[v.sel])s={...DEF,...v};}catch(e){s=DEF;}this.state={...s};}
+  componentDidMount(){this._r=()=>this.forceUpdate();window.addEventListener("resize",this._r);}
+  componentWillUnmount(){window.removeEventListener("resize",this._r);}
+  componentDidUpdate(){try{localStorage.setItem(KEY,JSON.stringify(this.state));}catch(e){}}
+  has(ids){return ids.some(i=>this.state.insp.includes(i));}
+  u(){return true;}
+  reasons(n){const s=this.state,L=[];
+    const add=(ok,t)=>L.push({text:t,fg:ok?'#15803d':'#404040',dot:ok?'#22c55e':'#d4d4d4'});
+    if(n>=1){add(this.has(['EVD-002','EVD-003']),'Finding · inspect EVD-002 provenance');add(s.ackIndep,'Finding · acknowledge the alerts are not independent');}
+    if(n>=2){add(this.has(['EVD-008','REL-005']),'Dependency · inspect manifest');add(this.has(['EVD-009','REL-006','REL-007']),'Dependency · inspect dependency');add(this.has(['EVD-010']),'Dependency · inspect inventory');}
+    if(n>=3){add(s.expRev.length===4,'Explanations · review all four ('+s.expRev.length+' of 4)');add(s.gatesRev,'Explanations · review hard gates');}
+    if(n>=4){add(s.approved,'Decision · approve synthetic verification plan');}
+    return L;}
+  sel(id){this.setState(s=>({sel:id,insp:s.insp.includes(id)?s.insp:[...s.insp,id],expRev:id.startsWith('EXP')&&!s.expRev.includes(id)?[...s.expRev,id]:s.expRev}));}
+  hubGo(tab,filter){this.setState(x=>({page:'hub',hubReq:{n:(x.hubReq?x.hubReq.n:0)+1,tab,filter}}));}
+  isF(k,v){const s=this.state,f=s.hubReq&&s.hubReq.filter;return s.page==='hub'&&!!f&&f.k===k&&f.v===v;}
+  navSty(on){return {bg:on?'#d1e9ff':'transparent',hover:on?'#d1e9ff':'#f5f5f5',fg:on?'#175cd3':'#262626',cBg:on?'#ffffff':'#f5f5f5',cFg:on?'#1570ef':'#525252'};}
+  go(n){this.setState({page:'case',stage:Math.max(0,Math.min(4,n)),resp:false});}
+  tag(t){return T[t];}
+  renderVals(){
+    const s=this.state,exec=s.role==='exec',st=s.stage,locked=!this.u(st);
+    const sh='inset 3px 0 0 #1570ef';
+    const rowSel=id=>({bg:s.sel===id?'#eff8ff':'#ffffff',sh:s.sel===id?sh:'none'});
+    const revealed=this.has(['EVD-002','EVD-003']);
+    const rec=R[s.sel]||R['EVD-001'];
+    const rows=[];const push=(k,key,mono)=>{let v=rec[key];const red=exec&&REDACT.includes(key);const miss=v==null;
+      rows.push({k,v:red?'Redacted · Executive view':miss?M:v,fg:red?'#737373':miss?'#a3a3a3':'#171717',ff:mono&&!red&&!miss?"ui-monospace,'JetBrains Mono',Menlo,monospace":'inherit',fs:miss?'italic':'normal',bg:red?'#f5f5f5':'transparent'});};
+    if(rec.kind==='Evidence'){push('Source','source');push('Source group','sg',1);if(rec.replay||s.sel==='EVD-002')push('Replay','replay',1);push('Event / valid','evt',1);push('Processing','proc',1);push('Received','recv',1);push('Lifecycle','life');push('Model / rule','model',1);push('Signal','sig',1);push('Entities','ents',1);if(rec.rel)push('Relationship','rel',1);push('Role','role');push('Limitation','lim');}
+    else if(rec.kind==='Relationship'){push('Source','source');push('Source group','sg',1);push('Owner','owner');push('Valid from','validFrom',1);push('Confidence','conf');push('Evidence','ev',1);push('Limitation','lim');}
+    else if(rec.kind==='Explanation'){push('Posture','posture');push('Supporting','sup',1);push('Limiting','limit',1);push('Missing','missingEv');push('Source groups','groups');push('Rule','lim');}
+    else if(rec.kind==='Pattern'){push('Maturity','maturity');push('Lifecycle','lifecycle');push('Signals','sigs',1);push('Decision Case','dc',1);rows[rows.length-1].v='DC-LOG-102';rows[rows.length-1].fg='#171717';rows[rows.length-1].fs='normal';push('Limitation','lim');}
+    else {push('Closed','evt',1);push('Entities','ents',1);push('Rule','lim');}
+    const chips=[T[rec.truth]];if(s.sel==='EVD-002'&&revealed)chips.push(T.EX);if(rec.stale)chips.push({label:'STALE',...T.VR,label2:0});if(rec.kind!=='Evidence'||rec.truth==='PI')chips.push(T.VR);
+    const HINTS=['EVD-001 – 006','REL-005 – 007','EXP-CL-01 – 04','DC-LOG-102','OUT-CL-417'];
+    const stages=STAGES.map((g,i)=>{const cur=i===st;return {on:cur,line:cur?'#1570ef':'transparent',label:g.label,hint:HINTS[i],aria:cur?'page':'false',bg:cur?'#d1e9ff':'transparent',hover:cur?'#d1e9ff':'#f5f5f5',fg:cur?'#1570ef':'#737373',subFg:cur?'#175cd3':'#a3a3a3',onClick:()=>this.go(i)};});
+    const alerts=['EVD-001','EVD-002'].map(id=>{const r=R[id],x=id==='EVD-002'&&revealed;return {id,claim:r.title,meta:r.evt+' · '+r.sig+(exec?'':' · '+r.sg),deco:x?'line-through':'none',op:x?.7:1,tag:x?T.EX:T.KO,...rowSel(id),onClick:()=>this.sel(id)};});
+    const ctxRows=['EVD-004','EVD-005','EVD-006'].map(id=>({id,claim:R[id].title,source:R[id].source,stale:!!R[id].stale,tag:T[R[id].truth],...rowSel(id),onClick:()=>this.sel(id)}));
+    const node=(id,sub)=>({isNode:true,id,sub,bd:s.sel===id?'#1570ef':'#d4d4d4',bg:s.sel===id?'#eff8ff':'#ffffff',onClick:()=>this.sel(id)});
+    const edge=(label,rel)=>{const on=s.sel===rel,seen=s.insp.includes(rel);return {isEdge:true,label,rel,fg:on?'#175cd3':'#404040',bd:on?'#1570ef':'#d4d4d4',bg:on?'#eff8ff':'#ffffff',line:seen?'#1570ef':'#d4d4d4',onClick:()=>this.sel(rel)};};
+    const chain=[node('MOV-RSP-417','Movement'),edge('carries','REL-005'),node('CARGO-PCM9','Cargo'),edge('required_by','REL-006'),node('SYS-MSS4','Mission-support system'),edge('supports','REL-007'),node('TASK-RESTORE-04','Restoration task')];
+    ['MOV-RSP-417','CARGO-PCM9','SYS-MSS4','TASK-RESTORE-04'].forEach((id,i)=>{if(!R[id])R[id]={kind:'Entity',title:['Primary movement','Decision-relevant cargo','Dependent mission-support system','Restoration task / deadline'][i],truth:'SC',evt:null,ents:id,lim:'Remaining entity attributes load from the canonical fixture.'};});
+    const dc=(label,id,alts)=>{const ok=this.has(alts);return {label,id,mark:ok?'✓':'',bd:ok?'#15803d':'#d4d4d4',bg:ok?'#15803d':'#ffffff',onClick:()=>this.sel(id)};};
+    const pc={amber:['#fffbeb','#fde68a','#b45309'],neutral:['#f5f5f5','#e5e5e5','#404040'],ok:['#f0fdf4','#bbf7d0','#15803d']};
+    const exps=EXPS.map(x=>{const c=pc[x.pt];return {id:x.id,name:x.name,posture:x.p,pBg:c[0],pBd:c[1],pFg:c[2],reviewed:s.expRev.includes(x.id),sup:x.sup.map(v=>({id:v[0],t:v[1]})),lim:x.lim.map(v=>({id:v[0],t:v[1]})),missing:x.missing,groups:exec?'Redacted · Executive view':x.groups,...rowSel(x.id),onClick:()=>this.sel(x.id)};});
+    const oc={rec:['#d1e9ff','#84caff','#175cd3'],amber:['#fffbeb','#fde68a','#b45309'],red:['#fef2f2','#fecaca','#dc2626'],neutral:['#f5f5f5','#e5e5e5','#404040']};
+    const options=OPTS.map(o=>{const c=oc[o[3]],r=o[3]==='rec';return {name:o[0],reason:o[1],status:o[2],cBg:c[0],cBd:c[1],cFg:c[2],bg:r?'#eff8ff':'#ffffff',sh:r?sh:'none',nameFg:o[3]==='red'||o[3]==='amber'?'#737373':'#171717'};});
+    const canApprove=s.role==='lead'&&s.acks.every(Boolean);
+    const view=s.view;
+    const histExps=EXPS.map(x=>{const out=view==='outcome',c=out?(x.ok?pc.ok:pc.neutral):pc[x.pt];return {id:x.id,name:x.name,posture:out?x.op:x.p,pBg:c[0],pBd:c[1],pFg:c[2]};});
+    const note=NOTES[st];
+    const aq=s.assist!=null?ASSIST[s.assist]:null;
+    const clock=s.approved?(st===4&&view==='outcome'?'Outcome · 09:24Z':'Approved · 09:02Z'):'Decision time · 09:00Z';
+    const roleMeta={analyst:['DEMO-ANALYST','Analyst · cannot approve','DA'],lead:['USR-SUST-01','Joint Sustainment Watch Lead','JS'],exec:['DEMO-EXECUTIVE','Executive · redacted summary','DE']}[s.role];
+    const nextOk=st<4&&this.u(st+1);
+    return {
+      roles:[['analyst','Analyst'],['lead','Sustainment Lead'],['exec','Executive']].map(([k,l])=>({label:l,on:s.role===k,bg:s.role===k?'#ffffff':'transparent',fg:s.role===k?'#171717':'#525252',sh:s.role===k?'0 1px 2px rgba(0,0,0,.08)':'none',onClick:()=>this.setState({role:k})})),
+      userTextDisplay:window.innerWidth<1280?"none":"flex",cols:window.innerWidth<1280?"200px minmax(0,1fr) 280px":"232px minmax(0,1fr) 340px",userId:roleMeta[0],userRole:roleMeta[1],userInitials:roleMeta[2],
+      resp:s.resp,respBg:s.resp?'#f5f5f5':'#ffffff',toggleResp:()=>this.setState(x=>({resp:!x.resp})),
+      presenter:s.presenter,presBg:s.presenter?'#f5f5f5':'#ffffff',togglePresenter:()=>this.setState(x=>({presenter:!x.presenter})),
+      reset:()=>{try{localStorage.removeItem(KEY);}catch(e){}this.setState({...DEF,insp:['EVD-001'],expRev:[],acks:[false,false,false]});},
+      stageLabel:STAGES[st].label,
+      isHub:s.page==='hub',isCase:s.page==='case',hubReq:s.hubReq,
+      goHub:()=>this.hubGo('patterns',null),openCase:()=>this.setState({page:'case'}),toEntities:()=>this.hubGo('entities',null),
+      sideWs:[{label:'360 Logistics',count:12,...this.navSty(s.page==='hub'&&!s.hubReq.filter),onClick:()=>this.hubGo('patterns',null)}],
+      sideCases:[{label:'DC-LOG-102',count:1,...this.navSty(s.page==='case'),onClick:()=>this.setState({page:'case'})}],
+      sideEnts:[['MOV-RSP-417',2],['DEV-TRK-417',1],['LOC-TP-ATLAS',2],['LOC-DEST-KESTREL',0],['ROUTE-PRIMARY-7',2],['ROUTE-ALT-3',1]].map(([id,n])=>({label:id,count:n,...this.navSty(this.isF('entity',id)),onClick:()=>this.hubGo('signals',{k:'entity',v:id})})),
+      sideAgents:[['movement','Movement Monitor',5],['route','Route Monitor',3],['dependency','Dependency Monitor',3],['comms','Communications Monitor',1]].map(([id,l,n])=>({label:l,count:n,...this.navSty(this.isF('agent',id)),onClick:()=>this.hubGo('signals',{k:'agent',v:id})})),clockLabel:clock,
+      stages,note:{time:note[0],action:note[1],take:note[2]},
+      selPattern:()=>this.sel('PAT-CL-001'),
+      stageEyebrow:STAGES[st].label.toUpperCase(),stageTitle:STAGES[st].title,stageDesc:STAGES[st].desc,
+      locked,lockReasons:this.reasons(st),
+      show0:st===0,show1:st===1&&!locked,show2:st===2&&!locked,show3:st===3&&!locked,show4:st===4&&!locked,
+      corrNum:revealed?'1':'2',corrLabel:revealed?'canonical observation group':'apparent movement alerts',corrFg:revealed?'#171717':'#b45309',
+      alerts,revealed,sgShown:exec?'Redacted · Executive view':'SG-KNOW-TRACK-01',replayShown:exec?'Redacted · Executive view':'RPL-417-0840',sel003:()=>this.sel('EVD-003'),
+      ackIndep:s.ackIndep,ackDisabled:false,ackCursor:'pointer',ackFg:'#171717',toggleAckIndep:()=>this.setState(x=>({ackIndep:!x.ackIndep})),
+      ctxRows,chain,sel001:()=>this.sel('EVD-001'),sel010:()=>this.sel('EVD-010'),sel007:()=>this.sel('EVD-007'),
+      depChecks:[dc('Manifest','EVD-008',['EVD-008','REL-005']),dc('Dependency','EVD-009',['EVD-009','REL-006','REL-007']),dc('Inventory','EVD-010',['EVD-010'])],
+      exps,conf:CONF.map(c=>({name:c[0],state:c[1],fg:c[2]?'#b45309':'#171717'})),
+      gates:GATES.map(g=>{const c=GS[g[1]];return {name:g[0],state:g[1],note:g[2],bg:c[0],bd:c[1],fg:c[2]};}),
+      gatesRev:s.gatesRev,gatesBtn:s.gatesRev?'Gates reviewed':'Mark gates reviewed',reviewGates:()=>this.setState({gatesRev:true}),
+      options,approved:s.approved,notApproved:!s.approved,
+      acks:ACKS.map((t,i)=>({text:t,on:s.acks[i],dis:s.role==='exec',onChange:()=>this.setState(x=>{const a=[...x.acks];a[i]=!a[i];return {acks:a};})})),
+      approveDisabled:!canApprove,apBg:canApprove?'#1570ef':'#f5f5f5',apFg:canApprove?'#ffffff':'#a3a3a3',apHover:canApprove?'#175cd3':'#f5f5f5',apCursor:canApprove?'pointer':'not-allowed',
+      approveHint:s.role!=='lead'?'Only the Sustainment Lead role can approve.':s.acks.every(Boolean)?'No external effect':'Check all three acknowledgements',
+      approve:()=>{if(canApprove)this.setState({approved:true,sel:'OUT-CL-417'===s.sel?s.sel:s.sel});},
+      views:[['decision','Decision-Time · 09:00Z'],['outcome','Outcome · 09:24Z']].map(([k,l])=>({label:l,on:view===k,bg:view===k?'#ffffff':'transparent',fg:view===k?'#171717':'#525252',sh:view===k?'0 1px 2px rgba(0,0,0,.08)':'none',onClick:()=>this.setState({view:k})})),
+      outcomeView:view==='outcome',
+      timeline:[['09:18Z','Movement verified at Atlas','EVD-013 · SIG-CL-013','EVD-013'],['—','Tracker inspection finds a loose power connector','EVD-014 · SIG-CL-014','EVD-014'],['—','Fresh route check completed on ROUTE-PRIMARY-7','TASK-REFRESH-ROUTE-7','EVD-014'],['09:24Z','Human disposition: Continue on primary plan · case closed','OUT-CL-417','OUT-CL-417']].map((t,i)=>({time:t[0],text:t[1],ids:t[2],bg:s.sel===t[3]&&i!==2?'#eff8ff':'#ffffff',onClick:()=>this.sel(t[3])})),
+      histTitle:view==='outcome'?'Explanations after outcome':'Explanations as known at 09:00Z',
+      histNote:view==='outcome'?'EVD-013 · EVD-014':'Immutable snapshot',
+      histExps,histFoot:view==='outcome'?'Outcome postures are recorded alongside, never over, the 09:00Z record.':'Recommendation at 09:00Z: Verify · prepare alternate · do not execute reroute · do not attribute cause. Later evidence does not rewrite this view.',
+      prev:()=>this.go(st-1),prevDisabled:st===0,prevOp:st===0?.5:1,
+      next:()=>{if(nextOk)this.go(st+1);},nextDisabled:!nextOk,nextBg:nextOk?'#1570ef':'#f5f5f5',nextFg:nextOk?'#ffffff':'#a3a3a3',
+      nextLabel:st<4?'Next · '+STAGES[st+1].label:'End of walkthrough',nextHint:st<4&&!nextOk&&!locked?(this.reasons(st+1).find(r=>r.fg!=='#15803d')||{}).text||'':'',
+      stageStr:String(st),jump:e=>this.go(parseInt(e.target.value,10)),
+      insKind:rec.kind,insId:s.sel,insTitle:rec.title,insChips:chips,insRows:rows,
+      assistQs:ASSIST.map((a,i)=>({q:a.q,bg:s.assist===i?'#eff8ff':'#ffffff',bd:s.assist===i?'#84caff':'#e5e5e5',onClick:()=>this.setState({assist:i})})),
+      hasAnswer:!!aq,answer:aq?{text:exec&&aq.ax?aq.ax:aq.a,lim:aq.lim,cites:aq.c.map(id=>({id,tag:T[R[id].truth],onClick:()=>this.sel(id)}))}:{text:'',lim:'',cites:[]}
+    };
+  }
+}
+</script>
+</body>
+</html>

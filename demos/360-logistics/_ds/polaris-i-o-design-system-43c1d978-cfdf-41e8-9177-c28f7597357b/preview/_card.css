@@ -1,0 +1,37 @@
+/* Shared preview-card skeleton.
+   Every card imports colors_and_type.css then this. Cards target 700px wide. */
+html, body {
+  margin: 0;
+  background: #ffffff;
+  font-family: var(--font-sans);
+  color: var(--fg-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.card {
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-sizing: border-box;
+}
+.row { display: flex; gap: 12px; }
+.col { display: flex; flex-direction: column; gap: 8px; }
+.eyebrow {
+  font-size: 11px;
+  line-height: 16px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--fg-tertiary);
+}
+.spec {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 14px;
+  color: var(--fg-tertiary);
+}
+.swatch {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+}
