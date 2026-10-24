@@ -7,7 +7,8 @@
         {label:"Cargo Tracking", href:"Cargo%20Tracking.dc.html", icon:"\u{1F4E6}"},
         {label:"Aviation Scheduling", href:"Aviation%20Scheduling.dc.html", icon:"\u2708\uFE0F"},
         {label:"Carrier Tendering", href:"Carrier%20Tendering.dc.html", icon:"\u{1F69A}"},
-        {label:"Billing / Recon", href:"Billing%20Reconciliation.dc.html", icon:"\u{1F4B8}"}
+        {label:"Billing / Recon", href:"Billing%20Reconciliation.dc.html", icon:"\u{1F4B8}"},
+        {label:"Entities", href:"Entities.html", icon:"\u{1FA79}"}
       ]}
     ];
     var nav = document.createElement("nav"); nav.id="app-nav";
