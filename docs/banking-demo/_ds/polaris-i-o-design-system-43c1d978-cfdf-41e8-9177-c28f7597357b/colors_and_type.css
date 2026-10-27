@@ -1,0 +1,342 @@
+/* ============================================================
+   POLARIS I/O — Colors & Type
+   ------------------------------------------------------------
+   Pull this file into any artifact. All tokens are CSS custom
+   properties, so cascade as normal:
+
+     :root { --pol-bg: var(--neutral-50); }
+
+   Sourced from the Figma file `Intel Hub.fig`. Polaris sits in
+   the Bloomberg / Palantir register — restrained neutrals,
+   sharp cobalt accent, semantic color used SPARINGLY.
+   ============================================================ */
+
+/* Plus Jakarta Sans — local @font-face. Files live in /fonts/.
+   Update the path prefix if you embed this stylesheet at a different depth.
+   This is the ONLY typeface in the system. Numerics use tabular-nums + the
+   bolder weight; we don't ship a separate mono family. */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-weight: 200; font-style: normal; font-display: swap;
+  src: url('fonts/PlusJakartaSans-ExtraLight.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-weight: 200; font-style: italic; font-display: swap;
+  src: url('fonts/PlusJakartaSans-ExtraLightItalic.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-weight: 300; font-style: normal; font-display: swap;
+  src: url('fonts/PlusJakartaSans-Light.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-weight: 300; font-style: italic; font-display: swap;
+  src: url('fonts/PlusJakartaSans-LightItalic.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-weight: 400; font-style: normal; font-display: swap;
+  src: url('fonts/PlusJakartaSans-Regular.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-weight: 400; font-style: italic; font-display: swap;
+  src: url('fonts/PlusJakartaSans-Italic.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-weight: 500; font-style: normal; font-display: swap;
+  src: url('fonts/PlusJakartaSans-Medium.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-weight: 500; font-style: italic; font-display: swap;
+  src: url('fonts/PlusJakartaSans-MediumItalic.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-weight: 600; font-style: normal; font-display: swap;
+  src: url('fonts/PlusJakartaSans-SemiBold.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-weight: 600; font-style: italic; font-display: swap;
+  src: url('fonts/PlusJakartaSans-SemiBoldItalic.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-weight: 700; font-style: normal; font-display: swap;
+  src: url('fonts/PlusJakartaSans-Bold.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-weight: 700; font-style: italic; font-display: swap;
+  src: url('fonts/PlusJakartaSans-BoldItalic.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-weight: 800; font-style: normal; font-display: swap;
+  src: url('fonts/PlusJakartaSans-ExtraBold.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-weight: 800; font-style: italic; font-display: swap;
+  src: url('fonts/PlusJakartaSans-ExtraBoldItalic.ttf') format('truetype');
+}
+
+:root {
+
+  /* ----------------------------------------------------------
+     NEUTRAL SCALE
+     The product is ~90% neutrals. Match Tailwind's `neutral-*`
+     so existing devs / Figma libs map 1:1.
+     ---------------------------------------------------------- */
+  --neutral-0:    #ffffff;
+  --neutral-25:   #fcfcfc;
+  --neutral-50:   #fafafa;   /* page subtle bg, hover-rest cells */
+  --neutral-100:  #f5f5f5;
+  --neutral-150:  #ececec;   /* heavier divider */
+  --neutral-200:  #e5e5e5;   /* default border — used 172× in the source */
+  --neutral-300:  #d4d4d4;   /* input border */
+  --neutral-400:  #a3a3a3;
+  --neutral-500:  #737373;   /* secondary text, sidebar headings */
+  --neutral-600:  #525252;   /* body */
+  --neutral-700:  #404040;   /* secondary button text */
+  --neutral-800:  #262626;   /* sidebar nav text */
+  --neutral-900:  #171717;   /* primary text */
+  --neutral-950:  #0c0e12;   /* table column headers */
+
+  /* ----------------------------------------------------------
+     BRAND — Polaris primary (blue)
+     The app uses the Untitled UI Blue ramp for primary actions,
+     links, focus rings and selected states. The WORDMARK uses a
+     separate two-tone navy + cobalt (--polaris-navy +
+     --polaris-wordmark-blue); don't reach for those in UI.
+     ---------------------------------------------------------- */
+
+  /* Wordmark colors (logo only) */
+  --polaris-navy:           #001030;
+  --polaris-wordmark-blue:  #2868c0;
+
+  /* Brand primary scale — Untitled UI Blue, application-level */
+  --brand-50:   #eff8ff;
+  --brand-100:  #d1e9ff;
+  --brand-200:  #b2ddff;
+  --brand-300:  #84caff;
+  --brand-400:  #53b1fd;
+  --brand-500:  #2e90fa;   /* default brand */
+  --brand-600:  #1570ef;   /* primary action rest */
+  --brand-700:  #175cd3;   /* hover */
+  --brand-800:  #1849a9;   /* press */
+  --brand-900:  #194185;
+  --brand-950:  #102a56;
+
+  /* Aliases (keep --polaris-cobalt names so older code keeps working) */
+  --polaris-cobalt:        var(--brand-600);
+  --polaris-cobalt-hover:  var(--brand-700);
+  --polaris-cobalt-press:  var(--brand-800);
+  --polaris-cobalt-soft:   var(--brand-100);
+  --polaris-cobalt-border: var(--brand-300);
+  --polaris-blue-500:      var(--brand-600);
+  --polaris-blue-600:      var(--brand-700);
+
+  --polaris-orange:        #ff8200;   /* legacy ABM-Hub accent only */
+  --polaris-orange-soft:   #fff4e6;
+
+  /* ----------------------------------------------------------
+     SEMANTIC — used in badges, status pills, signals
+     Always paired: bg + border + text. Never use alone.
+     ---------------------------------------------------------- */
+  --success-bg:    #f0fdf4;
+  --success-border:#bbf7d0;
+  --success-text:  #15803d;
+
+  --warning-bg:    #fffbeb;
+  --warning-border:#fde68a;
+  --warning-text:  #b45309;
+
+  --error-bg:      #fef2f2;
+  --error-border:  #fecaca;
+  --error-text:    #dc2626;
+
+  --info-bg:       #eff6ff;
+  --info-border:   #bfdbfe;
+  --info-text:     #1d4ed8;
+
+  /* ----------------------------------------------------------
+     SEMANTIC ALIASES — what designers actually reach for
+     ---------------------------------------------------------- */
+  --bg-canvas:        var(--neutral-0);
+  --bg-subtle:        var(--neutral-50);
+  --bg-muted:         var(--neutral-100);
+  --bg-inverse:       var(--neutral-900);
+  --bg-hover:         var(--neutral-100);
+  --bg-selected:      var(--polaris-cobalt-soft);
+
+  --fg-primary:       var(--neutral-900);
+  --fg-secondary:     var(--neutral-600);
+  --fg-tertiary:      var(--neutral-500);
+  --fg-quaternary:    var(--neutral-400);
+  --fg-on-brand:      var(--neutral-0);
+  --fg-brand:         var(--polaris-cobalt);
+  --fg-brand-dark:    var(--polaris-navy);
+  --fg-table-header:  var(--neutral-950);
+
+  --border-subtle:    var(--neutral-200);   /* default everywhere */
+  --border-default:   var(--neutral-300);   /* inputs, buttons */
+  --border-strong:    var(--neutral-400);
+  --border-brand:     var(--polaris-cobalt);
+  --border-focus:     var(--polaris-cobalt);
+
+  /* ----------------------------------------------------------
+     TYPE — Plus Jakarta Sans (only typeface in the system)
+     ---------------------------------------------------------- */
+  --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;   /* alias \u2014 use tabular-nums for numeric tables */
+
+  /* Weight scale — the source uses 400 / 500 / 700 almost exclusively */
+  --weight-regular:  400;
+  --weight-medium:   500;
+  --weight-semibold: 600;
+  --weight-bold:     700;
+  --weight-black:    800;
+
+  /* Type scale — px values, source-anchored */
+  --text-xs:    11px;
+  --text-sm:    12px;
+  --text-base:  14px;
+  --text-md:    16px;   /* sidebar section headings, body */
+  --text-lg:    18px;
+  --text-xl:    20px;   /* page H1 in source */
+  --text-2xl:   24px;
+  --text-3xl:   30px;
+  --text-4xl:   36px;
+  --text-5xl:   48px;
+  --text-6xl:   60px;
+
+  /* Line height (unitless multipliers, except specimens below) */
+  --leading-tight:  1.15;
+  --leading-snug:   1.3;
+  --leading-normal: 1.5;
+  --leading-loose:  1.65;
+
+  /* Letter-spacing — tightening big display, opening uppercase eyebrows */
+  --tracking-tight:    -0.02em;
+  --tracking-normal:    0;
+  --tracking-wide:      0.04em;
+  --tracking-eyebrow:   0.08em;   /* uppercase section labels */
+
+  /* ----------------------------------------------------------
+     RADII — 6, 8, 12, full
+     ---------------------------------------------------------- */
+  --radius-xs:   4px;
+  --radius-sm:   6px;    /* nav items, small badges */
+  --radius-md:   8px;    /* buttons, inputs */
+  --radius-lg:   12px;   /* cards, filter bar, tables */
+  --radius-xl:   16px;
+  --radius-full: 9999px; /* pills */
+
+  /* ----------------------------------------------------------
+     SHADOWS — three flavors. NEVER colored, NEVER large.
+     This is the most-broken token when AI guesses; please use these.
+     ---------------------------------------------------------- */
+  --shadow-xs:     0 1px 2px 0 rgba(0,0,0,0.05);
+  --shadow-sm:     0 1px 3px 0 rgba(0,0,0,0.06), 0 1px 2px -1px rgba(0,0,0,0.06);
+  --shadow-md:     0 4px 8px -2px rgba(0,0,0,0.08), 0 2px 4px -2px rgba(0,0,0,0.04);
+  --shadow-lg:     0 12px 24px -8px rgba(0,0,0,0.10), 0 4px 8px -4px rgba(0,0,0,0.06);
+
+  /* Button inset highlight (Untitled UI pattern — gives buttons depth) */
+  --button-inset:  inset 0 -2px 0 0 rgba(0,0,0,0.05), inset 0 0 0 1px rgba(0,0,0,0.18);
+
+  /* Focus ring — brand 600 at 24% */
+  --ring-focus:    0 0 0 4px rgba(21,112,239,0.24);
+
+  /* ----------------------------------------------------------
+     SPACING — 4px grid
+     ---------------------------------------------------------- */
+  --space-0:   0;
+  --space-1:   4px;
+  --space-2:   8px;
+  --space-3:   12px;
+  --space-4:   16px;
+  --space-5:   20px;
+  --space-6:   24px;
+  --space-8:   32px;
+  --space-10:  40px;
+  --space-12:  48px;
+  --space-16:  64px;
+  --space-20:  80px;
+  --space-24:  96px;
+
+  /* ----------------------------------------------------------
+     MOTION
+     Polaris moves SLIGHTLY. Never bounce, never spring. Linear or
+     cubic-bezier easing only. Hovers are 120ms; state changes 200ms.
+     ---------------------------------------------------------- */
+  --ease-out:     cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out:  cubic-bezier(0.65, 0, 0.35, 1);
+  --duration-fast:    120ms;
+  --duration-base:    200ms;
+  --duration-slow:    320ms;
+}
+
+/* ============================================================
+   SEMANTIC TYPE — drop-in classes
+   Use these instead of ad-hoc font-size / weight combos. They
+   collapse the design system into 6 display + 4 body + 2 utility
+   roles. If you reach for something not in this list, ask first.
+   ============================================================ */
+
+.pol-display-2xl,
+.pol-display-xl,
+.pol-display-lg,
+.pol-h1,
+.pol-h2,
+.pol-h3,
+.pol-h4,
+.pol-body-lg,
+.pol-body,
+.pol-body-sm,
+.pol-caption,
+.pol-eyebrow,
+.pol-mono {
+  font-family: var(--font-sans);
+  color: var(--fg-primary);
+  margin: 0;
+  text-wrap: pretty;
+}
+
+.pol-display-2xl { font-size: 60px; line-height: 1.05; font-weight: var(--weight-bold);     letter-spacing: var(--tracking-tight); }
+.pol-display-xl  { font-size: 48px; line-height: 1.08; font-weight: var(--weight-bold);     letter-spacing: var(--tracking-tight); }
+.pol-display-lg  { font-size: 36px; line-height: 1.15; font-weight: var(--weight-bold);     letter-spacing: var(--tracking-tight); }
+.pol-h1          { font-size: 30px; line-height: 1.2;  font-weight: var(--weight-bold); }
+.pol-h2          { font-size: 24px; line-height: 1.3;  font-weight: var(--weight-bold); }
+.pol-h3          { font-size: 20px; line-height: 30px; font-weight: var(--weight-bold); }  /* page H1 in source */
+.pol-h4          { font-size: 16px; line-height: 24px; font-weight: var(--weight-bold); }  /* sidebar section heads */
+
+.pol-body-lg     { font-size: 16px; line-height: 24px; font-weight: var(--weight-regular); color: var(--fg-secondary); }
+.pol-body        { font-size: 14px; line-height: 20px; font-weight: var(--weight-regular); color: var(--fg-primary); }
+.pol-body-sm     { font-size: 12px; line-height: 18px; font-weight: var(--weight-regular); color: var(--fg-secondary); }
+.pol-caption     { font-size: 11px; line-height: 16px; font-weight: var(--weight-medium);  color: var(--fg-tertiary); }
+
+.pol-eyebrow     {
+  font-size: 11px; line-height: 16px;
+  font-weight: var(--weight-bold);
+  color: var(--fg-tertiary);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+}
+
+.pol-mono        {
+  font-family: var(--font-sans);
+  font-size: 12px; line-height: 18px;
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0;
+  color: var(--fg-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Numerics in tables: ALWAYS tabular */
+.pol-num { font-variant-numeric: tabular-nums; }
