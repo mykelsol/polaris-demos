@@ -64,7 +64,7 @@
 
     .masthead__inner,
     .intro__inner,
-    .catalog,
+    .content-layout,
     .footer__inner {
       width: min(calc(100% - 48px), var(--max));
       margin-inline: auto;
@@ -178,7 +178,58 @@
       text-transform: uppercase;
     }
 
-    .catalog { padding-block: 32px 64px; }
+    .content-layout {
+      display: grid;
+      grid-template-columns: 220px minmax(0, 1fr);
+      gap: 32px;
+      align-items: start;
+      padding-block: 32px 64px;
+    }
+
+    .collection-nav {
+      position: sticky;
+      top: 24px;
+      border-top: 3px solid var(--navy);
+      background: #fff;
+    }
+
+    .collection-nav__heading {
+      margin: 0;
+      padding: 16px 16px 12px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .collection-nav__link {
+      min-height: 54px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 16px;
+      border-top: 1px solid var(--line);
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.35;
+      text-decoration: none;
+    }
+
+    .collection-nav__link:hover { background: var(--blue-soft); color: var(--blue-dark); }
+
+    .collection-nav__link:focus-visible {
+      position: relative;
+      z-index: 1;
+      outline: 3px solid var(--blue);
+      outline-offset: -3px;
+    }
+
+    .collection-nav__arrow { color: var(--blue-dark); font-size: 17px; }
+
+    .catalog { min-width: 0; }
 
     .toolbar {
       display: flex;
@@ -365,12 +416,15 @@
     @media (max-width: 760px) {
       .masthead__inner,
       .intro__inner,
-      .catalog,
+      .content-layout,
       .footer__inner { width: min(calc(100% - 32px), var(--max)); }
 
       .masthead__label { display: none; }
       .intro__inner { padding-block: 36px 32px; grid-template-columns: 1fr; gap: 24px; }
       .catalog-count { width: 100%; display: flex; align-items: baseline; gap: 10px; }
+      .content-layout { grid-template-columns: 1fr; gap: 24px; padding-block: 24px 48px; }
+      .collection-nav { position: static; }
+      .collection-nav__heading { padding-block: 12px 10px; }
       .toolbar { align-items: stretch; flex-direction: column; }
       .search { width: 100%; }
       .demo-grid { grid-template-columns: 1fr; }
@@ -411,7 +465,20 @@
       </div>
     </section>
 
-    <section class="catalog" aria-labelledby="catalog-title">
+    <div class="content-layout">
+      <nav class="collection-nav" aria-label="Demo collections">
+        <p class="collection-nav__heading">Demo collections</p>
+        <a class="collection-nav__link" href="concept-demos/">
+          <span>Concept Demos</span>
+          <span class="collection-nav__arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="collection-nav__link" href="unfinished-demos/">
+          <span>Unfinished / Not Ready</span>
+          <span class="collection-nav__arrow" aria-hidden="true">→</span>
+        </a>
+      </nav>
+
+      <section class="catalog" aria-labelledby="catalog-title">
       <div class="toolbar">
         <h2 class="toolbar__heading" id="catalog-title">Demo catalog</h2>
         <label class="search">
@@ -477,7 +544,8 @@
         <h2>No demos found</h2>
         <p>Try another search term.</p>
       </div>
-    </section>
+      </section>
+    </div>
   </main>
 
   <footer class="footer">
